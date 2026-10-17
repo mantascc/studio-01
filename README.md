@@ -2,10 +2,10 @@
 
 Public interaction and visual explorations by [mantascc](https://github.com/mantascc).
 
-[Open Studio](https://mantascc.github.io/studio/)
+[Open Studio](https://mantas.cc/studio/)
 
-- [Avatar exploration](https://mantascc.github.io/studio/avatar-exploration/) — shape, character, motion, and agent interfaces.
-- [Sketches](https://mantascc.github.io/studio/sketches/) — momentum, reinvention, overflow, and topology.
+- [Avatar exploration](https://mantas.cc/studio/avatar-exploration/) — shape, character, motion, and agent interfaces.
+- [Sketches](https://mantas.cc/studio/sketches/) — momentum, reinvention, overflow, and topology.
 
 ## Work here
 

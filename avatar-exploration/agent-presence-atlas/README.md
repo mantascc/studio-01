@@ -88,7 +88,7 @@ Read the full issue and all comments, including [breadth](https://github.com/man
 
 [Style seed](https://github.com/mantascc/100days/blob/main/43-style-seed/style-seed.md) and [Clear Channel](https://github.com/mantascc/100days/tree/main/69-clear-channel) inform simple rules, explicit mechanisms and the comparison grid. [Sprite States](https://github.com/mantascc/100days/blob/main/89-sprite-states/interface.md) informs still-pose communication; [Thinking States](https://github.com/mantascc/100days/blob/main/30-thinking-states/interface.md) informs deterministic time-based variation. Monochrome and hover-only conventions were adapted to the issue’s identity-color and touch requirements. SVG is sufficient for the bounded collective and matrix scenes here; no raster or 3D dependency is justified yet.
 
-Originally developed as a local exploration; now published in [Studio](https://mantascc.github.io/studio/).
+Originally developed as a local exploration; now published in [Studio](https://mantas.cc/studio/).
 
 ## Nocturne — matrix characters after dark
 
