@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>001 — Momentum / Urban Pulse</title>
+<style>
+:root{color-scheme:dark;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;color:#bac0b6;background:#0a0c0b}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#0a0c0b}
+body{min-height:100vh;display:grid;place-items:center;padding:clamp(16px,4vw,48px)}
+main{width:min(100%,780px)}
+header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:12px}
+.header-actions{display:flex;gap:12px;align-items:center}
+.panel{margin-bottom:12px;padding:12px;border:1px solid #20261f;background:#0d100d}
+.panel[hidden]{display:none}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+.control{display:grid;gap:4px}
+.control span{display:flex;justify-content:space-between;gap:12px;color:#87927f}
+.control output{color:#b9c5b2;font-variant-numeric:tabular-nums}
+.control input[type=range]{width:100%;accent-color:#b9cfad}
+@media(max-width:560px){.controls{grid-template-columns:1fr}}
+h1{font:inherit;font-weight:400;letter-spacing:.05em;color:#e1e7dc;margin:0}
+button{color:#8f9989;background:none;border:0;padding:0;font:inherit;cursor:pointer}
+button:hover{color:#eef4e9}
+.arena{position:relative;width:100%;aspect-ratio:1;background:#0a0c0b;border:1px solid #20261f;overflow:hidden}
+canvas{display:block;width:100%;height:100%}
+.note{margin-top:12px;color:#707a6d;font-size:10px;letter-spacing:.04em}
+@media(max-width:560px){body{padding:16px}h1{max-width:72%}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>001 — momentum / urban pulse</h1>
+    <div class="header-actions">
+      <button id="parameters" type="button" aria-expanded="false" aria-controls="panel">parameters</button>
+      <button id="pause" type="button" aria-pressed="false">pause</button>
+    </div>
+  </header>
+  <section id="panel" class="panel" hidden>
+    <div class="controls">
+      <label class="control"><span>arrival rate <output id="rate-value"></output></span><input id="rate" type="range" min="0.4" max="2.5" step="0.05"></label>
+      <label class="control"><span>damping <output id="damping-value"></output></span><input id="damping" type="range" min="0.02" max="0.12" step="0.002"></label>
+      <label class="control"><span>trail length <output id="lifetime-value"></output></span><input id="lifetime" type="range" min="4" max="22" step="0.2"></label>
+      <label class="control"><span>initial momentum <output id="impulse-value"></output></span><input id="impulse" type="range" min="0.4" max="1" step="0.02"></label>
+      <label class="control"><span>grid visibility <output id="grid-value"></output></span><input id="grid" type="range" min="0" max="0.8" step="0.02"></label>
+      <label class="control"><span>curl <output id="curl-value"></output></span><input id="curl" type="range" min="0" max="1.4" step="0.02"></label>
+      <label class="control"><span>pulse speed <output id="pulseSpeed-value"></output></span><input id="pulseSpeed" type="range" min="0.08" max="0.6" step="0.01"></label>
+      <label class="control"><span>pulse sharpness <output id="pulseSharpness-value"></output></span><input id="pulseSharpness" type="range" min="0.6" max="4" step="0.1"></label>
+      <label class="control"><span>burst density <output id="burstDensity-value"></output></span><input id="burstDensity" type="range" min="0" max="8" step="0.25"></label>
+      <label class="control"><span>rush acceleration <output id="rushAccel-value"></output></span><input id="rushAccel" type="range" min="0" max="0.7" step="0.02"></label>
+    </div>
+  </section>
+  <div class="arena">
+    <canvas id="field" role="img" aria-label="Small angular momentum paths move through a dense transit-like field, cycling from calm intervals into rush-hour bursts and back again."></canvas>
+  </div>
+</main>
+
+<script>
+'use strict';
+
+const DT=1/60;
+const parameters={hidden:true};
+const DIRS=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+const canvas=document.querySelector('#field');
+const ctx=canvas.getContext('2d');
+const arena=document.querySelector('.arena');
+const pauseButton=document.querySelector('#pause');
+const parametersButton=document.querySelector('#parameters');
+const panel=document.querySelector('#panel');
+const media=matchMedia('(prefers-reduced-motion: reduce)');
+
+let width=0,height=0,dpr=1,last=null,acc=0,paused=media.matches;
+
+class UrbanPulse{
+  constructor(cols=49,rows=49){
+    this.cols=cols;
+    this.rows=rows;
+    this.time=0;
+    this.next=.25;
+    this.serial=0;
+    this.seed=8128;
+    this.paths=[];
+    this.settings={rate:1,damping:.068,lifetime:4,impulse:.6,grid:.8,curl:1.18,pulseSpeed:.15,pulseSharpness:2.6,burstDensity:2.5,rushAccel:.5};
+  }
+  random(t=this){
+    t.seed=(Math.imul(t.seed,1664525)+1013904223)>>>0;
+    return t.seed/4294967296;
+  }
+  intensity(){
+    // About a 42-second urban pulse at the default speed: quiet -> rush -> quiet.
+    const wave=(Math.sin(this.time*this.settings.pulseSpeed-Math.PI/2)+1)/2;
+    return Math.pow(wave,this.settings.pulseSharpness);
+  }
+  launch(){
+    const intensity=this.intensity();
+    const corridors=[.22,.34,.46,.58,.70,.78];
+    const lane=corridors[Math.floor(this.random()*corridors.length)];
+    const y=Math.floor(this.rows*(lane+(this.random()-.5)*(.035-.02*intensity)));
+    const x=Math.floor(this.cols*(.04+this.random()*.06));
+    const dir=this.random()<(.84+.10*intensity)?0:(this.random()<.5?1:7);
+    const id=++this.serial;
+    const handed=this.random()<.5?-1:1;
+    const phase=this.random()*Math.PI*2;
+    const path={
+      id,x,y,dir,m:this.settings.impulse*(.92+.08*intensity),
+      seed:8128+id*31,
+      damping:this.settings.damping,
+      age:0,wait:0,steps:0,alive:true,
+      handed,phase,turnBudget:0,
+      points:[{x,y,time:this.time}]
+    };
+    this.paths.push(path);
+    if(this.paths.length>42)this.paths.shift();
+
+    // Rush periods compress headways; calm periods leave visible gaps.
+    const calmGap=2.8+this.random()*2.6;
+    const rushGap=.22+this.random()*.45;
+    this.next=this.time+(calmGap*(1-intensity)+rushGap*intensity)/this.settings.rate;
+  }
+  hop(t){
+    const life=1-t.m;
+    const pulse=Math.sin(t.steps*.52+t.phase);
+    const growing=.18+.82*Math.min(1,t.steps/34);
+    const curlBias=pulse*this.settings.curl*growing;
+    const release=Math.max(0,Math.min(1,(t.steps-34)/16));
+
+    // Preserve the Open Field momentum rule, but when momentum yields,
+    // turns are gently biased into alternating arcs that widen over time.
+    if(this.random(t)>t.m){
+      const sign=curlBias>=0?t.handed:-t.handed;
+      const amount=Math.abs(curlBias)>.55?1:(this.random(t)<.22?1:0);
+      if(amount)t.dir=(t.dir+(sign>0?1:7))%8;
+      else if(this.random(t)<.28)t.dir=(t.dir+(this.random(t)<.5?1:7))%8;
+    }
+
+    // The last third tends to release back toward forward motion rather than
+    // completing a literal spiral.
+    if(release>0 && this.random(t)<release*.22){
+      const candidates=[7,0,1];
+      t.dir=candidates[Math.floor(this.random(t)*candidates.length)];
+    }
+
+    let [dx,dy]=DIRS[t.dir];
+    if(t.x+dx<0||t.x+dx>=this.cols||t.y+dy<0||t.y+dy>=this.rows){
+      dx=t.x+dx<0||t.x+dx>=this.cols?-dx:dx;
+      dy=t.y+dy<0||t.y+dy>=this.rows?-dy:dy;
+      t.dir=DIRS.findIndex(v=>v[0]===dx&&v[1]===dy);
+    }
+
+    t.x+=dx;
+    t.y+=dy;
+    t.steps++;
+    t.points.push({x:t.x,y:t.y,time:this.time});
+    t.m*=1-t.damping*(.96+life*.10);
+    if(t.m<.045)t.alive=false;
+  }
+  step(){
+    this.time+=DT;
+    if(this.time>=this.next){
+      const intensity=this.intensity();
+      const burst=1+Math.floor(intensity*this.settings.burstDensity);
+      for(let i=0;i<burst;i++)this.launch();
+    }
+
+    for(const t of this.paths){
+      if(t.alive){
+        t.age+=DT;
+        t.wait+=DT;
+        const urban=this.intensity();
+        const interval=(.032+.07*(1-t.m))*(1-this.settings.rushAccel*urban);
+        if(t.wait>=interval){
+          t.wait-=interval;
+          this.hop(t);
+        }
+      }
+      t.points=t.points.filter(p=>this.time-p.time<this.settings.lifetime);
+    }
+    this.paths=this.paths.filter(t=>t.alive||t.points.length>1);
+  }
+}
+
+let model=new UrbanPulse();
+const gridCanvas=document.createElement('canvas');
+const gctx=gridCanvas.getContext('2d');
+
+function project(x,y){
+  return [(x+.5)*width/model.cols,(y+.5)*height/model.rows];
+}
+
+function buildGrid(){
+  gridCanvas.width=Math.round(width*dpr);
+  gridCanvas.height=Math.round(height*dpr);
+  gctx.setTransform(dpr,0,0,dpr,0,0);
+  gctx.clearRect(0,0,width,height);
+  gctx.fillStyle='#8b9b83';
+  for(let j=0;j<model.rows;j++){
+    for(let i=0;i<model.cols;i++){
+      const [x,y]=project(i,j);
+      gctx.beginPath();
+      gctx.arc(x,y,.55,0,Math.PI*2);
+      gctx.fill();
+    }
+  }
+}
+
+function fit(){
+  const rect=arena.getBoundingClientRect();
+  width=Math.floor(rect.width);
+  height=Math.floor(rect.height);
+  dpr=Math.min(devicePixelRatio||1,2);
+  canvas.width=Math.max(1,Math.round(width*dpr));
+  canvas.height=Math.max(1,Math.round(height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  buildGrid();
+  render();
+}
+
+function render(){
+  ctx.fillStyle='#0a0c0b';
+  ctx.fillRect(0,0,width,height);
+
+  ctx.globalAlpha=model.settings.grid*.58;
+  ctx.drawImage(gridCanvas,0,0,width,height);
+  ctx.globalAlpha=1;
+  ctx.lineCap='round';
+
+  for(const t of model.paths){
+    for(let i=1;i<t.points.length;i++){
+      const a=t.points[i-1];
+      const b=t.points[i];
+      const alpha=Math.max(0,1-(model.time-b.time)/model.settings.lifetime);
+      const [ax,ay]=project(a.x,a.y);
+      const [bx,by]=project(b.x,b.y);
+
+      const urban=model.intensity();
+      ctx.strokeStyle=`rgba(185,207,173,${alpha*(.58+.22*urban)})`;
+      ctx.lineWidth=.72;
+      ctx.beginPath();
+      ctx.moveTo(ax,ay);
+      ctx.lineTo(bx,by);
+      ctx.stroke();
+    }
+
+    if(t.alive){
+      const [x,y]=project(t.x,t.y);
+      ctx.fillStyle='#e1efd9';
+      ctx.fillRect(x-1.15,y-1.15,2.3,2.3);
+      ctx.strokeStyle='rgba(185,207,173,.42)';
+      ctx.beginPath();
+      ctx.arc(x,y,2.2+t.m*3.1,0,Math.PI*2);
+      ctx.stroke();
+    }
+  }
+}
+
+const controls=['rate','damping','lifetime','impulse','grid','curl','pulseSpeed','pulseSharpness','burstDensity','rushAccel'];
+const formats={
+  rate:v=>v.toFixed(2)+'×',
+  damping:v=>v.toFixed(3),
+  lifetime:v=>v.toFixed(1)+'s',
+  impulse:v=>Math.round(v*100)+'%',
+  grid:v=>Math.round(v*100)+'%',
+  curl:v=>v.toFixed(2),
+  pulseSpeed:v=>v.toFixed(2),
+  pulseSharpness:v=>v.toFixed(1),
+  burstDensity:v=>v.toFixed(2),
+  rushAccel:v=>Math.round(v*100)+'%'
+};
+for(const key of controls){
+  const input=document.getElementById(key);
+  const output=document.getElementById(key+'-value');
+  input.value=model.settings[key];
+  output.value=formats[key](model.settings[key]);
+  input.addEventListener('input',()=>{
+    model.settings[key]=+input.value;
+    output.value=formats[key](model.settings[key]);
+    render();
+  });
+}
+
+if(parameters.hidden){
+  parametersButton.hidden=true;
+  panel.hidden=true;
+}
+
+parametersButton.addEventListener('click',()=>{
+  const open=panel.hidden;
+  panel.hidden=!open;
+  parametersButton.setAttribute('aria-expanded',String(open));
+});
+
+function sync(){
+  pauseButton.textContent=paused?'resume':'pause';
+  pauseButton.setAttribute('aria-pressed',String(paused));
+}
+
+pauseButton.addEventListener('click',()=>{
+  paused=!paused;
+  last=null;
+  acc=0;
+  sync();
+});
+
+media.addEventListener('change',e=>{
+  if(e.matches){
+    paused=true;
+    last=null;
+    acc=0;
+    sync();
+  }
+});
+
+document.addEventListener('visibilitychange',()=>{last=null;acc=0});
+
+function frame(now){
+  if(last!==null&&!paused&&!document.hidden){
+    acc+=Math.min((now-last)/1000,.1);
+    while(acc>=DT){
+      model.step();
+      acc-=DT;
+    }
+  }
+  last=now;
+  render();
+  requestAnimationFrame(frame);
+}
+
+new ResizeObserver(()=>fit()).observe(arena);
+
+fit();
+model.launch();
+sync();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

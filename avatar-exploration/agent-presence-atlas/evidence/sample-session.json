@@ -1,0 +1,64 @@
+{
+  "format": "min1-presence-session",
+  "version": 1,
+  "favorites": [
+    "3-4",
+    "1-7",
+    "2-1",
+    "6-3"
+  ],
+  "identities": [
+    {
+      "family": 3,
+      "variant": 4,
+      "palette": 5,
+      "color": null,
+      "softness": 25,
+      "aspect": 100,
+      "spread": 100,
+      "weight": 100,
+      "rotation": 0,
+      "seed": 1994,
+      "offsets": {}
+    },
+    {
+      "family": 1,
+      "variant": 7,
+      "palette": 6,
+      "color": null,
+      "softness": 5,
+      "aspect": 100,
+      "spread": 100,
+      "weight": 100,
+      "rotation": 0,
+      "seed": 1861,
+      "offsets": {}
+    },
+    {
+      "family": 2,
+      "variant": 1,
+      "palette": 3,
+      "color": null,
+      "softness": 84,
+      "aspect": 100,
+      "spread": 100,
+      "weight": 100,
+      "rotation": 0,
+      "seed": 1878,
+      "offsets": {}
+    },
+    {
+      "family": 6,
+      "variant": 3,
+      "palette": 1,
+      "color": null,
+      "softness": 54,
+      "aspect": 100,
+      "spread": 100,
+      "weight": 100,
+      "rotation": 0,
+      "seed": 2232,
+      "offsets": {}
+    }
+  ]
+}

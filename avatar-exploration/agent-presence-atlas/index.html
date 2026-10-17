@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="80 generative identity studies across ten construction systems. A self-contained, editable exploration for min1 issue 5.">
+<title>Form / presence — an exploration atlas</title>
+<style>
+:root{--bg:#101310;--surface:#181c18;--raised:#202620;--fg:#edf0e5;--muted:#a7afa1;--line:#343d34;--accent:#d5e3aa;--onaccent:#20281a;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;--sans:Inter,Arial,Helvetica,sans-serif;color-scheme:dark}
+[data-theme="light"]{--bg:#f3f2ec;--surface:#faf9f4;--raised:#e9eae0;--fg:#20271f;--muted:#586354;--line:#cbd0c2;--accent:#354e29;--onaccent:#fafcf5;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 var(--sans)}button,input,select,textarea{font:inherit}button,a,input,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer;color:inherit;background:transparent;border:1px solid var(--line);padding:10px 14px;min-height:44px;border-radius:0}button:active{background:var(--raised)}button[aria-pressed="true"],.primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}button:disabled{opacity:.45;cursor:default}a{color:inherit;text-underline-offset:4px}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}input,select,textarea{color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:0;min-height:44px;max-width:100%}select{padding:8px 30px 8px 10px}input[type="range"]{width:100%;accent-color:var(--accent);border:0;background:transparent;cursor:pointer}input[type="number"]{width:108px;padding:8px}input[type="color"]{width:46px;padding:4px;cursor:pointer}input[type="checkbox"]{width:20px;height:20px;min-height:20px;accent-color:var(--accent)}h1,h2,h3,p{margin:0}svg{display:block;flex-shrink:0}button svg{pointer-events:none}.shell{max-width:1320px;margin:auto;padding:0 40px}.eyebrow,.mono{font-family:var(--mono)}.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}.muted{color:var(--muted)}.small{font-size:12px}.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:88px;border-bottom:1px solid var(--line)}.wordmark{font:14px var(--mono);letter-spacing:.04em}.wordmark span{color:var(--muted)}.top-actions{display:flex;align-items:center;gap:8px}.top-actions a{padding:12px;font:11px var(--mono);text-decoration:none}.top-actions button{font:11px var(--mono)}.hero{padding:64px 0 32px;display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:end}.hero h1{font:500 clamp(42px,5.8vw,76px)/1.01 var(--sans);letter-spacing:-.065em;margin-top:20px;max-width:700px}.hero h1 span{color:var(--muted)}.intro{max-width:440px}.intro p{font-size:16px;line-height:1.65;margin-bottom:22px}.legend{display:flex;gap:22px;flex-wrap:wrap;font:11px var(--mono);color:var(--muted)}.legend strong{color:var(--fg);font-weight:400}.hero-strip{display:grid;grid-template-columns:repeat(10,1fr);border-block:1px solid var(--line);margin:24px 0 16px}.hero-item{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;padding:22px 4px 16px;border:0;border-right:1px solid var(--line);gap:12px}.hero-item:last-child{border-right:0}.hero-item svg{width:72px;height:72px}.hero-item span{font:10px var(--mono);color:var(--muted)}.hero-note{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font:11px/1.6 var(--mono);padding-bottom:48px}.hero-note a{text-decoration:none}.toolbar-wrap{position:sticky;top:0;z-index:10;background:var(--bg);border-block:1px solid var(--line)}.toolbar{display:flex;align-items:center;gap:12px;padding:14px 0;flex-wrap:wrap}.filter-label{display:flex;align-items:center;gap:8px;font:11px var(--mono)}.filter-label select{font:12px var(--mono)}.toolbar .spacer{flex:1}.segmented{display:inline-flex}.segmented button{font:11px var(--mono);padding-inline:12px}.segmented button+button{border-left:0}.count{font:11px var(--mono);color:var(--muted)}.toolbar>button{font:11px var(--mono)}.collection{padding-top:28px}.family{padding:28px 0 56px;border-bottom:1px solid var(--line);scroll-margin-top:104px}.family-header{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-bottom:24px}.family-title{display:flex;align-items:baseline;gap:16px;margin-bottom:12px}.family-title .number{font:12px var(--mono);color:var(--muted)}.family-title h2{font-size:29px;font-weight:500;letter-spacing:-.04em}.family .description{max-width:590px;color:var(--muted);font-size:14px;line-height:1.65}.parameters{font:11px/1.8 var(--mono);color:var(--muted);margin-top:12px}.parameters b{font-weight:400;color:var(--fg)}.criteria{display:grid;grid-template-columns:repeat(4,1fr);align-self:start;gap:16px;padding-top:8px}.criterion{font:10px/1.6 var(--mono);color:var(--muted)}.criterion b{display:block;font:12px var(--mono);color:var(--fg);margin-top:8px}.rating{display:flex;gap:3px;margin-top:10px}.rating i{display:block;width:12px;height:3px;background:var(--line)}.rating i.on{background:var(--accent)}.axis-caption{display:flex;justify-content:space-between;gap:8px;font:10px var(--mono);color:var(--muted);margin-bottom:12px}.axis-caption span:last-child{text-align:right}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{position:relative;min-width:0;border:1px solid var(--line);background:var(--surface)}.open-card{display:block;width:100%;border:0;text-align:left;padding:0;min-height:0;color:var(--fg);background:none}.art{height:172px;display:flex;align-items:center;justify-content:center;position:relative}.art svg{width:128px;height:128px}.actual64 .art svg{width:64px;height:64px}.card-no{position:absolute;top:14px;left:14px;color:var(--muted);font:10px var(--mono)}.edited-dot{position:absolute;left:14px;bottom:8px;font:10px var(--mono);color:var(--muted)}.card-copy{padding:14px;border-top:1px solid var(--line);min-height:101px}.card-name{display:flex;justify-content:space-between;gap:10px;font-size:15px;margin-bottom:6px;letter-spacing:-.02em}.card-name span:last-child{font:11px var(--mono);color:var(--muted)}.vibe-tag{display:inline-block;font:10px var(--mono);color:var(--muted);margin-bottom:7px}.card-recipe{color:var(--muted);font:10px/1.5 var(--mono);padding-right:2px;display:block}.favorite{position:absolute;top:0;right:0;width:44px;height:44px;border:0;padding:0;font-size:21px}.favorite[aria-pressed="true"]{color:var(--accent);background:transparent}.family-foot{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:18px;font:11px/1.7 var(--mono);color:var(--muted)}.family-foot b{color:var(--fg);font-weight:400}.empty{padding:80px 20px;text-align:center;color:var(--muted)}.assessment{padding:64px 0}.assessment h2{font-size:30px;font-weight:500;letter-spacing:-.04em;margin:12px 0 24px}.recommendations{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.recommendation{padding:24px;border:1px solid var(--line)}.recommendation .rec-art{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.recommendation h3{font-size:19px;font-weight:500;margin-bottom:8px}.recommendation p{font-size:13px;color:var(--muted)}.recommendation button{margin-top:18px;font:11px var(--mono);width:100%}.notes{margin-top:32px;border-top:1px solid var(--line);padding-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:32px}.notes p{font-size:13px;color:var(--muted);margin-top:10px}.notes a{overflow-wrap:anywhere}.notes summary{cursor:pointer;min-height:44px;padding:10px 0;font:12px var(--mono)}.references{display:flex;gap:16px;flex-wrap:wrap;font:11px var(--mono);margin-top:16px}.references a{padding-block:8px}footer{border-top:1px solid var(--line);padding:24px 0 40px;display:flex;justify-content:space-between;gap:20px;font:11px var(--mono);color:var(--muted)}.skip{position:fixed;top:-100px;left:16px;z-index:99;background:var(--accent);color:var(--onaccent);padding:14px}.skip:focus{top:16px}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;background:var(--fg);color:var(--bg);padding:12px 20px;font:12px var(--mono);max-width:calc(100vw - 32px);pointer-events:none}.toast:empty{display:none}[hidden]{display:none!important}
+dialog{width:min(1120px,calc(100vw - 48px));max-height:calc(100dvh - 48px);padding:0;border:1px solid var(--line);background:var(--bg);color:var(--fg);overflow:hidden}dialog::backdrop{background:#080b08cc}.dialog-shell{display:flex;flex-direction:column;max-height:calc(100dvh - 50px)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 24px;border-bottom:1px solid var(--line);flex-shrink:0}.dialog-head h2{font-size:22px;font-weight:500;letter-spacing:-.035em}.dialog-head .eyebrow{margin-bottom:3px}.dialog-head button{font:12px var(--mono)}.dialog-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}.editor-layout{display:grid;grid-template-columns:1fr 1fr;min-height:610px}.preview-panel{padding:24px;border-right:1px solid var(--line)}.preview-meta{display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);color:var(--muted);gap:12px}.stage{min-height:300px;display:flex;align-items:center;justify-content:center;margin:16px 0;background:var(--surface);border:1px solid var(--line);position:relative;overflow:hidden}.stage>svg{width:min(100%,300px);height:300px}.stage.arranging{touch-action:none}.stage.arranging [data-part]{cursor:grab}.stage.arranging [data-part]:active{cursor:grabbing}.stage-label{position:absolute;bottom:10px;left:12px;font:10px var(--mono);color:var(--muted);pointer-events:none}.mini-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini-surface{padding:12px;min-height:110px;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--line)}.mini-surface.light{background:#f3f2ec;color:#586354}.mini-surface.dark{background:#101310;color:#a7afa1}.mini-surface span{font:10px/1.6 var(--mono)}.mini-surface svg{width:64px;height:64px}.state-strip{display:grid;grid-template-columns:repeat(4,1fr);margin-top:16px;gap:4px}.state-tile{padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:6px;font:10px var(--mono);border:1px solid var(--line);min-width:0}.state-tile[aria-pressed="true"]{background:var(--raised);color:var(--fg);border-color:var(--accent)}.state-tile svg{width:64px;height:64px}.pose-note{font:11px/1.7 var(--mono);color:var(--muted);margin-top:14px;min-height:38px}.control-panel{padding:24px;min-width:0}.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:24px}.tabs button{flex:1;border:0;border-bottom:2px solid transparent;font:12px var(--mono)}.tabs button[aria-selected="true"]{border-bottom-color:var(--accent);color:var(--accent);background:var(--raised)}.control-block{margin-bottom:22px}.control-label{display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);gap:12px;margin-bottom:8px}.control-label output{color:var(--muted)}.help{font:11px/1.7 var(--mono);color:var(--muted);margin-top:8px}.control-block>select{width:100%;font:12px var(--mono)}.swatches{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.swatch{padding:0;min-width:0;min-height:44px;display:grid;place-items:center;border:1px solid transparent;background:none}.swatch span{width:25px;height:25px;background:var(--swatch);border-radius:50%;border:1px solid #7c827080}.swatch[aria-pressed="true"]{background:var(--raised);border-color:var(--accent)}.color-row,.inline-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}.color-row label{font:11px var(--mono);display:flex;align-items:center;gap:10px}.color-row span{font:10px var(--mono);color:var(--muted)}.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.control-grid .control-block{margin-bottom:6px}.button-row{display:flex;gap:8px;flex-wrap:wrap}.button-row button{font:11px var(--mono);flex:1}.arrange-controls{margin-top:12px}.arrange-controls select{width:100%;font:11px var(--mono)}.nudge{display:flex;align-items:center;gap:6px;margin-top:8px}.nudge button{flex:1;padding-inline:8px}.hint-box{border:1px solid var(--line);padding:16px;margin-top:18px;font:12px/1.7 var(--mono);color:var(--muted)}.hint-box strong{color:var(--fg);font-weight:400}.motion-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.motion-controls button{font:12px var(--mono)}.state-explanation{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}.state-explanation dt{font:12px var(--mono);margin-bottom:4px}.state-explanation dd{font:12px/1.7 var(--sans);color:var(--muted);margin:0 0 14px}.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.export-grid button{font:12px var(--mono)}.recipe-text{width:100%;min-height:150px;padding:10px;font:11px/1.6 var(--mono);resize:vertical;margin-top:12px}.status-line{font:10px var(--mono);color:var(--muted);margin-top:20px}.compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:24px}.compare-card{border:1px solid var(--line);padding:16px;min-width:0}.compare-card h3{font-size:18px;font-weight:500;margin:12px 0 6px}.compare-card .compare-big{display:flex;justify-content:center;background:var(--surface);padding:12px 0}.compare-card .compare-big svg{width:128px;height:128px}.compare-state{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:8px 0;font:10px var(--mono);gap:5px}.compare-state svg{width:64px;height:64px}.compare-card button{width:100%;margin-top:10px;font:11px var(--mono)}.compare-info{padding:0 24px 24px;font:11px/1.8 var(--mono);color:var(--muted)}.checkbox-label{display:flex;align-items:center;gap:12px;min-height:44px;font:11px var(--mono)}
+@media(min-width:1440px){.art{height:190px}}
+@media(max-width:1000px){.shell{padding:0 24px}.hero{gap:24px}.hero-item svg{width:58px;height:58px}.hero-item span{font-size:9px}.family-header{grid-template-columns:1.2fr 1fr;gap:24px}.criteria{gap:8px}.toolbar .spacer{display:none}.intro p{font-size:14px}.preview-panel,.control-panel{padding:18px}.stage{min-height:250px}.stage>svg{height:250px;width:250px}.mini-surface{padding:8px;gap:4px}.mini-surface span{font-size:9px}.compare-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.shell{padding:0 18px}.topbar{min-height:72px}.wordmark{font-size:12px}.top-actions{gap:4px}.top-actions a{display:none}.top-actions button{padding-inline:10px}.hero{grid-template-columns:1fr;padding-top:34px;gap:24px}.hero h1{font-size:clamp(44px,11vw,64px);margin-top:16px}.intro{max-width:none}.intro p{font-size:14px;max-width:450px;margin-bottom:16px}.hero-strip{grid-template-columns:repeat(5,1fr);margin-top:0}.hero-item{padding:16px 2px 10px;gap:6px}.hero-item:nth-child(5){border-right:0}.hero-item:nth-child(-n+5){border-bottom:1px solid var(--line)}.hero-item svg{width:52px;height:52px}.hero-item span{font-size:9px}.hero-note{font-size:10px;padding-bottom:28px}.hero-note span{max-width:240px}.toolbar{gap:8px;padding-block:10px}.filter-label{flex:1 1 calc(50% - 8px);min-width:0;display:block;font-size:9px}.filter-label span{display:none}.filter-label select{width:100%;min-width:0;font-size:11px}.toolbar .count{margin-left:auto;font-size:10px}.toolbar>button{padding-inline:10px;font-size:10px}.segmented button{padding-inline:10px;font-size:10px}.family{padding:20px 0 36px;scroll-margin-top:132px}.family-header{grid-template-columns:1fr;gap:16px}.family-title{gap:10px}.family-title h2{font-size:26px}.criteria{gap:12px;padding-top:0}.criterion{font-size:9px}.criterion b{font-size:11px;margin-top:6px}.rating{margin-top:8px}.axis-caption{font-size:9px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.art{height:150px}.art svg{width:128px;height:128px}.card-no{font-size:9px;left:10px;top:12px}.card-copy{padding:11px 10px;min-height:108px}.card-name{font-size:14px;gap:4px}.card-recipe{font-size:9px}.vibe-tag{font-size:9px}.family-foot{grid-template-columns:1fr;gap:8px;font-size:10px}.recommendations{grid-template-columns:1fr;gap:12px}.recommendation{padding:20px}.recommendation .rec-art{margin-bottom:8px}.notes{grid-template-columns:1fr;gap:20px}.assessment{padding:40px 0}.assessment h2{font-size:27px}.hero-note a{white-space:nowrap}footer{font-size:10px;flex-direction:column;gap:8px}dialog{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border:0;margin:0}.dialog-shell{max-height:100dvh;height:100dvh}.dialog-head{padding:12px 16px;gap:10px}.dialog-head h2{font-size:20px}.dialog-head .eyebrow{font-size:9px}.dialog-head button{padding-inline:12px}.editor-layout{grid-template-columns:1fr}.preview-panel{border-right:0;border-bottom:1px solid var(--line);padding:16px}.stage{margin:12px 0;min-height:224px;height:224px}.stage>svg{height:224px;width:224px}.mini-pair{gap:8px}.mini-surface{padding:10px 12px;min-height:92px}.mini-surface span{font-size:10px}.state-strip{margin-top:12px;gap:5px}.state-tile{font-size:9px}.control-panel{padding:20px 16px 40px}.swatches{grid-template-columns:repeat(4,1fr)}.pose-note{min-height:0;margin-top:12px}.tabs{position:sticky;top:-1px;z-index:2;background:var(--bg)}.compare-grid{padding:16px;gap:10px}.compare-card{padding:10px}.compare-card h3{font-size:16px}.compare-card .compare-big svg{width:112px;height:112px}.compare-info{padding-inline:16px}.compare-state{font-size:9px}.compare-state svg{width:64px;height:64px}.compare-state{font-size:8.5px;gap:4px}}
+@media(max-width:360px){.shell{padding-inline:12px}.hero-item svg{width:48px;height:48px}.hero-item span{font-size:8px}.art{height:142px}.art svg{width:128px;height:128px}.card-name{font-size:13px}.toolbar>button{font-size:9px;padding-inline:8px}.criterion{font-size:8px}.rating i{width:10px}.state-tile svg{width:64px;height:64px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media print{.toolbar-wrap,.top-actions,.favorite,dialog,.toast{display:none}.family{break-inside:avoid}.shell{padding:0}.cards{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#gallery">Skip to studies</a>
+<div class="shell">
+<header class="topbar"><div class="wordmark">form <span>/</span> presence</div><div class="top-actions"><a href="#reading">Reading the atlas</a><button id="themeToggle" aria-label="Switch to light theme">Light theme</button></div></header>
+<section class="hero" aria-labelledby="title"><div><div class="eyebrow">Min1 · exploration 01 · 17 october 2026</div><h1>A little form.<br><span>A lot of presence.</span></h1></div><div class="intro"><p>What can an agent look like before it becomes a character? Ten construction rules, eighty identities, and a small laboratory for finding out.</p><div class="legend"><span><strong>80</strong> studies</span><span><strong>10</strong> directions</span><span><strong>4</strong> state poses</span></div></div></section>
+<nav id="heroStrip" class="hero-strip" aria-label="Jump to a construction family"></nav>
+<div class="hero-note"><span>Tap a form to change its shape, color, arrangement and state.</span><a href="#reading">How to review ↓</a></div>
+</div>
+<div class="toolbar-wrap"><div class="shell"><div class="toolbar" aria-label="Gallery controls"><label class="filter-label"><span>Construction</span><select id="familyFilter" aria-label="Filter by construction"><option value="all">All constructions</option></select></label><label class="filter-label"><span>Vibe</span><select id="vibeFilter" aria-label="Filter by vibe"><option value="all">All personalities</option><option value="0">Cute / kawaii</option><option value="1">Playful / expressive</option><option value="2">Restrained / functional</option><option value="3">Geometric / Bauhaus</option></select></label><span class="spacer"></span><div class="segmented" aria-label="Gallery preview size"><button id="sizeLarge" aria-pressed="true">128 px</button><button id="sizeSmall" aria-pressed="false">64 px</button></div><button id="shortlistButton" aria-pressed="false">Saved <span id="savedCount">0</span></button><button id="compareButton">Compare</button><span class="count" id="resultCount">80 studies</span></div></div></div>
+<main class="shell"><div id="gallery" class="collection" aria-label="Exploration gallery"></div>
+<section class="assessment" id="reading"><div class="eyebrow">Reading the atlas</div><h2>Pick a rule. Then give it a personality.</h2><p class="muted" style="max-width:740px;margin-bottom:28px">Each family contains two kawaii, two playful, two functional and two Bauhaus studies. The eight specimens change topology or construction, not just color. Tap ☆ to save candidates; Compare keeps their idle and working poses side by side.</p><div id="recommendations" class="recommendations"></div>
+<div class="notes"><div><div class="eyebrow">A common comparison</div><p>The four ratings are design judgments, not user research: <b>identity</b> (a distinctive structural signature), <b>expression</b> (clear state poses), <b>64 px</b> (small-scale legibility) and <b>editing</b> (meaningful room to customize). Five bars is strongest. Read each family’s tradeoff before choosing.</p><p>Use the 64 px switch for the actual interface footprint. The laboratory shows the same identity on both grounds and adds internal structure at communication scale. Color stays constant across themes and states.</p></div><div><div class="eyebrow">One file, your decisions</div><p>All drawing, controls and motion work offline. Edits and saved studies stay in this browser where storage is available. Export a recipe to keep an identity independently of the browser; import it here to reproduce the result.</p><p>Every pose works without animation. Playback is opt-in and stops when reduced motion is requested. State shapes are hypotheses to review, not a validated universal vocabulary.</p></div></div>
+<details class="notes" style="display:block"><summary>Construction notes & reference lineage</summary><p>Computational minimalism supplies the method: a small vocabulary, deterministic rules, meaningful negative space. Clear Channel informs the grid, comparison rhythm and visible mechanisms. Day 89 contributes four readable state poses; Day 30 contributes time as a parameter. Their monochrome and hover-led conventions are deliberately adapted for identity color and touch.</p><p>SVG is the common substrate here: even collective and matrix studies remain small vector scenes. Raster sprites, canvas fields and 3D are deferred until a chosen direction needs them. No stock images, external fonts, libraries or network assets are used.</p><div class="references"><a href="https://github.com/mantascc/min1/issues/5" target="_blank" rel="noreferrer">Issue 5 ↗</a><a href="https://github.com/mantascc/100days/blob/main/43-style-seed/style-seed.md" target="_blank" rel="noreferrer">Style seed ↗</a><a href="https://github.com/mantascc/100days/tree/main/69-clear-channel" target="_blank" rel="noreferrer">Clear Channel ↗</a><a href="https://github.com/mantascc/100days/blob/main/89-sprite-states/interface.md" target="_blank" rel="noreferrer">Sprite States ↗</a><a href="https://github.com/mantascc/100days/blob/main/30-thinking-states/interface.md" target="_blank" rel="noreferrer">Thinking States ↗</a></div></details>
+</section><footer><span>form / presence · a broad first exploration, open for review</span><span>80 structures · SVG + code · self-contained</span></footer></main>
+<dialog id="editor" aria-labelledby="editorTitle"><div class="dialog-shell"><header class="dialog-head"><div><div class="eyebrow" id="editorFamily"></div><h2 id="editorTitle">Identity laboratory</h2></div><button id="closeEditor">Done ×</button></header><div class="dialog-scroll" id="editorScroll"><div class="editor-layout"><section class="preview-panel" aria-label="Live identity previews"><div class="preview-meta"><span id="previewState">IDLE / COMMUNICATION</span><button id="stageTheme" style="font:10px var(--mono);padding:7px 10px">Dark ground</button></div><div id="stage" class="stage"></div><div class="mini-pair"><div class="mini-surface light"><span>64 × 64<br>light</span><div id="miniLight"></div></div><div class="mini-surface dark"><span>64 × 64<br>dark</span><div id="miniDark"></div></div></div><div class="state-strip" id="stateStrip" aria-label="Select a static state pose"></div><p class="pose-note" id="poseNote"></p></section><section class="control-panel" aria-label="Identity controls"><div class="tabs" role="tablist" aria-label="Laboratory controls"><button role="tab" id="tabShape" aria-controls="panelShape" aria-selected="true" data-tab="Shape">Identity</button><button role="tab" id="tabStates" aria-controls="panelStates" aria-selected="false" data-tab="States" tabindex="-1">Motion</button><button role="tab" id="tabExport" aria-controls="panelExport" aria-selected="false" data-tab="Export" tabindex="-1">Export</button></div>
+<div id="panelShape" role="tabpanel" aria-labelledby="tabShape"><div class="control-block"><label class="control-label" for="variantSelect">Construction <span id="variantVibe" class="muted"></span></label><select id="variantSelect"></select></div><div class="control-block"><div class="control-label">Identity palette <output id="paletteName"></output></div><div id="swatches" class="swatches" role="group" aria-label="Identity palette"></div><div class="color-row"><label>Custom <input id="customColor" type="color" aria-label="Custom identity color"></label><span id="colorCode"></span></div></div><div class="control-grid"><div class="control-block"><label class="control-label" for="softness"><span id="softnessLabel">Softness</span> <output id="softnessValue"></output></label><input id="softness" type="range" min="0" max="100"></div><div class="control-block"><label class="control-label" for="aspect">Proportion <output id="aspectValue"></output></label><input id="aspect" type="range" min="75" max="125"></div><div class="control-block"><label class="control-label" for="spread">Spacing <output id="spreadValue"></output></label><input id="spread" type="range" min="75" max="125"></div><div class="control-block"><label class="control-label" for="weight">Weight <output id="weightValue"></output></label><input id="weight" type="range" min="75" max="125"></div></div><div class="control-block" style="margin-top:14px"><label class="control-label" for="rotation">Orientation <output id="rotationValue"></output></label><input id="rotation" type="range" min="-45" max="45"></div><div class="button-row"><button id="arrangeButton" aria-pressed="false">Arrange parts</button><button id="resetIdentity">Reset identity</button></div><div id="arrangeControls" class="arrange-controls" hidden><p class="help" id="arrangeHelp">Tap a part in the large preview, then drag or use the arrows. Arrow keys also work when a part is selected.</p><label class="control-label" for="partSelect" style="margin-top:12px">Selected part</label><select id="partSelect"></select><div class="nudge" aria-label="Move selected part"><button data-nudge="-2,0" aria-label="Move part left">←</button><button data-nudge="0,-2" aria-label="Move part up">↑</button><button data-nudge="0,2" aria-label="Move part down">↓</button><button data-nudge="2,0" aria-label="Move part right">→</button><button id="resetParts" aria-label="Reset all part positions">Reset</button></div></div><div class="inline-controls"><label for="seedInput" class="mono small">Seed</label><input id="seedInput" type="number" min="1" max="99999"><button id="newSeed" style="font:11px var(--mono)">Reseed</button></div><p class="help">Seed adds bounded irregularity; construction remains deliberate. Softness changes corners or curvature; for Pressure forms, pixel chunkiness selects a fine, medium or coarse grid. Spacing moves parts relative to the center.</p><p id="storageStatus" class="status-line" aria-live="polite">Saved on this device.</p></div>
+<div id="panelStates" role="tabpanel" aria-labelledby="tabStates" hidden><div class="eyebrow">Shape carries the signal</div><p class="help" style="font-size:13px">Select a pose beneath the preview. Play animates idle breathing and working rhythm at both scales; Cycle interpolates through all four states.</p><div class="motion-controls"><button id="playMotion" aria-pressed="false">Play motion</button><button id="cycleMotion" aria-pressed="false">Cycle states</button></div><div class="control-block" style="margin-top:20px"><label class="control-label" for="tempo">Tempo <output id="tempoValue">1×</output></label><input id="tempo" type="range" min="50" max="150" value="100"></div><div class="control-block"><label class="control-label" for="phase">Static phase <output id="phaseValue">0%</output></label><input id="phase" type="range" min="0" max="100" value="0"><p class="help">Scrub a single motion loop without playing it. Exports use this exact frame.</p></div><div id="motionNotice" class="hint-box"></div><dl class="state-explanation" id="stateExplanations"></dl></div>
+<div id="panelExport" role="tabpanel" aria-labelledby="tabExport" hidden><div class="control-block"><label class="control-label" for="exportSize">Asset size</label><select id="exportSize"><option value="64">64 × 64 · interface</option><option value="256">256 × 256 · communication</option><option value="512" selected>512 × 512 · communication</option><option value="1024">1024 × 1024 · communication</option></select></div><div class="control-block"><label class="control-label" for="exportGround">Background</label><select id="exportGround"><option value="transparent">Transparent</option><option value="light">Light</option><option value="dark">Dark</option></select></div><div class="export-grid"><button id="exportSVG">Export SVG ↓</button><button id="exportPNG">Export PNG ↓</button><button id="exportSheet">4-state sheet ↓</button><button id="exportRecipe">Identity recipe ↓</button></div><p class="help">SVG and PNG export the selected state and scrubbed phase. The sheet contains four static 128 px poses. Communication sizes add structure inside the same form. SVGs include an embedded recipe.</p><div class="button-row" style="margin-top:20px"><button id="copyRecipe">Copy recipe</button><button id="importRecipe">Import recipe</button></div><input id="recipeFile" type="file" accept=".json,application/json" hidden><textarea id="recipeText" class="recipe-text" aria-label="Identity recipe for manual copying" readonly hidden></textarea><p class="help">Recipe JSON stores the version, construction, palette, seed, parameters and individual part offsets. It can be imported offline.</p><div class="hint-box">Your shortlist stays local. <button id="exportSession" style="width:100%;margin-top:12px;font:11px var(--mono)">Export all saved identities ↓</button></div></div>
+</section></div></div></div></dialog>
+<dialog id="compareDialog" aria-labelledby="compareTitle"><div class="dialog-shell"><header class="dialog-head"><div><div class="eyebrow">Your saved candidates</div><h2 id="compareTitle">Compare constructions</h2></div><button id="closeCompare">Done ×</button></header><div class="dialog-scroll"><div id="compareGrid" class="compare-grid"></div><p class="compare-info" id="compareInfo"></p></div></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:30px">This self-contained gallery needs JavaScript enabled to draw and edit the eighty vector studies. It does not require a network connection.</p></noscript>
+<script>
+'use strict';
+// Curated construction recipes: eight distinct structures per family.
+const VERSION=1, STORE='min1-presence-atlas-v1';
+const PALETTES=[
+ ['Ultramarine','#5579da','#a4b2de','#344a91'],['Verdigris','#328d7e','#97c1a8','#285d54'],
+ ['Persimmon','#cc704f','#e0ac85','#8b4537'],['Iris','#966dca','#c0a8da','#654786'],
+ ['Ochre','#b18a35','#d4bb7c','#725824'],['Lagoon','#3c8da7','#95c3cf','#2b5b77'],
+ ['Rose','#c5658b','#dda6b9','#873d61'],['Moss','#81954b','#bcc894','#536731']
+];
+const VIBES=['Cute / kawaii','Playful / expressive','Restrained / functional','Geometric / Bauhaus'];
+const STATE_NAMES=['Idle','Working','Attention','Failure'];
+const FAMILIES=[
+ {key:'pressure',name:'Pressure forms',short:'Pressure',kind:'Retro pixel silhouettes',
+ rule:'A solid sprite silhouette carries the identity. Stepped edges, chunky pixels and a restrained highlight recall retro game objects; notches and asymmetric crowns keep each specimen distinct.',
+ varies:'stepped silhouette · pixel density · asymmetry',scores:[4,4,5,3],
+ strength:'The silhouette survives tiny rendering and works without a face.',risk:'Large shape changes can erase the signature. Keep the main notch or lobe fixed.',
+ detail:'Large assets retain the same pixel grid, with a stepped highlight and dark lower edge.',
+ states:['Balanced boundary, recognizable notch or lobe.','The boundary leans forward and stretches toward a task.','The upper edge lifts into a clear peak.','The base settles; one side loses tension.'],
+ variants:[['Mallow','chunky capsule / stepped shoulders'],['Pea','pixel bean / deep cleft'],['Bud','three pixel lobes / narrow stem'],['Tilt','stepped kite / offset crown'],['Shard','pixel triangle / blunt tip'],['Kink','block silhouette / inward step'],['Keystone','stepped block / flat crown'],['Crag','pixel crag / split ridge']]},
+ {key:'aperture',name:'Apertures',short:'Apertures',kind:'Identity by subtraction',
+ rule:'Cut a characteristic void through a solid. The hole, slot or open gate is the invariant; it is a real transparent cutout rather than a painted patch.',
+ varies:'outer primitive · void count · opening position',scores:[5,4,5,4],
+ strength:'Negative space is a memorable signature on either interface ground.',risk:'Small holes close up quickly. Keep the narrowest gap generous at 64 px.',
+ detail:'Large assets add registration cuts around the opening.',
+ states:['The opening rests near the center.','Apertures align and narrow into an active channel.','The opening rises and grows taller.','The opening drops, tilts and compresses.'],
+ variants:[['Bubble loop','round shell / single soft void'],['Twinwell','capsule / paired wells'],['Porthole','offset ellipse / large void'],['Keyhole','disc / connected slot'],['Slot','rounded slab / horizontal cut'],['Gate','open arch / deep channel'],['Split','square / twin diagonal cuts'],['Keyway','chamfered plate / stepped void']]},
+ {key:'glyph',name:'Stroke glyphs',short:'Glyphs',kind:'A line with memory',
+ rule:'An open, connected stroke becomes a compact signature. Endpoints and junctions matter more than a surrounding container; the path remains legible as a tiny mark.',
+ varies:'stroke topology · terminal shape · junction rhythm',scores:[5,3,5,4],
+ strength:'Distinct, economical marks that can travel from avatar to wordmark.',risk:'Fine gestures can look like letters or familiar symbols. Check associations later.',
+ detail:'Large assets expose terminal nodes and a secondary trace along the route.',
+ states:['The route is open and level.','Junctions gather into a purposeful forward lean.','The final terminal rises; the route opens.','One branch drops out of alignment.'],
+ variants:[['Looplet','loop with an open tail'],['Sway','two bowls / soft return'],['Tuning fork','three prongs / one root'],['Kettle','loop / bent handle'],['Staple','orthogonal bridge / twin feet'],['Relay','two connected right angles'],['Zig','three turns / terminal dot'],['Circuit','closed bend / offset crossbar']]},
+ {key:'assembly',name:'Modular assemblies',short:'Assemblies',kind:'A grammar of parts',
+ rule:'Three to six solid primitives make a small, deliberate construction. Identity comes from the relationship between parts, so moving one piece can express a state.',
+ varies:'part inventory · adjacency · balance · proportion',scores:[5,5,5,5],
+ strength:'The richest direct editing, with clear shape language at both scales.',risk:'Free rearrangement can fragment the identity. Preserve one stable anchor.',
+ detail:'Large assets expose seams and small registration marks inside each module.',
+ states:['The pieces sit in a stable arrangement.','A movable module offsets while the anchor stays fixed.','The upper module lifts, requesting a response.','A low module slips and rotates out of alignment.'],
+ variants:[['Pebble trio','three unequal rounded modules'],['Nest','arch / two sheltered discs'],['Totem','four pieces / vertical rhythm'],['Span','two piers / sliding bridge'],['Counterweight','disc / bar / small square'],['Crosslock','four blocks / central joint'],['Tangram','triangles / quarter disc'],['Cantilever','beam / column / balancing disc']]},
+ {key:'ribbon',name:'Folded ribbons',short:'Ribbons',kind:'One continuous strip',
+ rule:'A connected ribbon turns through the plane. Facet color makes a fold readable without shading; continuity holds the identity even as the joints change angle.',
+ varies:'turn sequence · fold depth · ribbon width',scores:[4,4,4,4],
+ strength:'A strong communication asset with a clear material logic.',risk:'Overlapping facets can become a knot at 64 px. Fewer, wider turns work best.',
+ detail:'Large assets add an inset fold seam to each segment.',
+ states:['The fold sequence is relaxed.','The strip unfolds slightly along its active edge.','The final fold stands taller.','The strip slumps at alternating hinges.'],
+ variants:[['Curl','rolled return / three folds'],['Bow','two shoulders / low join'],['Saddle','high-low-high / wide facets'],['Twine','offset double turn'],['Traverse','three staggered planes'],['Switchback','four tight reverse folds'],['Step','right-angle folded path'],['Kitefold','acute diamond / open end']]},
+ {key:'radial',name:'Radial systems',short:'Radials',kind:'An organized center',
+ rule:'Petals, sectors and interrupted arcs share a center. Count and angular rhythm create identity; coordinated rotation makes activity readable without changing its color.',
+ varies:'sector count · angular gaps · hub / orbit ratio',scores:[4,5,4,4],
+ strength:'State motion has a clear, economical mechanism at interface scale.',risk:'A continuous spinner looks like generic loading. Keep asymmetric sectors.',
+ detail:'Large assets add radial calibration ticks, aligned with each sector.',
+ states:['Sectors balance around a still hub.','Sectors advance around the center with a visible angular offset.','One upper sector opens away from the hub.','One sector falls out of radial alignment.'],
+ variants:[['Petal','three soft lobes / small hub'],['Pinwheel','four offset paddles'],['Whorl','three unequal arc bands'],['Beacon','five rays / one long sector'],['Dial','two open arcs / marker'],['Gyre','six sectors / open center'],['Rotor','three rigid vanes'],['Quadrant','four quarter discs / offset hub']]},
+ {key:'collective',name:'Collectives',short:'Collectives',kind:'Many parts, one presence',
+ rule:'A handful of independent particles form one recognizable constellation. Density, ordering and gaps carry personality; no single particle is the avatar.',
+ varies:'point topology · density · grouping · node shape',scores:[3,5,3,5],
+ strength:'Naturally suggests multiple processes or a distributed agency.',risk:'Individual particles get small. Sparse, asymmetric constellations read best.',
+ detail:'Large assets reveal low-contrast relations between neighboring particles.',
+ states:['The constellation holds a recognizable loose arrangement.','Nodes gather into ordered lanes, keeping their group membership.','The highest cluster separates upward.','The lowest cluster sags while a gap opens.'],
+ variants:[['Puff','seven nodes / dense center'],['Satellites','large core / three companions'],['Shoal','nine nodes / directional wedge'],['Flock','three unequal clusters'],['Relay nodes','staggered chain / sparse joints'],['Bridge','two banks / shared middle'],['Quorum','nine nodes / off-center gap'],['Regiment','twelve squares / broken grid']]},
+ {key:'matrix',name:'Matrices',short:'Matrices',kind:'Discrete signatures',
+ rule:'Occupied cells on a five-by-five grid make an emblem. This is an explicit pattern, not random pixel noise; the pattern stays intact while rows shift to signal state.',
+ varies:'cell occupancy · grid rhythm · cell shape',scores:[4,3,5,4],
+ strength:'Excellent reproducibility and crisp static identity at small sizes.',risk:'A busy pattern can resemble a generic identicon. Keep a strong outer contour.',
+ detail:'Large assets reveal cell insets and the underlying discrete construction.',
+ states:['Occupied cells align to their home grid.','Alternating rows step forward through a processing rhythm.','The top occupied row lifts away from the grid.','The right-hand cells drop and split from the body.'],
+ variants:[['Pillow','rounded cell cloud / 13 cells'],['Seedling','soft fork / two wide leaves'],['Pixel tuft','tall tuft / asymmetric foot'],['Sprout','diagonal growth / central stem'],['Crossbar','stepped cross / open corners'],['Cipher','broken frame / interior key'],['Stair','triangular grid / clear diagonal'],['Flag','rectilinear flag / offset post']]},
+ {key:'contour',name:'Contour stacks',short:'Contours',kind:'A form made of intervals',
+ rule:'Repeated open contours imply a volume without filling it. The gap between ribs is the material; changing the interval creates a distinct pressure or rhythm.',
+ varies:'rib profile · nesting · interval · curvature',scores:[4,4,3,4],
+ strength:'Expressive rhythm with a distinctive larger-scale signature.',risk:'Dense ribs merge at interface size. Use fewer heavy lines, not fine detail.',
+ detail:'Large assets add aligned terminal markers that describe each layer.',
+ states:['Intervals are regular and calm.','A wave travels through the ribs, offsetting each layer.','Upper ribs rise and the stack opens.','Intervals collapse unevenly toward the base.'],
+ variants:[['Cushion','four nested soft arches'],['Shell','five offset half-loops'],['Ripple','four waves / broad center'],['Cove','five open nested bowls'],['Echo','four squared gates'],['Fan','five divergent ribs'],['Terrace','four stacked right angles'],['Contour wedge','five nested chevrons']]},
+ {key:'hinge',name:'Articulated forms',short:'Articulates',kind:'Presence through posture',
+ rule:'A few masses are joined by visible hinges. Posture gives the form agency; only the two kawaii studies use tiny face marks. The rest remain abstract mechanisms.',
+ varies:'joint graph · mass ratio · posture · optional face',scores:[4,5,4,5],
+ strength:'The clearest static state vocabulary, with generous room for expression.',risk:'Character associations arrive quickly. Decide whether that is desirable.',
+ detail:'Large assets expose joint rings and connection axes.',
+ states:['The mechanism rests over its anchor.','The leading mass leans into a task and its hinge follows.','The leading mass rises and turns outward.','The leading mass folds down toward the support.'],
+ variants:[['Nod','large round mass / small feet'],['Tuck','soft square / folded limb'],['Perch','round head / angled support'],['Loopkin','open loop / two joints'],['Probe','disc / one long cantilever'],['Pivot','two squares / central hinge'],['Signal','vertical post / flag-like mass'],['Counterpose','three masses / asymmetrical balance']]}
+];
+const SOLIDS=[
+ [[27,31],[63,26],[96,35],[101,70],[86,97],[49,101],[25,85],[21,57]],
+ [[49,22],[84,24],[101,48],[92,79],[75,103],[46,101],[27,80],[23,53],[44,60],[59,45]],
+ [[52,21],[74,26],[79,45],[99,48],[104,74],[87,90],[65,82],[46,103],[25,86],[29,59],[44,54]],
+ [[73,19],[91,47],[106,76],[77,95],[37,102],[22,71],[39,43]],
+ [[61,22],[103,93],[25,100],[32,66]],
+ [[27,24],[74,24],[74,45],[102,45],[102,98],[46,98],[46,77],[27,77]],
+ [[43,24],[94,24],[106,96],[23,96]],
+ [[24,43],[44,22],[65,36],[87,24],[104,63],[87,101],[52,91],[29,104],[34,70]]
+];
+const GLYPHS=[
+ [[[34,91],[32,48],[46,28],[77,28],[94,48],[83,69],[58,69],[52,49]],[[83,69],[95,96]]],
+ [[[29,39],[29,69],[45,87],[62,68],[62,38]],[[62,68],[80,88],[98,68],[98,37]]],
+ [[[27,34],[27,58],[63,68],[63,101]],[[63,68],[63,26]],[[63,68],[99,54],[99,34]]],
+ [[[33,89],[33,42],[63,26],[91,42],[91,75],[64,91],[33,89]],[[91,42],[103,27]]],
+ [[[28,99],[28,34],[98,34],[98,99]],[[28,73],[47,73]],[[79,73],[98,73]]],
+ [[[26,92],[26,58],[63,58],[63,27],[100,27]],[[63,58],[100,58],[100,94]]],
+ [[[28,29],[95,29],[47,63],[95,98],[28,98]]],
+ [[[31,94],[31,28],[96,28],[96,96],[63,96],[63,59],[106,59]]]
+];
+const MODULES=[
+ [[44,45,43,40,'r'],[80,59,34,34,'c'],[50,88,45,22,'r']],
+ [[64,54,76,64,'a'],[45,84,22,22,'c'],[83,83,30,30,'c']],
+ [[56,30,44,21,'r'],[75,58,40,30,'r'],[53,84,45,22,'r'],[87,99,23,13,'r']],
+ [[35,78,24,47,'r'],[93,78,24,47,'r'],[65,41,82,25,'r'],[64,78,18,18,'c']],
+ [[40,42,39,39,'c'],[77,69,62,18,'r'],[38,88,27,27,'r']],
+ [[47,37,33,29,'r'],[83,53,29,33,'r'],[65,90,33,27,'r'],[28,71,27,33,'r']],
+ [[41,42,44,44,'t'],[83,76,46,46,'q'],[39,85,31,31,'r']],
+ [[44,74,24,61,'r'],[71,34,74,18,'r'],[94,81,24,24,'c'],[43,105,50,8,'r']]
+];
+const RIBBONS=[
+ [[33,91],[32,47],[55,30],[91,40],[88,74],[61,82]],
+ [[29,72],[40,35],[66,75],[90,35],[101,83]],
+ [[28,34],[43,93],[67,66],[88,95],[99,34]],
+ [[32,98],[32,40],[70,40],[70,89],[98,89],[98,25]],
+ [[25,83],[46,40],[72,83],[101,40]],
+ [[27,95],[49,30],[66,94],[83,30],[101,91]],
+ [[27,99],[27,66],[64,66],[64,29],[101,29]],
+ [[65,104],[27,63],[65,25],[101,62],[72,83]]
+];
+const CLOUDS=[
+ [[65,61,12],[43,42,11],[72,32,10],[90,52,10],[86,80,11],[56,90,11],[33,70,10]],
+ [[63,65,20],[35,34,11],[95,44,9],[89,96,12]],
+ [[28,68,8],[43,48,9],[45,81,9],[63,32,8],[64,63,11],[64,96,8],[83,46,9],[85,79,9],[104,62,8]],
+ [[30,35,10],[49,31,7],[40,53,8],[77,44,9],[98,51,7],[85,66,8],[48,87,11],[72,94,10],[29,100,7]],
+ [[26,92,9],[43,74,6],[59,57,9],[60,30,7],[81,31,6],[100,31,9]],
+ [[26,36,9],[26,64,11],[26,93,9],[53,65,7],[77,65,7],[101,36,9],[101,64,11],[101,93,9]],
+ [[31,31,8],[64,31,8],[97,31,8],[31,64,8],[97,64,8],[31,97,8],[64,97,8],[97,97,8],[67,65,13]],
+ [[29,29,8],[52,29,8],[75,29,8],[98,29,8],[29,52,8],[52,52,8],[98,52,8],[29,75,8],[75,75,8],[98,75,8],[75,98,8],[98,98,8]]
+];
+const MATRICES=['01110/11111/01110/00100/00100','11011/11011/01110/00100/01110','00110/01110/11110/01100/01111','00011/00111/01110/00100/11100','00100/00100/11111/10101/10001','11110/10000/10110/10100/11111','10000/11000/11100/11110/11111','11111/10011/10111/10000/10000'];
+const HINGES=[
+ {nodes:[[64,48,27,'c'],[62,84,12,'c'],[40,101,9,'r'],[84,101,9,'r']],edges:[[0,1],[1,2],[1,3]],face:true},
+ {nodes:[[57,45,26,'r'],[81,78,11,'c'],[51,98,12,'r']],edges:[[0,1],[1,2]],face:true},
+ {nodes:[[80,37,23,'c'],[49,70,10,'c'],[69,102,14,'r']],edges:[[0,1],[1,2]]},
+ {nodes:[[64,43,23,'o'],[34,80,10,'c'],[92,94,12,'c']],edges:[[0,1],[0,2]]},
+ {nodes:[[91,34,17,'c'],[45,59,9,'c'],[45,99,18,'r']],edges:[[0,1],[1,2]]},
+ {nodes:[[36,34,19,'r'],[72,63,11,'c'],[96,96,16,'r']],edges:[[0,1],[1,2]]},
+ {nodes:[[81,38,24,'t'],[45,41,9,'c'],[45,99,16,'r']],edges:[[0,1],[1,2]]},
+ {nodes:[[34,35,19,'c'],[62,69,10,'c'],[98,45,15,'r'],[63,101,17,'r']],edges:[[0,1],[1,2],[1,3]]}
+];
+const $=id=>document.getElementById(id), clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const n=v=>Number(v.toFixed(3));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const noise=(seed,i)=>{const t=Math.sin(seed*12.9898+i*78.233)*43758.5453;return t-Math.floor(t)};
+const keyOf=c=>`${c.family}-${c.variant}`;
+function defaults(f,v){return {family:f,variant:v,palette:(f*3+v*5)%8,color:null,softness:[92,84,67,54,25,16,0,5][v],aspect:100,spread:100,weight:100,rotation:0,seed:1701+f*83+v*11,offsets:{}}}
+function colorMix(a,b,t){const x=a.match(/\w\w/g).map(v=>parseInt(v,16)),y=b.match(/\w\w/g).map(v=>parseInt(v,16));return '#'+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+function colors(c){const p=PALETTES[c.palette];return c.color?[c.color,colorMix(c.color,'f1eacf',.4),colorMix(c.color,'161e24',.34)]:p.slice(1)}
+function poly(points,soft=0,closed=true){
+ if(!points.length)return '';if(soft<=.01)return points.map((p,i)=>`${i?'L':'M'}${n(p[0])} ${n(p[1])}`).join(' ')+(closed?'Z':'');
+ const k=clamp(soft,0,1)*.47, lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+ if(!closed){let d=`M${points[0].map(n).join(' ')}`;for(let i=1;i<points.length-1;i++){const a=lerp(points[i],points[i-1],k),b=lerp(points[i],points[i+1],k);d+=`L${a.map(n).join(' ')}Q${points[i].map(n).join(' ')} ${b.map(n).join(' ')}`;}return d+`L${points.at(-1).map(n).join(' ')}`;}
+ return points.map((p,i)=>{const a=lerp(p,points[(i+points.length-1)%points.length],k),b=lerp(p,points[(i+1)%points.length],k);return `${i?'L':'M'}${a.map(n).join(' ')}Q${p.map(n).join(' ')} ${b.map(n).join(' ')}`}).join('')+'Z';
+}
+const circlePath=(x,y,rx,ry=rx)=>`M${n(x-rx)} ${n(y)}a${n(rx)} ${n(ry)} 0 1 0 ${n(rx*2)} 0a${n(rx)} ${n(ry)} 0 1 0 ${n(-rx*2)} 0Z`;
+function boxPath(x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));return `M${n(x+r)} ${n(y)}h${n(w-2*r)}q${n(r)} 0 ${n(r)} ${n(r)}v${n(h-2*r)}q0 ${n(r)} ${n(-r)} ${n(r)}h${n(-w+2*r)}q${n(-r)} 0 ${n(-r)} ${n(-r)}v${n(-h+2*r)}q0 ${n(-r)} ${n(r)} ${n(-r)}Z`}
+const stateVector=s=>typeof s==='string'?['working','attention','failure'].map(v=>+(v===s)):s;
+function makeGeometry(c,state='idle',theme='dark',rich=false,phase=0){
+ const f=c.family,v=c.variant,soft=c.softness/100,weight=c.weight/100,spread=c.spread/100;
+ const [a,b,d]=colors(c),ink=theme==='dark'?'#e4e9dc':'#233025',edge=theme==='dark'?'#b5c1b0':'#344334';
+ const [work,attn,fail]=stateVector(state),wave=Math.sin(phase*Math.PI*2),beat=Math.cos(phase*Math.PI*2),parts=[];
+ let extra='';
+ const point=(x,y,i=0)=>[64+(x-64)*spread+(noise(c.seed,i)-.5)*1.5,64+(y-64)*spread+(noise(c.seed,i+80)-.5)*1.5];
+ function add(id,label,cx,cy,html,transform=''){
+  const off=c.offsets[id]||[0,0];parts.push({id,label,cx:n(cx),cy:n(cy),html:`<g data-part="${id}" transform="translate(${n(off[0])} ${n(off[1])}) ${transform}">${html}</g>`});
+ }
+ const path=(p,fill=a,stroke=edge,sw=.65)=>`<path d="${p}" fill="${fill}" stroke="${stroke}" stroke-width="${n(sw)}" stroke-linejoin="round"/>`;
+ const line=(p,col=a,w=8)=>`<path d="${p}" fill="none" stroke="${col}" stroke-width="${n(w)}" stroke-linecap="${soft>.35?'round':'square'}" stroke-linejoin="${soft>.35?'round':'bevel'}"/>`;
+ const dot=(x,y,r,col=a)=>`<circle cx="${n(x)}" cy="${n(y)}" r="${n(r)}" fill="${col}" stroke="${edge}" stroke-width=".6"/>`;
+ function primitive(x,y,w,h,type,col){
+  if(type==='c')return `<ellipse cx="${n(x)}" cy="${n(y)}" rx="${n(w/2)}" ry="${n(h/2)}" fill="${col}" stroke="${edge}" stroke-width=".65"/>`;
+  if(type==='t')return path(poly([[x,y-h/2],[x+w/2,y+h/2],[x-w/2,y+h/2]],soft*.7),col);
+  if(type==='q')return path(`M${n(x-w/2)} ${n(y-h/2)}A${n(w)} ${n(h)} 0 0 1 ${n(x+w/2)} ${n(y+h/2)}L${n(x-w/2)} ${n(y+h/2)}Z`,col);
+  if(type==='a')return path(`M${n(x-w/2)} ${n(y+h/2)}V${n(y)}a${n(w/2)} ${n(h/2)} 0 0 1 ${n(w)} 0V${n(y+h/2)}h${n(-w*.26)}V${n(y)}a${n(w*.24)} ${n(h*.24)} 0 0 0 ${n(-w*.48)} 0V${n(y+h/2)}Z`,col);
+  return path(boxPath(x-w/2,y-h/2,w,h,soft*Math.min(w,h)*.46),col);
+ }
+ if(f===0){
+  const pts=SOLIDS[v].map(([x,y],i)=>{const q=point(64+(x-64)*(.6+weight*.4),64+(y-64)*(.6+weight*.4),i);return [q[0]+work*(64-y)*.16+fail*(y-50)*.1,q[1]+work*(y-64)*(.08+wave*.015)-attn*Math.max(0,70-y)*.2+fail*(y<66?12:2)]});
+  // Sample a solid silhouette on a discrete grid; never round the sprite edges.
+  const cell=soft>.66?8:soft>.33?6:4, occupied=new Set();
+  const inside=(x,y)=>{let hit=false;for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+   const [ax,ay]=pts[i],[bx,by]=pts[j];if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)hit=!hit;
+  }return hit;};
+  for(let y=-32;y<160;y+=cell)for(let x=-32;x<160;x+=cell)if(inside(x+cell/2,y+cell/2))occupied.add(`${x},${y}`);
+  let art='<g shape-rendering="crispEdges">';
+  for(const key of occupied){const [x,y]=key.split(',').map(Number);
+   const col=!occupied.has(`${x},${y+cell}`)?d:!occupied.has(`${x},${y-cell}`)?b:a;
+   art+=`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${col}"/>`;
+  }
+  art+='</g>';
+  add('body','Whole pixel silhouette',64,64,art);
+ }
+ if(f===1){
+  let outer='',holes='';const ox=work*4+(noise(c.seed,1)-.5)*2,oy=-attn*9+fail*10+(noise(c.seed,2)-.5)*2,hw=(1-work*.2+fail*.15)*spread,hh=(1+attn*.28-work*.12-fail*.35)*spread;
+  if(v===0){outer=boxPath(22,26,84,76,soft*38);holes=circlePath(64+ox,64+oy,23*hw,20*hh);}
+  if(v===1){outer=boxPath(22,31,84,65,30*soft);holes=circlePath(46+ox,62+oy,12*hw,18*hh)+circlePath(83+ox,66+oy,11*hw,15*hh);}
+  if(v===2){outer=boxPath(20,25,88,80,20+soft*20);holes=circlePath(72+ox,60+oy,24*hw,25*hh);}
+  if(v===3){outer=boxPath(23,21,82,82,25+soft*16);const x=64+ox,y=51+oy,r=18*hw;holes=`M${n(x-8*hw)} ${n(y+14*hh)}A${n(r)} ${n(18*hh)} 0 1 1 ${n(x+8*hw)} ${n(y+14*hh)}V${n(y+39*hh)}H${n(x-8*hw)}Z`;}
+  if(v===4){outer=boxPath(24,27,80,74,soft*24);holes=boxPath(36+ox,54+oy,56*hw,19*hh,soft*8);}
+  if(v===5){const gap=13.5*spread;outer=poly([[24,104],[24,47],[42,24],[85,24],[104,47],[104,104],[64+gap,104],[64+gap,56],[64-gap,56],[64-gap,104]],soft*.7);holes=boxPath(39+ox,35+oy*.3,13,12*hh,soft*4);}
+  if(v===6){const hp=pts=>poly(pts.map(([x,y])=>[64+(x-64)*spread+ox,64+(y-64)*hh+oy]),soft);outer=boxPath(25,25,78,78,soft*20);holes=hp([[38,42],[58,35],[58,81],[38,88]])+hp([[72,42],[91,35],[91,81],[72,88]]);}
+  if(v===7){outer=poly([[41,24],[102,24],[102,86],[85,103],[24,103],[24,42]],soft);holes=poly([[45,43],[83,43],[83,61],[64,61],[64,85],[45,85]].map(([x,y])=>[64+(x-64)*hw+ox,64+(y-64)*hh+oy]),soft);}
+  let hash=2166136261;for(const ch of outer)hash=Math.imul(hash^ch.charCodeAt(0),16777619);
+  const clip='aperture-'+(hash>>>0);
+  let art=`<defs><clipPath id="${clip}"><path d="${outer}"/></clipPath></defs><path d="${outer}${holes}" fill="${a}" fill-rule="evenodd" stroke="${edge}" stroke-width=".7" clip-path="url(#${clip})"/>`;
+  if(rich)art+=line('M51 31h10M70 96h9',b,1.4);
+  add('shell','Shell and opening',64,64,art,`rotate(${n(work*(3+wave*2)+fail*11)} 64 64) scale(${n(weight)}) translate(${n(64/weight-64)} ${n(64/weight-64)})`);
+ }
+ if(f===2){
+  GLYPHS[v].forEach((nodes,i)=>{
+   const pts=nodes.map(([x,y],j)=>{const q=point(x,y,j+i*15);return [q[0]+work*(64-y)*.13,q[1]-attn*(j===nodes.length-1?13:2)+fail*(x>65?13:0)+work*wave*2*(j%2)]});
+   let art=line(poly(pts,soft,false),i?b:a,(10+(v<2?2:0))*weight);
+   const end=pts.at(-1);art+=dot(end[0],end[1],(v<2?4:3.5)*weight,i?a:b);
+   if(rich){art+=line(poly(pts,soft,false),ink,1);art+=dot(pts[0][0],pts[0][1],2.4,d);}
+   add('stroke'+i,'Stroke '+(i+1),pts[0][0],pts[0][1],art);
+  });
+ }
+ if(f===3){
+  MODULES[v].forEach(([x,y,w,h,type],i)=>{
+   const q=point(x,y,i);q[0]+=work*(i===1?8:0)+work*wave*(i===1?3:0);q[1]-=attn*(i===0?12:0);q[1]+=fail*(i===MODULES[v].length-1?9:0);
+   let art=primitive(q[0],q[1],w*weight,h*weight,type,i===1?b:(i===3?d:a));
+   if(rich&&type!=='a')art+=line(`M${n(q[0]-w*.18)} ${n(q[1]+h*.15)}h${n(w*.36)}`,i===1?d:b,1.3);
+   add('module'+i,'Module '+(i+1)+' · '+({r:'block',c:'disc',a:'arch',t:'triangle',q:'quarter'}[type]),q[0],q[1],art,`rotate(${n((i===1?work*7:0)+(i===MODULES[v].length-1?fail*14:0))} ${n(q[0])} ${n(q[1])})`);
+  });
+ }
+ if(f===4){
+  const pts=RIBBONS[v].map(([x,y],i)=>{const q=point(x,y,i);return [q[0]+work*(i%2?4:-3),q[1]-attn*(i===RIBBONS[v].length-1?16:0)+fail*(i%2?11:0)+work*wave*2*(i%2)]});
+  const width=(v<2?20:18)*weight;
+  const joined=pts.map((p,i)=>{const left=c.offsets['fold'+Math.max(0,i-1)]||[0,0],right=c.offsets['fold'+Math.min(i,pts.length-2)]||[0,0];return [p[0]+(left[0]+right[0])/2,p[1]+(left[1]+right[1])/2]});
+  extra=line(poly(joined,soft,false),d,width*.92);
+  for(let i=0;i<pts.length-1;i++){
+   const p=pts[i],q=pts[i+1],dx=q[0]-p[0],dy=q[1]-p[1],len=Math.hypot(dx,dy),nx=-dy/len*width/2,ny=dx/len*width/2;
+   const corners=[[p[0]+nx,p[1]+ny],[q[0]+nx,q[1]+ny],[q[0]-nx,q[1]-ny],[p[0]-nx,p[1]-ny]];
+   let art=path(poly(corners,soft*.7),[a,b,d][i%3]);
+   if(rich)art+=line(`M${n(p[0])} ${n(p[1])}L${n(q[0])} ${n(q[1])}`,i%3===1?d:b,1.2);
+   add('fold'+i,'Fold '+(i+1),(p[0]+q[0])/2,(p[1]+q[1])/2,art);
+  }
+ }
+ if(f===5){
+  const counts=[3,4,3,5,2,6,3,4],count=counts[v],angle0=[-90,-45,-135,-90,-120,-90,-90,0][v];
+  for(let i=0;i<count;i++){
+   const angle=(angle0+i*360/count+(noise(c.seed,i)-.5)*2+work*(18+wave*8)+fail*(i===count-1?26:0))*Math.PI/180;
+   let radius=(v===4?31:28)*spread+(attn&&i===0?attn*7:0);const cx=64+Math.cos(angle)*radius,cy=64+Math.sin(angle)*radius+fail*(i===count-1?8:0);
+   let art='';
+   if(v===0)art=primitive(cx,cy,32*weight,42*weight,'r',i===0?b:a);
+   else if(v===1)art=primitive(cx,cy,29*weight,43*weight,'r',i===1?b:a);
+   else if(v===2||v===4||v===5){
+    const rr=(v===2?22+i*11:35)*spread,span=(v===4?130:360/count-32)*Math.PI/180,st=angle-span/2,en=angle+span/2;
+    const xx=64+Math.cos(st)*rr,yy=64+Math.sin(st)*rr,x2=64+Math.cos(en)*rr,y2=64+Math.sin(en)*rr;
+    art=line(`M${n(xx)} ${n(yy)}A${n(rr)} ${n(rr)} 0 0 1 ${n(x2)} ${n(y2)}`,i===1?b:a,(v===2?8:12)*weight);
+   } else if(v===3||v===6)art=path(poly([[cx-10,cy+18],[cx+12,cy+18],[cx+(v===6?14:0),cy-(i===0?23:16)]],soft),i===0?b:a);
+   else art=primitive(cx,cy,36*weight,36*weight,'q',i===1?b:a);
+   if(rich)art+=line(`M${n(cx-3)} ${n(cy)}h6`,ink,1.2);
+   add('sector'+i,'Sector '+(i+1),cx,cy,art,(v===2||v===4||v===5)?'':`rotate(${n(angle*180/Math.PI+90)} ${n(cx)} ${n(cy)})`);
+  }
+  if(v!==2&&v!==4&&v!==5)add('hub','Hub',64,64,dot(64,64,(v===7?9:8)*weight,d)+(rich?dot(64,64,2.5,b):''));
+ }
+ if(f===6){
+  const nodes=CLOUDS[v].map(([x,y,r],i)=>{
+   const q=point(x,y,i);const lane=Math.round((y-30)/24)*24+30;
+   q[0]+=work*((i%3)-1)*3+work*wave*2;q[1]+=(lane-y)*work*.6-attn*(y<55?12:0)+fail*(y>65?9:0);
+   return [q[0],q[1],r];
+  });
+  if(rich)extra=nodes.slice(1).map((p,i)=>{const left=c.offsets['node'+i]||[0,0],right=c.offsets['node'+(i+1)]||[0,0];return line(`M${n(nodes[i][0]+left[0])} ${n(nodes[i][1]+left[1])}L${n(p[0]+right[0])} ${n(p[1]+right[1])}`,edge,.7)}).join('');
+  nodes.forEach(([x,y,r],i)=>add('node'+i,'Node '+(i+1),x,y,primitive(x,y,r*2*weight,r*2*weight,soft>.45?'c':'r',i%4===1?b:(i%5===3?d:a))));
+ }
+ if(f===7){
+  MATRICES[v].split('/').forEach((row,j)=>[...row].forEach((cell,i)=>{
+   if(cell!=='1')return;let [x,y]=point(28+i*18,28+j*18,i+j*5);
+   x+=work*(j%2?4:-4)+work*wave*(j%2?2:-2);y-=attn*(j===0?10:0);y+=fail*(i>2?10:0);
+   let art=primitive(x,y,15*weight,15*weight,'r',(i+j)%5===0?b:a);
+   if(rich)art+=path(boxPath(x-3,y-3,6,6,soft*2),d,'none',0);
+   add('cell'+j+'_'+i,`Cell ${j+1}, ${i+1}`,x,y,art);
+  }));
+ }
+ if(f===8){
+  const count=[4,5,4,5,4,5,4,5][v];
+  for(let i=0;i<count;i++){
+   const k=i/(count-1),inset=i*8*spread,offset=work*Math.sin(k*Math.PI+phase*Math.PI*2)*4;
+   let pts;
+   if(v===0)pts=[[26+inset,98],[26+inset,58],[26+inset,24+inset],[64,24+inset],[102-inset,24+inset],[102-inset,58],[102-inset,98]];
+   if(v===1)pts=[[26+i*9,99],[24+i*9,66],[36+i*8,29+i*7],[70+i*4,24+i*8],[103,57+i*6]];
+   if(v===2)pts=[[22,39+i*18],[42,28+i*16],[65,51+i*14],[86,31+i*17],[106,43+i*18]];
+   if(v===3)pts=[[24+inset,30+i*3],[24+inset,85-i*5],[64,105-i*11],[104-inset,85-i*5],[104-inset,30+i*3]];
+   if(v===4)pts=[[23+inset,103],[23+inset,25+inset],[105-inset,25+inset],[105-inset,103]];
+   if(v===5)pts=[[25,96-i*3],[40+i*12,61-i*5],[34+i*17,24]];
+   if(v===6)pts=[[24+i*10,25+i*10],[104-i*8,25+i*10],[104-i*8,101]];
+   if(v===7)pts=[[24+i*8,102],[64,24+i*14],[104-i*8,102]];
+   pts=pts.map(([x,y],j)=>{const q=point(x,y,j+i*8);return [q[0]+offset,q[1]-attn*(1-k)*9+fail*(x>64?9+k*5:0)]});
+   let art=line(poly(pts,soft,false),i===0?b:a,(v<4?6.5:6)*weight);
+   if(rich){const p=pts[0];art+=dot(p[0],p[1],1.6,ink);}
+   add('rib'+i,'Contour '+(i+1),pts[0][0],pts[0][1],art);
+  }
+ }
+ if(f===9){
+  const h=HINGES[v],nodes=h.nodes.map(([x,y,r,type],i)=>{
+   const q=point(x,y,i);if(i===0){q[0]+=work*8+attn*3+fail*6;q[1]+=work*(3+wave*2)-attn*10+fail*20;}if(i===1){q[0]+=work*2;q[1]+=fail*6;}return [q[0],q[1],r,type];
+  });
+  extra=h.edges.map(([i,j])=>{const p=nodes[i],q=nodes[j],oi=c.offsets['joint'+i]||[0,0],oj=c.offsets['joint'+j]||[0,0];return line(`M${n(p[0]+oi[0])} ${n(p[1]+oi[1])}L${n(q[0]+oj[0])} ${n(q[1]+oj[1])}`,d,8*weight)}).join('');
+  nodes.forEach(([x,y,r,type],i)=>{
+   let art=type==='o'?`<path d="${circlePath(x,y,r)}${circlePath(x,y,r-10)}" fill="${a}" fill-rule="evenodd" stroke="${edge}" stroke-width=".7"/>`:primitive(x,y,r*2*weight,r*2*weight,type,i===0?a:(i===1?b:d));
+   if(i===0&&h.face){const ey=y+2+fail*3,eh=2.7-work*1.5;art+=`<ellipse cx="${n(x-8)}" cy="${n(ey)}" rx="2.3" ry="${n(eh)}" fill="#18231d"/><ellipse cx="${n(x+8)}" cy="${n(ey)}" rx="2.3" ry="${n(eh)}" fill="#18231d"/>`;}
+   if(rich&&i>0)art+=dot(x,y,Math.min(r*.35,5),ink);
+   add('joint'+i,(i===0?'Leading mass':'Joint '+i),x,y,art,`rotate(${n(i===0?work*8+fail*15-attn*5:0)} ${n(x)} ${n(y)})`);
+  });
+ }
+ const offsetExtent=Math.max(0,...Object.values(c.offsets).flat().map(Math.abs)),rad=Math.abs(c.rotation)*Math.PI/180;
+ const footprint=(55*Math.max(1,spread)*Math.max(c.aspect/100,2-c.aspect/100)*Math.max(1,.6+weight*.4)+offsetExtent)*(Math.cos(rad)+Math.sin(rad));
+ const fit=Math.min(1,60/footprint),idle=1-Math.max(work,attn,fail),breath=1+idle*Math.sin(phase*Math.PI*2)*.008;
+ const root=`translate(64 64) rotate(${c.rotation}) scale(${n(c.aspect/100*fit*breath)} ${n((2-c.aspect/100)*fit*breath)}) translate(-64 -64)`;
+ return {parts,root,markup:extra+parts.map(p=>p.html).join('')};
+}
+function svg(c,state='idle',theme='dark',size=128,rich=false,phase=0,interactive=false){
+ const g=makeGeometry(c,state,theme,rich,phase);const label=`${FAMILIES[c.family].variants[c.variant][0]}, ${typeof state==='string'?state:'transition'} pose`;
+ let handles='';if(interactive&&app.arranging)handles=g.parts.map(p=>{const off=c.offsets[p.id]||[0,0];return `<g data-part="${p.id}" transform="translate(${off[0]} ${off[1]})"><circle cx="${p.cx}" cy="${p.cy}" r="${p.id===app.part?7:4.5}" fill="${p.id===app.part?'#f8f6e6':'#111b17'}" stroke="${p.id===app.part?'#111b17':'#f8f6e6'}" stroke-width="1.5"/></g>`}).join('');
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 128 128" role="img" aria-label="${esc(label)}"><g class="geometry" transform="${g.root}">${g.markup}${handles}</g></svg>`;
+}
+// Reproducible identity state and local persistence.
+const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+const app={theme:'dark',stageTheme:'dark',family:'all',vibe:'all',shortlist:false,size:128,favorites:[],edits:{},current:null,state:'idle',vector:[0,0,0],phase:0,tempo:1,arranging:false,part:null,mode:'none',clock:0,last:0,raf:0,transition:null,storage:true,drag:null};
+function validateConfig(raw){
+ if(!raw||typeof raw!=='object')throw Error('Missing identity');
+ const integer=(k,a,b)=>{if(!Number.isInteger(raw[k])||raw[k]<a||raw[k]>b)throw Error('Invalid '+k);return raw[k]};
+ const c=defaults(integer('family',0,9),integer('variant',0,7));
+ for(const [k,lo,hi] of [['palette',0,7],['softness',0,100],['aspect',75,125],['spread',75,125],['weight',75,125],['rotation',-45,45],['seed',1,99999]])c[k]=integer(k,lo,hi);
+ if(raw.color!==null&&raw.color!==undefined&&!/^#[0-9a-f]{6}$/i.test(raw.color))throw Error('Invalid color');c.color=raw.color||null;
+ c.offsets={};if(raw.offsets&&typeof raw.offsets==='object')for(const [k,val] of Object.entries(raw.offsets)){
+  if(!/^(body|shell|stroke\d+|module\d+|fold\d+|sector\d+|hub|node\d+|cell\d+_\d+|rib\d+|joint\d+)$/.test(k))continue;
+  if(!Array.isArray(val)||val.length!==2||val.some(x=>!Number.isFinite(x)||Math.abs(x)>22))throw Error('Invalid part position');c.offsets[k]=val.map(x=>n(x));
+ }
+ return c;
+}
+try{const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved?.version===VERSION){
+ app.theme=saved.theme==='light'?'light':'dark';app.stageTheme=app.theme;
+ app.favorites=Array.isArray(saved.favorites)?[...new Set(saved.favorites.filter(k=>/^\d-[0-7]$/.test(k)))]:[];
+ if(saved.edits&&typeof saved.edits==='object')for(const [k,c] of Object.entries(saved.edits))try{const v=validateConfig(c);if(keyOf(v)===k)app.edits[k]=v}catch{}
+}}catch{app.storage=false}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify({version:VERSION,theme:app.theme,favorites:app.favorites,edits:app.edits}));app.storage=true}catch{app.storage=false}$('storageStatus').textContent=app.storage?'Edits saved on this device.':'Browser storage unavailable. Export a recipe to keep your edits.'}
+const config=(f,v)=>structuredClone(app.edits[`${f}-${v}`]||defaults(f,v));
+let toastTimer;
+function toast(message){$('toast').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').textContent='',3200)}
+function applyTheme(){document.documentElement.dataset.theme=app.theme;$('themeToggle').textContent=app.theme==='dark'?'Light theme':'Dark theme';$('themeToggle').setAttribute('aria-label',`Switch to ${app.theme==='dark'?'light':'dark'} theme`);renderHero();renderGallery();renderRecommendations();persist()}
+function renderHero(){
+ const selections=[3,7,0,4,7,0,2,5,2,4];
+ $('heroStrip').innerHTML=FAMILIES.map((f,i)=>`<button class="hero-item" data-jump="${i}" aria-label="View ${esc(f.name)}">${svg(config(i,selections[i]),'idle',app.theme,72)}<span>${String(i+1).padStart(2,'0')} / ${f.short}</span></button>`).join('');
+}
+function scoreMarkup(scores){const labels=['Identity','Expression','64 px','Editing'];return scores.map((s,i)=>`<div class="criterion">${labels[i]}<b>${['','Low','Limited','Promising','Strong','Very strong'][s]}</b><span class="rating" role="img" aria-label="${s} out of 5">${Array.from({length:5},(_,j)=>`<i class="${j<s?'on':''}"></i>`).join('')}</span></div>`).join('')}
+function renderGallery(){
+ let total=0;
+ $('gallery').innerHTML=FAMILIES.map((f,fi)=>{
+  if(app.family!=='all'&&Number(app.family)!==fi)return '';
+  const cards=f.variants.map(([name,recipe],vi)=>{
+   if(app.vibe!=='all'&&Math.floor(vi/2)!==Number(app.vibe))return '';
+   const key=`${fi}-${vi}`,saved=app.favorites.includes(key);if(app.shortlist&&!saved)return '';total++;
+   return `<article class="card" data-key="${key}"><button class="open-card" data-open="${key}" aria-label="Edit ${esc(name)}, ${esc(f.name)}, ${VIBES[Math.floor(vi/2)]}"><div class="art"><span class="card-no">${String(fi+1).padStart(2,'0')}.${String(vi+1).padStart(2,'0')}</span>${svg(config(fi,vi),'idle',app.theme,128)}${app.edits[key]?'<span class="edited-dot">edited</span>':''}</div><div class="card-copy"><div class="card-name"><span>${name}</span><span aria-hidden="true">↗</span></div><span class="vibe-tag">${VIBES[Math.floor(vi/2)]}</span><span class="card-recipe">${recipe}</span></div></button><button class="favorite" data-favorite="${key}" aria-pressed="${saved}" aria-label="${saved?'Unsave':'Save'} ${name}">${saved?'★':'☆'}</button></article>`;
+  }).join('');
+  if(!cards)return '';
+  return `<section class="family" id="family-${fi}" aria-labelledby="family-title-${fi}"><div class="family-header"><div><div class="eyebrow">${f.kind}</div><div class="family-title"><span class="number">${String(fi+1).padStart(2,'0')}</span><h2 id="family-title-${fi}">${f.name}</h2></div><p class="description">${f.rule}</p><p class="parameters"><b>Vary:</b> ${f.varies}</p></div><div class="criteria" aria-label="Provisional design assessment">${scoreMarkup(f.scores)}</div></div><div class="axis-caption"><span>SOFT / KAWAII → PLAYFUL</span><span>FUNCTIONAL → BAUHAUS</span></div><div class="cards">${cards}</div><div class="family-foot"><p><b>Promise /</b> ${f.strength}</p><p><b>Watch /</b> ${f.risk}</p></div></section>`;
+ }).join('')||'<div class="empty">No studies in this view.<br>Choose another filter or save a study with ☆.</div>';
+ $('gallery').classList.toggle('actual64',app.size===64);
+ $('resultCount').textContent=`${total} ${total===1?'study':'studies'}`;$('savedCount').textContent=app.favorites.length;
+ $('shortlistButton').setAttribute('aria-pressed',String(app.shortlist));
+}
+function renderRecommendations(){
+ const picks=[{f:9,v:0,label:'Selected direction',body:'Articulated forms are a successful direction: posture and connected masses give the avatar expression.'},{f:7,v:2,label:'Selected direction',body:'Matrices are a successful direction: discrete patterns make compact, reproducible identities.'},{f:6,v:3,label:'Selected direction',body:'Collectives are a successful direction: multiple parts read together as one presence.'}];
+ $('recommendations').innerHTML=picks.map(p=>`<article class="recommendation"><div class="rec-art"><span class="eyebrow">${p.label}</span>${svg(config(p.f,p.v),'idle',app.theme,64)}</div><h3>${FAMILIES[p.f].name}</h3><p>${p.body}</p><button data-open="${p.f}-${p.v}">Explore ${FAMILIES[p.f].variants[p.v][0]} ↗</button></article>`).join('');
+}
+function toggleFavorite(key){const i=app.favorites.indexOf(key);if(i>=0)app.favorites.splice(i,1);else app.favorites.push(key);persist();renderGallery();toast(i>=0?'Removed from saved studies.':'Saved for comparison.')}
+function openEditor(key){
+ const [f,v]=key.split('-').map(Number);app.current=config(f,v);app.state='idle';app.vector=[0,0,0];app.phase=0;app.clock=0;app.arranging=false;app.part=null;app.transition=null;stopMotion();
+ app.stageTheme=app.theme;setTab('Shape',false);syncEditor();$('editorScroll').scrollTop=0;
+ if(!$('editor').open){$('editor').showModal();document.body.style.overflow='hidden'}
+ $('closeEditor').focus({preventScroll:true});
+}
+function setTab(name,focus=false){for(const t of ['Shape','States','Export']){const active=t===name;$('panel'+t).hidden=!active;$('tab'+t).setAttribute('aria-selected',String(active));$('tab'+t).tabIndex=active?0:-1;}if(focus)$('tab'+name).focus()}
+function syncEditor(){
+ const c=app.current,f=FAMILIES[c.family];
+ $('softnessLabel').textContent=c.family===0?'Pixel chunkiness':'Softness';
+ $('editorTitle').textContent=f.variants[c.variant][0];$('editorFamily').textContent=`${String(c.family+1).padStart(2,'0')}.${String(c.variant+1).padStart(2,'0')} / ${f.name}`;
+ $('variantSelect').innerHTML=f.variants.map(([name],i)=>`<option value="${i}" ${c.variant===i?'selected':''}>${String(i+1).padStart(2,'0')} · ${name}</option>`).join('');
+ $('variantVibe').textContent=VIBES[Math.floor(c.variant/2)].split(' / ')[0];
+ $('swatches').innerHTML=PALETTES.map((p,i)=>`<button class="swatch" data-palette="${i}" aria-label="${p[0]} palette" aria-pressed="${i===c.palette&&!c.color}"><span style="--swatch:${p[1]}"></span></button>`).join('');
+ $('paletteName').textContent=c.color?'Custom':PALETTES[c.palette][0];$('customColor').value=colors(c)[0];$('colorCode').textContent=colors(c)[0].toUpperCase();
+ for(const k of ['softness','aspect','spread','weight','rotation']){$(k).value=c[k];$(k+'Value').textContent=k==='rotation'?c[k]+'°':c[k]+'%'}
+ $('seedInput').value=c.seed;$('arrangeButton').setAttribute('aria-pressed',String(app.arranging));$('arrangeControls').hidden=!app.arranging;$('stage').classList.toggle('arranging',app.arranging);
+ const parts=makeGeometry(c,app.state,app.stageTheme).parts;
+ if(!parts.some(p=>p.id===app.part))app.part=parts[0]?.id;
+ $('partSelect').innerHTML=parts.map(p=>`<option value="${p.id}" ${p.id===app.part?'selected':''}>${p.label}</option>`).join('');
+ $('arrangeHelp').textContent=c.family<2?'This is one connected construction. Drag to position the whole mark; use softness and proportion to edit its shape.':'Tap a part in the large preview, then drag or use the arrows. Arrow keys also work when a part is selected.';
+ $('stateExplanations').innerHTML=f.states.map((s,i)=>`<dt>${STATE_NAMES[i]}</dt><dd>${s}</dd>`).join('');
+ $('phase').value=Math.round(app.phase*100);$('phaseValue').textContent=Math.round(app.phase*100)+'%';
+ $('recipeText').hidden=true;updateMotionNotice();updatePreviews(true);persist();
+}
+function visualState(){return app.vector.some((v,i)=>Math.abs(v-stateVector(app.state)[i])>.00001)?app.vector:app.state}
+function updatePreviews(strip=false,vector=null){
+ if(!app.current)return;
+ if(vector)app.vector=vector;
+ const c=app.current,ground=app.stageTheme;
+ $('stage').style.background=ground==='dark'?'#101310':'#f3f2ec';$('stageTheme').textContent=ground==='dark'?'Dark ground':'Light ground';
+ $('stage').innerHTML=svg(c,visualState(),ground,300,true,app.phase,true)+'<span class="stage-label">'+(app.arranging?'arrangement / drag a part':'communication / enriched structure')+'</span>';
+ $('miniLight').innerHTML=svg(c,visualState(),'light',64,false,app.phase);$('miniDark').innerHTML=svg(c,visualState(),'dark',64,false,app.phase);
+ $('previewState').textContent=app.state.toUpperCase()+' / '+(app.mode==='none'?'STATIC':'PLAYING');
+ const ix=['idle','working','attention','failure'].indexOf(app.state);$('poseNote').textContent=FAMILIES[c.family].states[ix];
+ if(strip)$('stateStrip').innerHTML=['idle','working','attention','failure'].map((s,i)=>`<button class="state-tile" data-state="${s}" aria-pressed="${s===app.state}" aria-label="Show ${STATE_NAMES[i]} pose">${svg(c,s,ground,64)}<span>${STATE_NAMES[i]}</span></button>`).join('');
+ else for(const b of $('stateStrip').children)b.setAttribute('aria-pressed',String(b.dataset.state===app.state));
+}
+function commitEdit(){app.edits[keyOf(app.current)]=structuredClone(app.current);persist()}
+function editParam(k,value){app.current[k]=value;commitEdit();syncEditor()}
+function closeEditor(){const key=app.current&&keyOf(app.current);stopMotion();$('editor').close();document.body.style.overflow='';renderGallery();renderHero();renderRecommendations();document.querySelector(`[data-open="${key}"]`)?.focus({preventScroll:true})}
+function updateMotionNotice(){
+ const reduced=motionPreference.matches;$('playMotion').disabled=reduced;$('cycleMotion').disabled=reduced;
+ $('motionNotice').innerHTML=reduced?'<strong>Reduced motion is on.</strong><br>Playback is disabled. All four still poses and phase scrubbing remain available.':'<strong>Static by default.</strong><br>Play is optional. Changing states interpolates the geometry; failure holds steady. Hidden tabs suspend playback.';
+}
+function stopMotion(){cancelAnimationFrame(app.raf);app.raf=0;app.mode='none';app.transition=null;$('playMotion').setAttribute('aria-pressed','false');$('cycleMotion').setAttribute('aria-pressed','false');$('playMotion').textContent='Play motion';$('cycleMotion').textContent='Cycle states'}
+function startMotion(mode){
+ if(motionPreference.matches)return;
+ if(app.mode===mode){stopMotion();updatePreviews();return}
+ cancelAnimationFrame(app.raf);app.mode=mode;app.clock=0;app.last=performance.now();
+ if(app.arranging){app.arranging=false;syncEditor()}
+ $('playMotion').setAttribute('aria-pressed',String(mode==='state'));$('cycleMotion').setAttribute('aria-pressed',String(mode==='cycle'));$('playMotion').textContent=mode==='state'?'Pause motion':'Play motion';$('cycleMotion').textContent=mode==='cycle'?'Pause cycle':'Cycle states';app.raf=requestAnimationFrame(tick);
+}
+function tick(now){
+ if(app.mode==='none'||!$('editor').open)return;
+ const dt=Math.min((now-app.last)/1000,.1);app.last=now;
+ if(!document.hidden){app.clock+=dt*app.tempo;app.phase=(app.phase+dt*app.tempo/2.6)%1;
+  let vector=null;
+  if(app.mode==='cycle'){
+   const labels=['idle','working','attention','failure'],idx=Math.floor(app.clock/3.2)%4,local=app.clock%3.2,blend=clamp((local-2.35)/.85,0,1);
+   app.state=labels[idx];const from=stateVector(labels[idx]),to=stateVector(labels[(idx+1)%4]);vector=from.map((v,i)=>v+(to[i]-v)*blend);
+  }else if(app.transition){const blend=clamp((now-app.transition.start)/650,0,1);vector=app.transition.from.map((v,i)=>v+(app.transition.to[i]-v)*blend);if(blend===1)app.transition=null;}
+  updatePreviews(false,vector);$('phase').value=Math.round(app.phase*100);$('phaseValue').textContent=Math.round(app.phase*100)+'%';
+ }
+ app.raf=requestAnimationFrame(tick);
+}
+function setState(s){const from=[...app.vector];app.state=s;if(app.mode==='cycle')stopMotion();if(app.mode==='state')app.transition={from,to:stateVector(s),start:performance.now()};else app.phase=0;app.vector=stateVector(s);updatePreviews(false,app.transition?from:app.vector);$('phase').value=Math.round(app.phase*100);$('phaseValue').textContent=Math.round(app.phase*100)+'%'}
+function movePart(dx,dy){if(!app.current||!app.part)return;const p=app.current.offsets[app.part]||[0,0];app.current.offsets[app.part]=[n(clamp(p[0]+dx,-22,22)),n(clamp(p[1]+dy,-22,22))];commitEdit();updatePreviews(true)}
+// Touch and keyboard arrangement share the same coordinates and stored offsets.
+$('stage').addEventListener('pointerdown',e=>{
+ if(!app.arranging||e.button!==0)return;const target=e.target.closest('[data-part]');if(!target)return;
+ const geometry=$('stage').querySelector('.geometry'),m=geometry.getScreenCTM().inverse();const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(m);
+ app.part=target.dataset.part;$('partSelect').value=app.part;const off=app.current.offsets[app.part]||[0,0];app.drag={x:p.x,y:p.y,off:[...off],matrix:m,id:e.pointerId};$('stage').setPointerCapture(e.pointerId);e.preventDefault();updatePreviews();
+});
+$('stage').addEventListener('pointermove',e=>{
+ if(!app.drag||app.drag.id!==e.pointerId)return;const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(app.drag.matrix),d=app.drag;
+ app.current.offsets[app.part]=[n(clamp(d.off[0]+p.x-d.x,-22,22)),n(clamp(d.off[1]+p.y-d.y,-22,22))];updatePreviews();
+});
+function endDrag(e){if(app.drag&&app.drag.id===e.pointerId){app.drag=null;commitEdit();updatePreviews(true)}}
+$('stage').addEventListener('pointerup',endDrag);$('stage').addEventListener('pointercancel',endDrag);
+$('editor').addEventListener('keydown',e=>{
+ if(app.arranging&&!['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)){
+  const dirs={ArrowLeft:[-2,0],ArrowRight:[2,0],ArrowUp:[0,-2],ArrowDown:[0,2]};if(dirs[e.key]){e.preventDefault();movePart(...dirs[e.key])}
+ }
+});
+// File export is entirely local. Recipe imports are bounded and versioned.
+function recipe(){return {format:'min1-presence-identity',version:VERSION,identity:structuredClone(app.current),pose:app.state,poseMix:[...app.vector],phase:app.phase}}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
+function assetName(ext){return `presence-${FAMILIES[app.current.family].key}-${app.current.variant+1}-${app.state}.${ext}`}
+function assetSVG(){
+ const size=Number($('exportSize').value),bg=$('exportGround').value,theme=bg==='transparent'?app.stageTheme:bg;
+ let out=svg(app.current,visualState(),theme,size,size>64,app.phase);
+ const insert=`<metadata>${esc(JSON.stringify(recipe()))}</metadata>`+(bg!=='transparent'?`<rect width="128" height="128" fill="${bg==='light'?'#f3f2ec':'#101310'}"/>`:'');
+ return out.replace('<g class="geometry"',insert+'<g class="geometry"');
+}
+async function exportPNG(){
+ const button=$('exportPNG');button.disabled=true;
+ try{const size=Number($('exportSize').value),source=new Blob([assetSVG()],{type:'image/svg+xml'}),url=URL.createObjectURL(source);const img=new Image();
+  try{await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(Error('Image rendering failed'));img.src=url});const canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;canvas.getContext('2d').drawImage(img,0,0,size,size);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('PNG unavailable');download(blob,assetName('png'));toast('PNG exported.')}finally{URL.revokeObjectURL(url)}
+ }catch{toast('PNG could not be created. SVG export is available.')}finally{button.disabled=false}
+}
+function exportSheet(){
+ const bg=$('exportGround').value,theme=bg==='transparent'?app.stageTheme:bg,ink=theme==='dark'?'#edf0e5':'#20271f';
+ const content=['idle','working','attention','failure'].map((s,i)=>svg(app.current,s,theme,128,false,0).replace('<svg ',`<svg x="${i*128}" y="0" `)+`<text x="${i*128+64}" y="150" text-anchor="middle" fill="${ink}" font-family="monospace" font-size="10">${s}</text>`).join('');
+ const out=`<svg xmlns="http://www.w3.org/2000/svg" width="512" height="160" viewBox="0 0 512 160"><metadata>${esc(JSON.stringify(recipe()))}</metadata>${bg==='transparent'?'':`<rect width="512" height="160" fill="${theme==='dark'?'#101310':'#f3f2ec'}"/>`}${content}</svg>`;
+ download(new Blob([out],{type:'image/svg+xml'}),assetName('states.svg'));toast('Four-state SVG sheet exported.');
+}
+async function copyRecipe(){const raw=JSON.stringify(recipe(),null,2);try{await navigator.clipboard.writeText(raw);toast('Recipe copied.')}catch{$('recipeText').value=raw;$('recipeText').hidden=false;$('recipeText').focus();$('recipeText').select();toast('Select and copy the recipe below.')}}
+async function importFile(file){
+ try{
+  if(!file||file.size>1000000)throw Error('Choose a recipe under 1 MB.');const raw=JSON.parse(await file.text());if(raw.version!==VERSION)throw Error('Unsupported recipe version.');
+  if(raw.format==='min1-presence-session'){
+   if(!Array.isArray(raw.identities)||raw.identities.length>80)throw Error('Invalid saved collection.');
+   const list=raw.identities.map(validateConfig);const next={...app.edits};list.forEach(c=>{next[keyOf(c)]=c});
+   if(!Array.isArray(raw.favorites)||raw.favorites.some(k=>typeof k!=='string'||!/^\d-[0-7]$/.test(k)))throw Error('Invalid saved selection.');
+   app.edits=next;app.favorites=[...new Set(raw.favorites)];persist();renderGallery();if(list.length){app.current=structuredClone(list[0]);syncEditor()}toast(`Imported ${list.length} saved identities.`);
+  }else{
+   if(raw.format!=='min1-presence-identity')throw Error('Not an identity recipe.');const c=validateConfig(raw.identity);
+   if(raw.poseMix!==undefined&&(!Array.isArray(raw.poseMix)||raw.poseMix.length!==3||raw.poseMix.some(x=>!Number.isFinite(x)||x<0||x>1)))throw Error('Invalid state blend.');
+   stopMotion();app.current=c;app.state=['idle','working','attention','failure'].includes(raw.pose)?raw.pose:'idle';app.vector=raw.poseMix||stateVector(app.state);app.phase=Number.isFinite(raw.phase)?clamp(raw.phase,0,1):0;app.arranging=false;commitEdit();syncEditor();toast('Identity reproduced from recipe.');
+  }
+ }catch(e){toast('Import rejected: '+(e instanceof SyntaxError?'invalid JSON.':e.message))}
+ $('recipeFile').value='';
+}
+function exportSession(){const keys=new Set([...app.favorites,...Object.keys(app.edits)]),identities=[...keys].map(k=>config(...k.split('-').map(Number)));const data={format:'min1-presence-session',version:VERSION,favorites:[...app.favorites],identities};download(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'presence-atlas-saved-identities.json');toast(`Exported ${identities.length} edited or saved identities.`)}
+function openCompare(){
+ const keys=app.favorites.slice(0,4);
+ $('compareGrid').innerHTML=keys.map(k=>{
+  const c=config(...k.split('-').map(Number)),f=FAMILIES[c.family];
+  return `<article class="compare-card"><div class="eyebrow">${f.short}</div><div class="compare-big">${svg(c,'idle',app.theme,128,true)}</div><h3>${f.variants[c.variant][0]}</h3><div class="small muted" style="margin-bottom:12px">${VIBES[Math.floor(c.variant/2)]}</div>${['idle','working','attention','failure'].map(s=>`<div class="compare-state"><span>${s}</span>${svg(c,s,app.theme,64)}</div>`).join('')}<div class="help">${f.strength}</div><button data-compare-edit="${k}">Edit identity ↗</button></article>`;
+ }).join('')||'<div class="empty" style="grid-column:1/-1">Save studies with ☆, then compare their state poses here.</div>';
+ $('compareInfo').textContent=keys.length?`Showing ${keys.length} of ${app.favorites.length} saved studies, in the order you saved them. ${app.favorites.length>4?'Unsave earlier studies to bring other candidates into this four-way comparison. ':''}The large preview includes internal detail; state poses use the compact construction.`:'You can save as many studies as you like. This board compares the first four.';
+ $('compareDialog').showModal();document.body.style.overflow='hidden';
+}
+function closeCompare(){$('compareDialog').close();document.body.style.overflow='';$('compareButton').focus({preventScroll:true})}
+// Event wiring.
+$('familyFilter').insertAdjacentHTML('beforeend',FAMILIES.map((f,i)=>`<option value="${i}">${String(i+1).padStart(2,'0')} · ${f.name}</option>`).join(''));
+$('themeToggle').addEventListener('click',()=>{app.theme=app.theme==='dark'?'light':'dark';applyTheme()});
+$('familyFilter').addEventListener('change',e=>{app.family=e.target.value;renderGallery()});$('vibeFilter').addEventListener('change',e=>{app.vibe=e.target.value;renderGallery()});
+$('sizeLarge').addEventListener('click',()=>{app.size=128;$('sizeLarge').setAttribute('aria-pressed','true');$('sizeSmall').setAttribute('aria-pressed','false');$('gallery').classList.remove('actual64')});
+$('sizeSmall').addEventListener('click',()=>{app.size=64;$('sizeLarge').setAttribute('aria-pressed','false');$('sizeSmall').setAttribute('aria-pressed','true');$('gallery').classList.add('actual64')});
+$('shortlistButton').addEventListener('click',()=>{app.shortlist=!app.shortlist;renderGallery()});$('compareButton').addEventListener('click',openCompare);
+document.addEventListener('click',e=>{
+ const open=e.target.closest('[data-open]');if(open)openEditor(open.dataset.open);
+ const favorite=e.target.closest('[data-favorite]');if(favorite)toggleFavorite(favorite.dataset.favorite);
+ const jump=e.target.closest('[data-jump]');if(jump){app.family='all';app.vibe='all';app.shortlist=false;$('familyFilter').value='all';$('vibeFilter').value='all';renderGallery();$('family-'+jump.dataset.jump).scrollIntoView({block:'start'});}
+});
+$('closeEditor').addEventListener('click',closeEditor);$('editor').addEventListener('cancel',e=>{e.preventDefault();closeEditor()});
+$('closeCompare').addEventListener('click',closeCompare);$('compareDialog').addEventListener('cancel',e=>{e.preventDefault();closeCompare()});
+$('compareGrid').addEventListener('click',e=>{const t=e.target.closest('[data-compare-edit]');if(t){closeCompare();openEditor(t.dataset.compareEdit)}});
+document.querySelectorAll('[data-tab]').forEach(t=>{t.addEventListener('click',()=>setTab(t.dataset.tab));t.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const names=['Shape','States','Export'],idx=names.indexOf(t.dataset.tab),next=e.key==='Home'?0:e.key==='End'?2:(idx+(e.key==='ArrowRight'?1:2))%3;setTab(names[next],true)})});
+$('variantSelect').addEventListener('change',e=>{stopMotion();app.current=config(app.current.family,Number(e.target.value));app.arranging=false;app.part=null;syncEditor()});
+$('swatches').addEventListener('click',e=>{const t=e.target.closest('[data-palette]');if(t){app.current.palette=Number(t.dataset.palette);app.current.color=null;commitEdit();syncEditor()}});
+$('customColor').addEventListener('input',e=>editParam('color',e.target.value));
+for(const k of ['softness','aspect','spread','weight','rotation'])$(k).addEventListener('input',e=>editParam(k,Number(e.target.value)));
+$('seedInput').addEventListener('change',e=>editParam('seed',clamp(Math.round(Number(e.target.value)||1),1,99999)));
+$('newSeed').addEventListener('click',()=>editParam('seed',app.current.seed%99999+1));
+$('resetIdentity').addEventListener('click',()=>{const {family,variant}=app.current;delete app.edits[keyOf(app.current)];app.current=defaults(family,variant);app.part=null;syncEditor();toast('Restored the curated identity.')});
+$('arrangeButton').addEventListener('click',()=>{app.arranging=!app.arranging;if(app.arranging)stopMotion();syncEditor();if(app.arranging&&innerWidth<=700){$('editorScroll').scrollTop=0;toast('Tap a part, then drag. Arrow controls are below.')}});
+$('partSelect').addEventListener('change',e=>{app.part=e.target.value;updatePreviews()});
+document.querySelectorAll('[data-nudge]').forEach(b=>b.addEventListener('click',()=>movePart(...b.dataset.nudge.split(',').map(Number))));
+$('resetParts').addEventListener('click',()=>{app.current.offsets={};commitEdit();updatePreviews(true)});
+$('stageTheme').addEventListener('click',()=>{app.stageTheme=app.stageTheme==='dark'?'light':'dark';updatePreviews(true)});
+$('stateStrip').addEventListener('click',e=>{const t=e.target.closest('[data-state]');if(t)setState(t.dataset.state)});
+$('playMotion').addEventListener('click',()=>startMotion('state'));$('cycleMotion').addEventListener('click',()=>startMotion('cycle'));
+$('tempo').addEventListener('input',e=>{app.tempo=Number(e.target.value)/100;$('tempoValue').textContent=app.tempo.toFixed(2)+'×'});
+$('phase').addEventListener('input',e=>{stopMotion();app.phase=Number(e.target.value)/100;$('phaseValue').textContent=e.target.value+'%';updatePreviews()});
+motionPreference.addEventListener('change',()=>{if(motionPreference.matches)stopMotion();updateMotionNotice();if(app.current)updatePreviews()});
+document.addEventListener('visibilitychange',()=>{app.last=performance.now()});
+$('exportSVG').addEventListener('click',()=>{download(new Blob([assetSVG()],{type:'image/svg+xml'}),assetName('svg'));toast('SVG exported.')});$('exportPNG').addEventListener('click',exportPNG);$('exportSheet').addEventListener('click',exportSheet);
+$('exportRecipe').addEventListener('click',()=>{download(new Blob([JSON.stringify(recipe(),null,2)],{type:'application/json'}),assetName('json'));toast('Reproducible identity recipe exported.')});
+$('copyRecipe').addEventListener('click',copyRecipe);$('importRecipe').addEventListener('click',()=>$('recipeFile').click());$('recipeFile').addEventListener('change',e=>importFile(e.target.files[0]));$('exportSession').addEventListener('click',exportSession);
+// Read-only diagnostic surface for reproducibility and viewport verification.
+window.presenceAtlas=Object.freeze({version:VERSION,families:FAMILIES,defaults,svg,makeGeometry,validateConfig,snapshot:()=>JSON.parse(JSON.stringify({theme:app.theme,mode:app.mode,state:app.state,poseMix:app.vector,phase:app.phase,current:app.current,favorites:app.favorites,edits:app.edits,storage:app.storage}))});
+applyTheme();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "format": "min1-presence-identity",
+  "version": 1,
+  "identity": {
+    "family": 3,
+    "variant": 4,
+    "palette": 5,
+    "color": null,
+    "softness": 25,
+    "aspect": 100,
+    "spread": 100,
+    "weight": 100,
+    "rotation": 0,
+    "seed": 1994,
+    "offsets": {}
+  },
+  "pose": "working",
+  "poseMix": [
+    1,
+    0,
+    0
+  ],
+  "phase": 0.37
+}

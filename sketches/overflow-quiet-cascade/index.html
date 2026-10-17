@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>overflow / quiet cascade</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080a09;color:#9b9f98;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}canvas{position:fixed;inset:0;display:block;width:100%;height:100%}header{position:fixed;top:max(24px,env(safe-area-inset-top));left:max(28px,env(safe-area-inset-left));right:max(28px,env(safe-area-inset-right));display:flex;align-items:start;justify-content:space-between;gap:24px;pointer-events:none}h1{font-size:11px;font-weight:400;letter-spacing:1.2px;margin:0;text-transform:lowercase}a{color:#8b9088;text-decoration:none;pointer-events:auto;padding:6px;margin:-6px}a:hover{color:#e1e4dd}button{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));min-height:44px;min-width:64px;padding:10px;background:#080a09;color:#a8afa2;border:0;font:inherit;cursor:pointer}button:hover{color:#f0f1ec}a:focus-visible,button:focus-visible{outline:1px solid #abb69f;outline-offset:4px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:620px){header{top:max(20px,env(safe-area-inset-top));left:20px;right:20px}h1{max-width:19ch}button{right:12px;bottom:max(12px,env(safe-area-inset-bottom))}}
+</style>
+</head>
+<body>
+<canvas id="field" role="img" aria-label="An autonomous field of pressure: faint accumulation, traveling luminous cascades, and slowly fading traces. No interaction is required."></canvas>
+<header><h1>overflow / quiet cascade</h1><a href="../index.html" aria-label="Back to all studies">← studies</a></header>
+<button id="pause" type="button" aria-pressed="false" aria-label="Pause animation">pause</button>
+<p id="motion-status" class="sr-only" role="status" aria-live="polite"></p>
+<script>
+'use strict';
+class QuietCascade {
+ constructor(cols=96,rows=60,sourceCount=3){this.cols=cols;this.rows=rows;this.count=cols*rows;this.sourceCount=sourceCount;this.tick=0;this.active=0;this.spills=0;this.pressure=new Float64Array(this.count);this.glow=new Float64Array(this.count);this.afterglow=new Float64Array(this.count);this.delta=new Float64Array(this.count);this.cooldown=new Uint16Array(this.count);this.force=new Float64Array(this.count);this.sources=[];for(let i=0;i<sourceCount;i++)this.sources.push({x:0,y:0,phase:i*1.4});for(let i=0;i<this.count;i++)this.pressure[i]=.45+(((Math.imul(i+31,1597334677)>>>0)%1000)/1000)*.025;this.updateForcing();}
+ updateForcing(){const t=this.tick/24;for(let j=0;j<this.sourceCount;j++){const s=this.sources[j],angle=j*2.399;s.x=.5+.29*Math.cos(angle+t*.012);s.y=.5+.28*Math.sin(angle+t*.014+.7);s.gain=((t+s.phase)%34)<12?1:0;}for(let y=0;y<this.rows;y++)for(let x=0;x<this.cols;x++){let feed=0;for(const s of this.sources){const d=((x+.5)/this.cols-s.x)**2+((y+.5)/this.rows-s.y)**2;feed+=s.gain*(.0027+.004*Math.exp(-d/.065));}this.force[y*this.cols+x]=feed/this.sourceCount;}}
+ resize(cols,rows,sourceCount){const oldCols=this.cols,oldRows=this.rows;for(const key of ['pressure','glow','afterglow','cooldown']){const previous=this[key],next=key==='cooldown'?new Uint16Array(cols*rows):new Float64Array(cols*rows);for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)next[y*cols+x]=previous[Math.min(oldRows-1,Math.floor((y+.5)/rows*oldRows))*oldCols+Math.min(oldCols-1,Math.floor((x+.5)/cols*oldCols))];this[key]=next;}this.cols=cols;this.rows=rows;this.count=cols*rows;this.sourceCount=sourceCount;this.sources=Array.from({length:sourceCount},(_,i)=>({x:0,y:0,phase:i*1.4}));this.delta=new Float64Array(this.count);this.force=new Float64Array(this.count);this.updateForcing();}
+ snapshot(){return Object.freeze({ticks:this.tick,seconds:this.tick/24,cols:this.cols,rows:this.rows,sources:this.sourceCount,active:this.active,totalSpills:this.spills,pressureMin:Math.min(...this.pressure),pressureMax:Math.max(...this.pressure),afterglowMax:Math.max(...this.afterglow)});}
+ step(){if(this.tick%12===0)this.updateForcing();this.delta.fill(0);let active=0;for(let i=0;i<this.count;i++){this.glow[i]*=.94;this.afterglow[i]*=.994;if(this.cooldown[i]>0){this.cooldown[i]--;this.pressure[i]*=.90;}else this.pressure[i]+=this.force[i];if(this.pressure[i]>=1&&this.cooldown[i]===0){const outgoing=this.pressure[i]*.84;this.delta[i]-=this.pressure[i]-.06;this.cooldown[i]=360;this.glow[i]=1;this.afterglow[i]=1;active++;const x=i%this.cols,y=Math.floor(i/this.cols),share=outgoing/4;if(x>0)this.delta[i-1]+=share;if(x<this.cols-1)this.delta[i+1]+=share;if(y>0)this.delta[i-this.cols]+=share;if(y<this.rows-1)this.delta[i+this.cols]+=share;}}for(let i=0;i<this.count;i++)this.pressure[i]+=this.delta[i];this.active=active;this.spills+=active;this.tick++;}
+}
+const canvas=document.getElementById('field'),ctx=canvas.getContext('2d');
+const pauseButton=document.getElementById('pause'),motionStatus=document.getElementById('motion-status');
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+let paused=reducedMotion.matches,frameId=0,lastTime=null,accumulator=0,width=0,height=0;
+function dimensions(){const mobile=window.innerWidth<=620;return {cols:Math.max(mobile?28:64,Math.min(mobile?44:112,Math.round(window.innerWidth/(mobile?12:14)))),rows:Math.max(mobile?48:40,Math.min(mobile?84:80,Math.round(window.innerHeight/(mobile?12:14)))),sources:mobile?2:3};}
+const initial=dimensions(),model=new QuietCascade(initial.cols,initial.rows,initial.sources);
+window.quietCascade=model;
+function draw(){ctx.fillStyle='#080a09';ctx.fillRect(0,0,width,height);const cw=width/model.cols,ch=height/model.rows;for(let i=0;i<model.count;i++){const pressure=Math.max(0,Math.min(1,model.pressure[i])),flash=model.glow[i],memory=model.afterglow[i];const salt=((Math.imul(i+31,1597334677)>>>0)%1000)/1000;const warm=Math.max(0,(pressure-.3)/.7);const sparse=salt>.72;const level=warm*warm*(sparse?52:18)+memory*(sparse?46:21)+flash*174;if(level<2&&!sparse)continue;const x=(i%model.cols+.5)*cw,y=(Math.floor(i/model.cols)+.5)*ch;const size=flash>.1?Math.max(2,Math.min(cw,ch)*.36):sparse?2:1;ctx.fillStyle=`rgb(${Math.min(238,Math.round(13+level))},${Math.min(243,Math.round(16+level*1.015))},${Math.min(221,Math.round(13+level*.90))})`;ctx.fillRect(Math.round(x-size/2),Math.round(y-size/2),Math.ceil(size),Math.ceil(size));if(flash>.35&&salt>.3){ctx.globalAlpha=flash*.38;ctx.fillRect(Math.round(x-cw*.33),Math.round(y),Math.ceil(cw*.66),1);ctx.fillRect(Math.round(x),Math.round(y-ch*.33),1,Math.ceil(ch*.66));ctx.globalAlpha=1;}}}
+function resize(){width=window.innerWidth;height=window.innerHeight;const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);const next=dimensions();if(next.cols!==model.cols||next.rows!==model.rows||next.sources!==model.sourceCount)model.resize(next.cols,next.rows,next.sources);draw();}
+function frame(time){frameId=0;if(paused||document.hidden){lastTime=null;return;}if(lastTime!==null)accumulator+=Math.min(100,time-lastTime);lastTime=time;while(accumulator>=1000/24){model.step();accumulator-=1000/24;}draw();frameId=requestAnimationFrame(frame);}
+function schedule(){lastTime=null;accumulator=0;if(frameId)cancelAnimationFrame(frameId);frameId=0;if(!paused&&!document.hidden)frameId=requestAnimationFrame(frame);}
+function updatePause(){pauseButton.textContent=paused?'resume':'pause';pauseButton.setAttribute('aria-pressed',String(paused));pauseButton.setAttribute('aria-label',paused?'Resume animation':'Pause animation');motionStatus.textContent=paused?'Animation paused. Activate resume to watch.':'Animation running.';schedule();}
+pauseButton.addEventListener('click',()=>{paused=!paused;updatePause();});
+reducedMotion.addEventListener('change',event=>{if(event.matches){paused=true;updatePause();}});
+document.addEventListener('visibilitychange',schedule);
+window.addEventListener('resize',resize);
+resize();updatePause();
+</script>
+</body>
+</html>

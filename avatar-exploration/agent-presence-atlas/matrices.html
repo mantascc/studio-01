@@ -1,0 +1,401 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matrix Characters</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one lit panel (the stage) above a cast row and an 8 × 8 contact sheet; quiet atlas chrome around it. */
+:root{
+  --bg:#f4f2eb;--card:#faf9f5;--panel:#fcfbf8;--fg:#282b27;--muted:#6e7268;--line:#d7d9cf;--wash:#ece8de;--accent:#b54b32;--dot:rgba(40,43,39,.10);
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151815;--card:#1b1e1a;--panel:#0f110f;--fg:#e5e8db;--muted:#9da794;--line:#343b32;--wash:#252b23;--accent:#f39d7e;--dot:rgba(229,232,219,.09);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151815;--card:#1b1e1a;--panel:#0f110f;--fg:#e5e8db;--muted:#9da794;--line:#343b32;--wash:#252b23;--accent:#f39d7e;--dot:rgba(229,232,219,.09);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--sans)}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media(min-width:760px){.wrap{padding-left:max(40px,env(safe-area-inset-left,0px));padding-right:max(40px,env(safe-area-inset-right,0px))}}
+.eyebrow,.mono,.small,label.l{font:11px/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(36px,5.2vw,70px);letter-spacing:-.06em;font-weight:500;line-height:1.02;margin:14px 0 0;text-wrap:balance}
+h2{font-size:clamp(24px,2.6vw,34px);letter-spacing:-.04em;font-weight:500;line-height:1.1;margin:6px 0 0;text-wrap:balance}
+h3{font-size:17px;font-weight:600;letter-spacing:-.02em;margin:0}
+p{margin:0}
+button{font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:4px;padding:8px 12px;min-height:40px;cursor:pointer}
+button:hover{background:var(--wash)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.top{padding-block:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.hero{padding-block:48px 36px;display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:end}
+.intro{color:var(--muted);font-size:16px;max-width:460px}
+.intro b{color:var(--fg);font-weight:500}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-block:1px solid var(--line)}
+.bar .wrap{display:flex;gap:8px;align-items:center;padding-block:10px;overflow-x:auto;scrollbar-width:none}
+.bar .wrap::-webkit-scrollbar{display:none}
+.bar button{white-space:nowrap;flex:none}
+.bar .sep{flex:none;width:1px;height:28px;background:var(--line);margin-inline:6px}
+.chip{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;padding:6px 12px}
+.chip small{font:10px/1.3 var(--mono);letter-spacing:.06em;opacity:.65;text-transform:uppercase}
+/* stage */
+.stage{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;padding-block:40px}
+.screen{background:var(--panel);border:1px solid var(--line);border-radius:6px;position:relative;aspect-ratio:1;max-width:100%}
+.screen canvas{position:absolute;inset:0;width:100%;height:100%}
+.cap{position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;gap:12px;font:11px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cap b{color:var(--fg);font-weight:500}
+.side{display:flex;flex-direction:column;gap:22px;min-width:0}
+.side p.note{font-size:16px;color:var(--muted);max-width:52ch}
+.how{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px;margin:0}
+.how dt{font:11px/1.8 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.how dd{margin:0}
+.how dd.on{color:var(--fg);font-weight:600}
+.picker{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.picker button{padding:4px;aspect-ratio:1;min-height:0;display:grid;place-items:center;background:var(--panel)}
+.picker button[aria-pressed="true"]{background:var(--panel);border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+.picker canvas{width:100%;height:100%}
+.ctls{display:grid;gap:12px}
+.ctl{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.ctl label.l{width:96px;flex:none}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.actual{display:flex;gap:20px;align-items:flex-end;padding-top:6px;border-top:1px solid var(--line)}
+.actual div{display:grid;justify-items:center;gap:6px;padding-top:16px}
+/* sections */
+section.block{padding-block:44px;border-top:1px solid var(--line)}
+.head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:26px}
+.head p{color:var(--muted);max-width:52ch}
+.cast{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:12px;cursor:pointer;text-align:left;min-height:0}
+.card:hover{border-color:var(--muted)}
+.card .art{background:var(--panel);border-radius:3px;aspect-ratio:1;position:relative}
+.card .art canvas{position:absolute;inset:0;width:100%;height:100%}
+.card .meta{font:11px/1.5 var(--mono);color:var(--muted)}
+.card p{font-size:13px;color:var(--muted)}
+.sheet{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+table{border-collapse:collapse;min-width:720px;width:100%}
+th,td{padding:8px;text-align:center;border-bottom:1px solid var(--line)}
+th{font:10px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:400}
+th[scope=row]{text-align:left;color:var(--fg);white-space:nowrap}
+td canvas{width:64px;height:64px;display:block;margin:auto;background:var(--panel);border-radius:3px}
+tr:last-child td,tr:last-child th{border-bottom:0}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:28px;border-top:1px solid var(--line)}
+@media(max-width:860px){.hero,.stage,.head{grid-template-columns:1fr;gap:24px}.cast{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding-block:32px 24px}}
+@media(max-width:420px){.picker{grid-template-columns:repeat(4,minmax(0,1fr))}.ctl label.l{width:auto;flex-basis:100%}}
+</style>
+<header class="wrap">
+  <div class="top"><span class="eyebrow">Form / presence · Exploration 03</span><span class="eyebrow">Matrices · October 17, 2026</span></div>
+  <div class="hero">
+    <div><div class="eyebrow">Identity through occupancy, with a temperament</div><h1>Eight characters that live on a grid.</h1></div>
+    <p class="intro">Nothing here moves. Cells only switch on and off, and motion happens in between. Each character has its own <b>body grammar</b>, so one feeling looks different in every body. Point or tap anywhere: they look at you.</p>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Expression"><div class="wrap" id="bar"></div></nav>
+
+<main>
+  <section class="stage wrap" aria-label="Stage">
+    <div class="screen" id="screen"><canvas id="stageCv" aria-label="Animated character"></canvas><div class="cap"><span id="capState"></span><span id="capLine"></span></div></div>
+    <div class="side">
+      <div><div class="eyebrow" id="stGrid"></div><h2 id="stName"></h2></div>
+      <p class="note" id="stNote"></p>
+      <dl class="how" id="stHow"></dl>
+      <div class="picker" id="picker" role="group" aria-label="Choose character"></div>
+      <div class="ctls">
+        <div class="ctl"><label class="l">Cell</label><div class="seg" id="cellSeg"></div></div>
+        <div class="ctl"><label class="l">Empty cells</label><div class="seg"><button id="gridBtn" aria-pressed="true">Shown</button></div></div>
+        <div class="ctl"><label class="l">Step rate</label><div class="seg" id="fpsSeg"></div></div>
+      </div>
+      <div class="actual" id="actual"></div>
+    </div>
+  </section>
+
+  <section class="block wrap">
+    <div class="head"><div><div class="eyebrow">Same feeling, eight bodies</div><h2>The cast</h2></div><p>All eight perform the expression chosen above. Select one to put it on the stage.</p></div>
+    <div class="cast" id="cast"></div>
+  </section>
+
+  <section class="block wrap">
+    <div class="head"><div><div class="eyebrow">Characters × expressions</div><h2>The matrix of matrices</h2></div><p>Every character in every state, at 64 px. Read down a column to compare one feeling across bodies; read across a row to judge a character's range.</p></div>
+    <div class="sheet"><table id="sheet"></table></div>
+  </section>
+</main>
+<footer><div class="wrap"><span class="small">8 characters · 8 expressions · cells switch, nothing tweens</span><span class="small">min1 issue #5</span></div></footer>
+
+<script>
+'use strict';
+/*CHARS*/
+const H=(a,b,c=0)=>{let h=Math.imul(a|0,374761393)^Math.imul(b|0,668265263)^Math.imul(c|0,1274126177);h=Math.imul(h^(h>>>13),1103515245);h^=h>>>16;return (h>>>0)/4294967296};
+const G=(w,h)=>({w,h,c:new Uint8Array(w*h)});
+function S(g,x,y,v=1){x=Math.round(x);y=Math.round(y);if(x>=0&&y>=0&&x<g.w&&y<g.h)g.c[y*g.w+x]=v}
+function at(g,x,y){return x>=0&&y>=0&&x<g.w&&y<g.h?g.c[y*g.w+x]:0}
+function box(g,x,y,w,h,v=1){for(let j=0;j<h;j++)for(let i=0;i<w;i++)S(g,x+i,y+j,v)}
+function disc(g,cx,cy,r,v=1){for(let y=0;y<g.h;y++)for(let x=0;x<g.w;x++){const dx=x+.5-cx,dy=y+.5-cy;if(dx*dx+dy*dy<=r*r)S(g,x,y,v)}}
+const CH={'.':-1,'#':1,'o':2,'*':3,'+':4};
+function stamp(g,rows,ox,oy){rows.forEach((r,j)=>[...r].forEach((c,i)=>{const v=CH[c];if(v>=0)S(g,ox+i,oy+j,v)}))}
+const EYE={open:['oo','oo'],shut:['..','oo'],joy:['oo','..'],xa:['o.','.o'],xb:['.o','o.']};
+const MOUTH={line:['.oo.'],o:['.oo.','.oo.'],open:['oooo','.oo.'],smile:['o..o','.oo.'],frown:['.oo.','o..o'],wry:['..oo','oo..']};
+const on=(t,f,th=0)=>Math.sin(t*f)>th;
+function eyeState(P){const e=P.expr;let L='open',R='open',m=null,gx=P.gx,gy=P.gy;
+  if(e==='think'){gx=(P.t%2.4<1.2)?-1:1;gy=-1;m='line'}
+  if(e==='speak')m=['line','o','open','o','line',null][Math.floor(P.t*8)%6];
+  if(e==='joy'){L=R='joy';m='smile';gx=gy=0}
+  if(e==='doubt'){R='shut';m='wry';gx=1;gy=0}
+  if(e==='sleep'){L=R='shut';gx=gy=0}
+  if(e==='error'){L=R=Math.floor(P.t*6)%2?'xa':'xb';m='frown';gx=gy=0}
+  if(P.blink&&['idle','listen','think','speak'].includes(e))L=R='shut';
+  return{L,R,m,gx,gy}}
+function face(g,P,x,y,sep,o={}){const s=eyeState(P),gy=o.noGy?0:s.gy;
+  stamp(g,EYE[s.L],x+s.gx,y+gy);stamp(g,EYE[s.R],x+sep+s.gx,y+gy);
+  if(o.mouth!==false&&s.m)stamp(g,MOUTH[s.m],x+Math.floor((sep+2)/2)-2+s.gx,y+(o.my??3)+gy)}
+function shear(g,k){const o=G(g.w,g.h);for(let y=0;y<g.h;y++){const s=Math.round(k*(g.h-1-y)/(g.h-1));for(let x=0;x<g.w;x++){const v=at(g,x,y);if(v)S(o,x+s,y,v)}}return o}
+function glitch(g,t,amt=.45){const f=Math.floor(t*10),o=G(g.w,g.h);for(let y=0;y<g.h;y++){const s=H(f,y,7)<amt?(H(f,y,9)<.5?-1:1)*(1+(H(f,y,3)*2|0)):0;for(let x=0;x<g.w;x++){const v=at(g,x,y);if(v)S(o,x+s,y,v)}}return o}
+function zs(g,t,x,y){for(let k=0;k<2;k++){const p=(t*.45+k*.5)%1,s=Math.floor(p*4);if(!at(g,x+s,y-s))S(g,x+s,y-s,3)}}
+function sparks(g,t,n=3){const f=Math.floor(t*6);for(let k=0;k<n;k++){const x=H(f,k,1)*g.w|0,y=H(f,k,2)*g.h|0;if(!at(g,x,y))S(g,x,y,3)}}
+function dots(g,t,x,y){const n=Math.floor(t*3)%4;for(let k=0;k<n;k++)if(!at(g,x+k,y-k))S(g,x+k,y-k,3)}
+
+const LOOP=(()=>{const p=[];for(let x=2;x<=9;x++)p.push([x,2]);for(let y=3;y<=9;y++)p.push([9,y]);for(let x=8;x>=2;x--)p.push([x,9]);for(let y=8;y>=3;y--)p.push([2,y]);return p})();
+const SPIRAL=[[5,6],[6,6],[6,7],[5,7],[4,7],[4,6],[4,5],[5,5],[6,5],[7,5],[7,6],[7,7],[7,8],[6,8],[5,8],[4,8],[3,8],[3,7]];
+
+const CHARS=[
+{id:'pip',name:'Pip',grid:'12 × 12',hue:'#e2603a',note:'The soft baseline. A round body that only breathes and hops; nearly all feeling lives in a negative-space face.',
+ how:{idle:'stepped breath, wandering gaze',listen:'leans toward you',think:'eyes dart up, thought dots rise',speak:'mouth cycles, small bob',joy:'hops, sparks',doubt:'one lid drops, leans back',sleep:'sinks, Z cells drift',error:'rows tear sideways'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t;let r=4.9,cx=6,cy=6.6,dx=0,dy=0;
+  if(e==='idle')r=on(t,1.8)?5.05:4.75;
+  if(e==='listen'){dx=P.gx;dy=P.gy*.5;r=5.05}
+  if(e==='speak')dy=on(t,10,.4)?-.6:0;
+  if(e==='joy'){dy=on(t,8,.1)?-1:0;r=5}
+  if(e==='sleep'){r=on(t,1.2)?4.6:4.3;cy=7.4}
+  disc(g,cx+dx,cy+dy,r);
+  face(g,P,Math.round(cx+dx)-3,Math.round(cy+dy)-3,4);
+  let o=g;
+  if(e==='think')dots(g,t,9,2);
+  if(e==='sleep')zs(g,t,9,3);
+  if(e==='joy')sparks(g,t,3);
+  if(e==='doubt')o=shear(g,on(t,1.4,-.5)?1:0);
+  if(e==='error')o=glitch(g,t);
+  return o}},
+{id:'slab',name:'Slab',grid:'12 × 12',hue:'#3d78d6',note:'A monolith with one visor. Every feeling has to pass through a single slit: it scans, widens, splits or goes dark.',
+ how:{idle:'top edge breathes, visor drifts',listen:'visor opens wide, tracks you',think:'visor scans top to bottom',speak:'visor flutters, grille pulses',joy:'visor splits into a face, bounces',doubt:'visor breaks into a tilted pair',sleep:'goes ghost, a level line rises',error:'visor shatters, body tears'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t;let top=1,oy=0;
+  if(e==='idle')top=on(t,1.6)?1:2;
+  if(e==='joy')oy=on(t,8)?-1:0;
+  const v=e==='sleep'?4:1;
+  box(g,2,top+oy,8,12-top,v);S(g,2,top+oy,0);S(g,9,top+oy,0);
+  let vx=4,vy=3,vw=4,vh=1;
+  if(e==='idle'){vy=top+2;vx=4+P.gx;if(P.blink)vw=0}
+  if(e==='listen'){vx=4+P.gx;vy=3+P.gy;vh=2;if(P.blink)vh=1}
+  if(e==='think'){const p=(t*1.4)%2;vy=2+Math.round((p<1?p:2-p)*8);vx=3;vw=6}
+  if(e==='speak'){vh=on(t,14)?2:1;const f=Math.floor(t*10);for(let i=0;i<6;i++)if((i+f)%2)S(g,3+i,8,2)}
+  if(e==='joy'){vw=0;stamp(g,['o..o','....','o..o','.oo.'],4,3+oy)}
+  if(e==='doubt'){vw=0;const k=on(t,1.6,-.4)?1:0;box(g,3,3+k,3,1,2);box(g,6,4-k,3,1,2)}
+  if(e==='sleep'){vw=0;const ly=11-Math.floor((t*.7)%1*10);box(g,2,ly,8,1,1)}
+  if(e==='error'){vw=0;const f=Math.floor(t*8);for(let k=0;k<5;k++)S(g,3+(H(f,k)*6|0),2+(H(f,k,5)*8|0),2)}
+  if(vw)box(g,vx,vy,vw,vh,2);
+  if(e==='joy')sparks(g,t,2);
+  if(e==='sleep')zs(g,t,10,3);
+  return e==='error'?glitch(g,t,.6):g}},
+{id:'quad',name:'Quad',grid:'12 × 12',hue:'#cf9512',note:'Four blocks pretending to be one. Listening pulls it together; thinking reshuffles the body so the face travels around itself.',
+ how:{idle:'gaps breathe',listen:'compacts, shifts toward you',think:'blocks rotate, face orbits',speak:'lower blocks work as a jaw',joy:'pulses apart and snaps back',doubt:'one block raises like a brow',sleep:'closes up, lids down',error:'a block drops out'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t;let gap=1,dx=0,dy=0,jaw=0,k=0;
+  if(e==='idle')gap=on(t,1.6)?1:2;
+  if(e==='listen'){gap=1;dx=P.gx;dy=P.gy}
+  if(e==='think'){k=Math.floor(t*2.5)%4;gap=1}
+  if(e==='speak')jaw=[0,1,2,1][Math.floor(t*8)%4];
+  if(e==='joy')gap=on(t,10)?0:2;
+  if(e==='sleep')gap=0;
+  const x0=Math.floor((12-(10+gap))/2),far=x0+5+gap;
+  const SL=[[x0,x0],[far,x0],[far,far],[x0,far]];
+  const s=eyeState(P),f=Math.floor(t*6);
+  for(let i=0;i<4;i++){const slot=(i+k)%4;let[x,y]=SL[slot];x+=dx;y+=dy;
+    if(slot>=2)y+=jaw;
+    if(e==='doubt'&&slot===1&&on(t,1.6,-.4))y-=1;
+    if(e==='error'&&i===2)y+=f%8;
+    box(g,x,y,5,5,1);
+    if(i<2){const kind=i===0?s.L:s.R;stamp(g,EYE[kind],x+1+s.gx+(i===0?1:0)-(i===1?0:0),y+1+s.gy+1)}}
+  if(e==='sleep')zs(g,t,9,1);
+  return e==='error'?glitch(g,t,.3):g}},
+{id:'worm',name:'Worm',grid:'12 × 12',hue:'#2f9a6c',note:'Pure trajectory. The body is a path through the grid, so expression is route: loop, wiggle, coil, reverse.',
+ how:{idle:'slow loop',listen:'stops and turns its head to you',think:'races a longer loop',speak:'creeps, head light blinks',joy:'wiggles across a wave',doubt:'goes forward, then back',sleep:'coils into a spiral',error:'breaks into segments'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t,N=LOOP.length;let pts=[],dir=1;
+  if(e==='joy'){const ph=Math.floor(t*8);for(let x=1;x<=9;x++)pts.unshift([x,6+Math.round(2*Math.sin(x*.9-ph*.7))])}
+  else if(e==='sleep'){pts=SPIRAL.slice().reverse()}
+  else{let head,len=9;
+    if(e==='idle')head=Math.floor(t*5);
+    if(e==='think'){head=Math.floor(t*14);len=15}
+    if(e==='speak')head=Math.floor(t*3);
+    if(e==='error')head=Math.floor(t*4);
+    if(e==='doubt'){const p=(t*4)%16;head=Math.floor(p<8?p:16-p);dir=p<8?1:-1}
+    if(e==='listen'){const tx=6+P.gx*5,ty=6+P.gy*5;let best=0,bd=1e9;LOOP.forEach(([x,y],i)=>{const d=(x-tx)**2+(y-ty)**2;if(d<bd){bd=d;best=i}});head=best}
+    for(let k=len-1;k>=0;k--)pts.push(LOOP[(((head-k*dir)%N)+N*4)%N])}
+  const v=e==='sleep'?4:1,f=Math.floor(t*8);
+  pts.forEach(([x,y],i)=>{let ox=0,oy=0;if(e==='error'&&Math.floor(i/3)%2){ox=H(f,i,1)<.5?-1:1;oy=H(f,i,2)<.5?-1:0}S(g,x+ox,y+oy,v)});
+  const[hx,hy]=pts[pts.length-1];const bx=Math.min(10,Math.max(0,hx)),by=Math.min(10,Math.max(0,hy));
+  box(g,bx,by,2,2,v===4?4:1);
+  const s=eyeState(P);
+  if(e==='speak'){if(on(t,12))S(g,bx+1,by,3)}
+  else if(e==='joy')S(g,bx+1,by,3);
+  else if(e!=='sleep'&&!(P.blink&&e==='idle'))S(g,bx+(s.gx>0?1:0),by+(s.gy>0?1:0),2);
+  if(e==='think')dots(g,t,9,1);
+  if(e==='sleep')zs(g,t,8,3);
+  return g}},
+{id:'murmur',name:'Murmur',grid:'12 × 12',hue:'#8d62d0',note:'A cloud with a face. It has no outline, only density. Mood is how full it is and how fast its edge churns.',
+ how:{idle:'slow shimmer at the edge',listen:'gathers toward you',think:'fast churn, interior thins',speak:'rings pulse out from the center',joy:'swells, sparks',doubt:'drifts sideways',sleep:'sparse and dim',error:'collapses into static'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t;let cx=6,cy=6.2,R=4.6,rate=4,edge=1.4,fill=.94;
+  if(e==='think'){rate=12;edge=2.4;fill=.72;R=4.4}
+  if(e==='listen'){cx+=P.gx*1.4;cy+=P.gy*1.2;rate=3;edge=.8;fill=1}
+  if(e==='speak'){R=on(t,9)?4.9:4.4;rate=6}
+  if(e==='joy'){R=5.3;rate=8;edge=1.8}
+  if(e==='doubt'){cx+=Math.round(Math.sin(t*1.3)*1.5);edge=1.8}
+  if(e==='sleep'){R=3.8;rate=1.5;fill=.5;cy=7}
+  const f=Math.floor(t*rate);
+  for(let y=0;y<12;y++)for(let x=0;x<12;x++){const d=Math.hypot(x+.5-cx,y+.5-cy),n=H(x,y,f*7+3);
+    if(e==='error'){if(H(x,y,Math.floor(t*14))>.5)S(g,x,y,1);continue}
+    if(d<R+(n-.5)*edge)S(g,x,y,H(x,y,f*13+1)<fill?1:4)}
+  if(e==='speak'){const rr=(t*7)%6;for(let y=0;y<12;y++)for(let x=0;x<12;x++)if(at(g,x,y)===1&&Math.abs(Math.hypot(x+.5-cx,y+.5-cy)-rr)<.5)S(g,x,y,3)}
+  face(g,P,Math.round(cx)-3,Math.round(cy)-3,4,{mouth:['speak','joy','error','doubt'].includes(e)});
+  if(e==='joy')sparks(g,t,4);
+  return g}},
+{id:'stack',name:'Stack',grid:'12 × 12',hue:'#d24877',note:'A head on a spine of bars. Speech is literal amplitude; thought slides the bars like an abacus.',
+ how:{idle:'bars ripple in a slow wave',listen:'whole spine leans to you',think:'bars slide left and right',speak:'bars jump like levels',joy:'bars bounce in a fast wave',doubt:'spine zigzags',sleep:'bars shrink and dim',error:'bars scatter or vanish'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t,f=Math.floor(t*9);let W=[6,8,6,4],sh=[0,0,0,0],hs=0,hy=1,v=1,miss=[0,0,0,0];
+  if(e==='idle')W=W.map((b,i)=>b+(Math.sin(t*2.2-i*.9)>0?2:0));
+  if(e==='speak'){W=W.map((b,i)=>2+2*(H(f,i,4)*5|0));hy=f%3===0?2:1}
+  if(e==='think')sh=sh.map((_,i)=>Math.round(2*Math.sin(t*3+i*1.3)));
+  if(e==='listen'){sh=sh.map((_,i)=>Math.round(P.gx*(3-i)*.7));hs=P.gx*2}
+  if(e==='joy')W=W.map((b,i)=>Math.sin(t*10-i)>0?10:4);
+  if(e==='doubt'){const k=on(t,1.5)?1:-1;sh=[k,-k,k,-k];hs=k>0?1:0}
+  if(e==='sleep'){W=[2,4,2,2];v=4;hy=2}
+  if(e==='error'){sh=sh.map((_,i)=>Math.round((H(f,i,2)-.5)*6));miss=miss.map((_,i)=>H(f,i,8)>.72)}
+  box(g,2+hs,hy,8,3,1);S(g,2+hs,hy,0);S(g,9+hs,hy,0);
+  W.forEach((w,i)=>{if(!miss[i])box(g,Math.round(6-w/2+sh[i]),5+i*2,w,1,v)});
+  face(g,P,3+hs,hy,4,{mouth:false,noGy:true});
+  if(e==='joy')for(let i=0;i<4;i++)S(g,Math.round(6+W[i]/2),5+i*2,3);
+  if(e==='think')dots(g,t,10,2);
+  if(e==='sleep')zs(g,t,10,3);
+  return g}},
+{id:'hinge',name:'Hinge',grid:'12 × 12',hue:'#1e93a8',note:'A head on a neck on a base. Posture carries attention: reaching out, looking away, resting its head down.',
+ how:{idle:'slow nod',listen:'neck reaches toward you',think:'head turns away and up',speak:'head bobs on each word',joy:'whole body jumps',doubt:'head cocks to one side',sleep:'head rests on the base',error:'head comes off and falls'},
+ body(P){const g=G(12,12),e=P.expr,t=P.t;let hx=2,hy=1,oy=0;
+  if(e==='idle')hy=on(t,1.5)?1:2;
+  if(e==='listen')hx=2+P.gx*2;
+  if(e==='think'){hx=0;hy=0}
+  if(e==='speak')hy=Math.floor(t*8)%2?1:2;
+  if(e==='joy')oy=on(t,8)?-1:0;
+  if(e==='doubt'){hx=4;hy=2}
+  if(e==='sleep')hy=5;
+  if(e==='error')hy=1+Math.floor((t*5)%6);
+  box(g,1,10+oy,10,2,1);
+  const f=Math.floor(t*10);
+  if(e!=='sleep')for(let y=hy+5;y<=9;y++){if(e==='error'&&H(f,y)<.5)continue;const p=(y-(hy+5))/Math.max(1,9-(hy+5));box(g,Math.round(hx+2.5+(5-(hx+2.5))*p),y+oy,2,1,1)}
+  box(g,hx,hy+oy,7,5,1);S(g,hx,hy+oy,0);S(g,hx+6,hy+oy,0);
+  face(g,P,hx+1,hy+oy+1,3,{my:2,noGy:true});
+  if(e==='think')dots(g,t,8,3);
+  if(e==='joy')sparks(g,t,2);
+  if(e==='sleep')zs(g,t,9,3);
+  return e==='doubt'?shear(g,on(t,1.4,-.5)?1:0):g}},
+{id:'glyph',name:'Glyph',grid:'5 × 5',hue:'ink',note:'The minimum. Twenty-five cells and one ink. Each state is a tiny frame vocabulary, closer to a font than a creature.',
+ how:{idle:'legs step, eyes wander',listen:'eyes follow you',think:'a dot orbits a closed core',speak:'mouth opens and closes',joy:'hops with a grin',doubt:'one eye, lean',sleep:'flattens, Z blinks',error:'flashes an X'},
+ body(P){const g=G(5,5),e=P.expr,t=P.t,b=Math.floor(t*2)%2,f=Math.floor(t*6);
+  const base=(legs)=>['.###.','#####','#####','#####',legs?'#.#.#':'.#.#.'];
+  if(e==='idle'||e==='listen'){stamp(g,base(e==='idle'?b:1),0,0);if(!P.blink){const gx=P.gx,gy=e==='listen'?Math.min(0,P.gy):0;S(g,1+gx,1+gy,2);S(g,3+gx,1+gy,2)}}
+  if(e==='think'){stamp(g,['.....','.###.','.#o#.','.###.','.....'],0,0);const per=[[0,0],[1,0],[2,0],[3,0],[4,0],[4,1],[4,2],[4,3],[4,4],[3,4],[2,4],[1,4],[0,4],[0,3],[0,2],[0,1]];const[x,y]=per[Math.floor(t*10)%16];S(g,x,y,3)}
+  if(e==='speak')stamp(g,b?['.###.','#o#o#','#####','#ooo#','.###.']:['.###.','#o#o#','#####','##o##','.###.'],0,0);
+  if(e==='joy')stamp(g,Math.floor(t*4)%2?['.###.','#o#o#','o###o','.###.','.....']:['.....','.###.','#o#o#','o###o','.###.'],0,0);
+  if(e==='doubt')stamp(g,on(t,1.6,-.3)?['..##.','.#o##','#####','#####','#.#..']:['.###.','#o###','#####','#####','#.#.#'],0,0);
+  if(e==='sleep')stamp(g,b?['....*','.###.','#####','#####','.....']:['...*.','.....','#####','#####','.....'],0,0);
+  if(e==='error')stamp(g,f%2?['#...#','.#.#.','..#..','.#.#.','#...#']:['.###.','#.#.#','##.##','#.#.#','.###.'],0,0);
+  return g}}
+];
+const EXPR=[['idle','Idle','Waiting'],['listen','Listen','You are typing'],['think','Think','Working'],['speak','Speak','Answering'],['joy','Joy','Done'],['doubt','Doubt','Needs input'],['sleep','Sleep','Paused'],['error','Error','Failed']];
+/*END*/
+
+const SCRIPT=[['listen',2.6,'You type a request'],['think',3.4,'Planning the query'],['speak',3,'Streaming the answer'],['doubt',2,'Asks which column you meant'],['listen',1.8,'You clarify'],['think',2.2,'Re-running'],['joy',1.8,'Done'],['idle',2.6,'Waiting for you']];
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+const st={char:0,expr:'idle',script:true,scriptT0:0,cell:'square',grid:true,fps:12,paused:reduce.matches};
+try{const s=JSON.parse(localStorage.getItem('matrix-characters')||'{}');['char','cell','grid','fps'].forEach(k=>{if(s[k]!==undefined)st[k]=s[k]})}catch{}
+function save(){try{localStorage.setItem('matrix-characters',JSON.stringify({char:st.char,cell:st.cell,grid:st.grid,fps:st.fps}))}catch{}}
+if(!(st.char>=0&&st.char<CHARS.length))st.char=0;
+
+// pointer gaze
+const ptr={x:0,y:0,last:-1e9};
+addEventListener('pointermove',e=>{ptr.x=e.clientX;ptr.y=e.clientY;ptr.last=performance.now()},{passive:true});
+addEventListener('pointerdown',e=>{ptr.x=e.clientX;ptr.y=e.clientY;ptr.last=performance.now()},{passive:true});
+
+const inst=[];
+function mk(cv,charIdx,opt={}){const o={cv,charIdx,fixedExpr:opt.expr||null,pad:opt.pad??.08,big:!!opt.big,vis:true};inst.push(o);return o}
+const io=new IntersectionObserver(es=>es.forEach(en=>{const o=inst.find(i=>i.cv===en.target);if(o)o.vis=en.isIntersecting}),{rootMargin:'100px'});
+
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+function draw(o,t,T){const cv=o.cv,r=cv.getBoundingClientRect(),css=Math.max(8,Math.round(Math.min(r.width,r.height)));if(!css)return;
+  const dpr=Math.min(2,devicePixelRatio||1),px=Math.round(css*dpr);if(cv.width!==px){cv.width=cv.height=px}
+  const c=CHARS[o.charIdx],expr=o.fixedExpr||currentExpr(t),seed=o.charIdx*.73+(o.fixedExpr?EXPR.findIndex(e=>e[0]===o.fixedExpr)*.31:0);
+  // gaze
+  let gx,gy;const now=performance.now();
+  if(now-ptr.last<3500){const cx=r.left+r.width/2,cy=r.top+r.height/2,th=Math.max(24,r.width*.3),dx=ptr.x-cx,dy=ptr.y-cy;gx=Math.abs(dx)>th?Math.sign(dx):0;gy=Math.abs(dy)>th?Math.sign(dy):0}
+  else{const a=Math.sin(t*.45+seed*2),b=Math.sin(t*.31+seed);gx=a>.55?1:a<-.55?-1:0;gy=b>.8?1:b<-.8?-1:0}
+  const per=3.1+(seed%1)*1.7,blink=((t+seed*5)%per)<.16;
+  const g=c.body({expr,t,gx,gy,blink});
+  const ctx=cv.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,px,px);
+  const n=Math.max(g.w,g.h),pad=css<=40?0:Math.round(px*o.pad),cell=(px-2*pad)/n,ox=pad+(n-g.w)*cell/2,oy=pad+(n-g.h)*cell/2;
+  const hue=c.hue==='ink'?T.fg:c.hue,ghost=c.hue==='ink'?T.ghostInk:hexA(c.hue,.3);
+  const gap=st.cell==='solid'||cell<4?0:Math.max(1,cell*.12);
+  for(let y=0;y<g.h;y++)for(let x=0;x<g.w;x++){const v=g.c[y*g.w+x];const X=ox+x*cell,Y=oy+y*cell;
+    if(v===0||v===2){if(v===0&&st.grid&&cell>=4){ctx.fillStyle=T.dot;const d=Math.max(1,cell*.14);ctx.fillRect(Math.round(X+cell/2-d/2),Math.round(Y+cell/2-d/2),Math.round(d),Math.round(d))}continue}
+    ctx.fillStyle=v===1?hue:v===3?T.fg:ghost;
+    if(st.cell==='led'&&cell>=4){ctx.beginPath();ctx.arc(X+cell/2,Y+cell/2,(cell-gap)/2*.92,0,Math.PI*2);ctx.fill()}
+    else{const x0=Math.round(X+gap/2),y0=Math.round(Y+gap/2),x1=Math.round(X+cell-gap/2),y1=Math.round(Y+cell-gap/2);ctx.fillRect(x0,y0,Math.max(1,x1-x0),Math.max(1,y1-y0))}}}
+
+function currentExpr(t){if(!st.script)return st.expr;const total=SCRIPT.reduce((a,s)=>a+s[1],0);let p=(t-st.scriptT0)%total;if(p<0)p+=total;for(const s of SCRIPT){if(p<s[1])return s[0];p-=s[1]}return 'idle'}
+function scriptLine(t){const total=SCRIPT.reduce((a,s)=>a+s[1],0);let p=(t-st.scriptT0)%total;if(p<0)p+=total;for(const s of SCRIPT){if(p<s[1])return s[2];p-=s[1]}return''}
+
+// UI
+const bar=$('bar');
+bar.innerHTML=`<button id="scriptBtn" class="chip" aria-pressed="true">Run a task<small>agent script</small></button><span class="sep" aria-hidden="true"></span>`+EXPR.map(([id,l,m])=>`<button class="chip" data-expr="${id}" aria-pressed="false">${l}<small>${m}</small></button>`).join('')+`<span class="sep" aria-hidden="true"></span><button id="pauseBtn" aria-pressed="false">Pause</button>`;
+$('cellSeg').innerHTML=[['square','Square'],['led','LED'],['solid','Solid']].map(([v,l])=>`<button data-cell="${v}">${l}</button>`).join('');
+$('fpsSeg').innerHTML=[6,12,24].map(v=>`<button data-fps="${v}">${v} fps</button>`).join('');
+$('picker').innerHTML=CHARS.map((c,i)=>`<button data-char="${i}" aria-label="${c.name}"><canvas></canvas></button>`).join('');
+$('actual').innerHTML=[64,32,24].map(s=>`<div><canvas style="width:${s}px;height:${s}px"></canvas><span class="small">${s} px</span></div>`).join('');
+$('cast').innerHTML=CHARS.map((c,i)=>`<button class="card" data-char="${i}" aria-label="Put ${c.name} on stage"><div class="art"><canvas></canvas></div><div><h3>${c.name}</h3><div class="meta">${c.grid}</div></div><p>${c.note.split('. ')[0]}.</p></button>`).join('');
+$('sheet').innerHTML=`<thead><tr><th scope="col"></th>${EXPR.map(e=>`<th scope="col">${e[1]}</th>`).join('')}</tr></thead><tbody>${CHARS.map((c,i)=>`<tr><th scope="row">${c.name}</th>${EXPR.map(e=>`<td><canvas data-c="${i}" data-e="${e[0]}" aria-label="${c.name} ${e[1]}"></canvas></td>`).join('')}</tr>`).join('')}</tbody>`;
+
+const stageI=mk($('stageCv'),st.char,{big:true,pad:.12});
+const actualI=[...$('actual').querySelectorAll('canvas')].map(cv=>mk(cv,st.char,{pad:.06}));
+[...$('picker').querySelectorAll('canvas')].forEach((cv,i)=>mk(cv,i,{pad:.06}));
+[...$('cast').querySelectorAll('canvas')].forEach((cv,i)=>mk(cv,i,{pad:.1}));
+[...$('sheet').querySelectorAll('canvas')].forEach(cv=>mk(cv,+cv.dataset.c,{expr:cv.dataset.e,pad:.08}));
+inst.forEach(o=>io.observe(o.cv));
+
+function syncUI(t){
+  const c=CHARS[st.char],ex=currentExpr(t);
+  stageI.charIdx=st.char;actualI.forEach(o=>o.charIdx=st.char);
+  $('stGrid').textContent=`${c.grid} · ${c.hue==='ink'?'one ink':'identity '+c.hue}`;$('stName').textContent=c.name;$('stNote').textContent=c.note;
+  $('stHow').innerHTML=EXPR.map(([id,l])=>`<dt>${l}</dt><dd class="${id===ex?'on':''}">${c.how[id]}</dd>`).join('');
+  $('capState').innerHTML=`<b>${EXPR.find(e=>e[0]===ex)[1]}</b>`;$('capLine').textContent=st.script?scriptLine(t):EXPR.find(e=>e[0]===ex)[2];
+  $('scriptBtn').setAttribute('aria-pressed',st.script);
+  bar.querySelectorAll('[data-expr]').forEach(b=>b.setAttribute('aria-pressed',!st.script&&b.dataset.expr===st.expr));
+  $('picker').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.char===st.char));
+  $('cellSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.cell===st.cell));
+  $('fpsSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.fps===st.fps));
+  $('gridBtn').setAttribute('aria-pressed',st.grid);$('gridBtn').textContent=st.grid?'Shown':'Hidden';
+  $('pauseBtn').setAttribute('aria-pressed',st.paused);$('pauseBtn').textContent=st.paused?'Play':'Pause';
+}
+let clock=1.2,lastWall=null,lastQ=-1,lastExpr=null,force=true;
+bar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.id==='scriptBtn'){st.script=!st.script;st.scriptT0=clock}
+  else if(b.id==='pauseBtn')st.paused=!st.paused;
+  else if(b.dataset.expr){st.expr=b.dataset.expr;st.script=false}
+  force=true});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-char],[data-cell],[data-fps],#gridBtn');if(!b||b.closest('#bar'))return;
+  if(b.dataset.char!==undefined){st.char=+b.dataset.char;if(b.classList.contains('card'))$('screen').scrollIntoView({behavior:reduce.matches?'auto':'smooth',block:'center'})}
+  if(b.dataset.cell)st.cell=b.dataset.cell;if(b.dataset.fps)st.fps=+b.dataset.fps;if(b.id==='gridBtn')st.grid=!st.grid;
+  save();force=true});
+
+function tokens(){const cs=getComputedStyle(document.documentElement);const fg=cs.getPropertyValue('--fg').trim();return{fg,dot:cs.getPropertyValue('--dot').trim(),ghostInk:hexA(fg.length===7?fg:'#282b27',.3)}}
+function frame(now){
+  if(lastWall===null)lastWall=now;const dt=Math.min(.25,(now-lastWall)/1000);lastWall=now;if(!st.paused)clock+=dt;
+  const q=Math.floor(clock*st.fps);
+  if(q!==lastQ||force){lastQ=q;const t=q/st.fps,T=tokens();const ex=currentExpr(t);
+    if(force||ex!==lastExpr||st.script){syncUI(t);lastExpr=ex}force=false;
+    for(const o of inst)if(o.vis)draw(o,t,T)}
+  requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+reduce.addEventListener?.('change',()=>{st.paused=reduce.matches;force=true});
+</script>
+</html>

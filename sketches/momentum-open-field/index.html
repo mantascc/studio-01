@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Momentum / Open Field</title>
+<style>
+:root{color-scheme:dark;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;color:#bac0b6;background:#0a0c0b}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}canvas{display:block;position:fixed;inset:0;width:100%;height:100%}
+button,input,a{-webkit-tap-highlight-color:transparent}button,a{color:inherit;font:inherit}button{cursor:pointer;border:1px solid #343b34;background:#101410;padding:10px 14px;min-height:44px;border-radius:3px}button:hover{border-color:#788371;color:#e7eddf}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #c2d3b1;outline-offset:4px}
+#toggle{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom));background:#0d100dea;letter-spacing:.03em;z-index:2}
+#panel{position:fixed;right:max(22px,env(safe-area-inset-right));bottom:80px;width:min(292px,calc(100vw - 44px));max-height:calc(100dvh - 110px);overflow:auto;padding:22px;background:#101410f5;border:1px solid #333b32;border-radius:4px;box-shadow:0 12px 50px #0005}
+[hidden]{display:none!important}h1{font:inherit;letter-spacing:.04em;color:#e1e7dc;margin:0 0 4px}.subtitle{color:#7c8877;font-size:10px;margin:0 0 24px}.control{display:block;margin:0 0 14px}.label{display:flex;justify-content:space-between;gap:16px}output{color:#87977e;font-variant-numeric:tabular-nums}input[type=range]{width:100%;height:32px;margin:3px 0 0;accent-color:#b4c6a2;cursor:pointer}.actions{display:flex;gap:8px;margin-top:20px}.actions button{flex:1}footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;font-size:10px;color:#85927c}a{text-decoration:none}a:hover{color:#e7eddf}#motion-note{margin:14px 0 0;color:#adbca1;font-size:10px}
+@media(max-width:480px){#toggle{right:16px;bottom:max(16px,env(safe-area-inset-bottom))}#panel{right:16px;bottom:74px;width:calc(100vw - 32px)}}
+</style>
+</head>
+<body>
+<canvas id="field" role="img" aria-label="A full-screen dot grid with automatically launched angular paths hopping between neighboring dots, losing momentum and fading."></canvas>
+<button id="toggle" type="button" aria-expanded="false" aria-controls="panel">parameters</button>
+<section id="panel" aria-label="Momentum parameters" hidden>
+  <h1>momentum / open field</h1>
+  <p class="subtitle">arrive · carry · leave a trace</p>
+  <label class="control"><span class="label">arrival tempo <output id="rate-value" for="rate"></output></span><input id="rate" type="range" min="0.25" max="3" step="0.25" value="1.5"></label>
+  <label class="control"><span class="label">damping <output id="damping-value" for="damping"></output></span><input id="damping" type="range" min="0.03" max="0.20" step="0.01" value="0.07"></label>
+  <label class="control"><span class="label">trail persistence <output id="lifetime-value" for="lifetime"></output></span><input id="lifetime" type="range" min="4" max="24" step="1" value="17"></label>
+  <label class="control"><span class="label">initial momentum <output id="impulse-value" for="impulse"></output></span><input id="impulse" type="range" min="0.4" max="1" step="0.05" value="0.8"></label>
+  <label class="control"><span class="label">grid visibility <output id="grid-value" for="grid"></output></span><input id="grid" type="range" min="0" max="1" step="0.05" value="0.35"></label>
+  <div class="actions"><button id="pause" type="button" aria-pressed="false">pause</button><button id="reset" type="button">reset field</button></div>
+  <p id="motion-note" hidden>Reduced motion is enabled. Resume when ready.</p>
+  <footer><a href="../index.html">← sketches</a><span>ambient / 02</span></footer>
+</section>
+<script>
+'use strict';
+const DT=1/60,DIRS=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+const defaults={rate:1.5,damping:.07,lifetime:17,impulse:.8,grid:.35};
+class OpenField{
+ constructor(cols=61,rows=41){this.cols=cols;this.rows=rows;this.settings={...defaults};this.time=0;this.next=.2;this.serial=0;this.seed=8128;this.paths=[]}
+ random(t=this){t.seed=(Math.imul(t.seed,1664525)+1013904223)>>>0;return t.seed/4294967296}
+ launch(x,y,dir,m,seed=8128){const t={id:++this.serial,x,y,dir,m,seed,damping:this.settings.damping,age:0,wait:0,steps:0,turns:0,alive:true,path:[{x,y,time:this.time}]};this.paths.push(t);if(this.paths.length>24)this.paths.shift();return t}
+ spawn(){const x=Math.floor(this.random()*this.cols),y=Math.floor(this.random()*this.rows),dir=Math.floor(this.random()*8);this.launch(x,y,dir,this.settings.impulse,8128+this.serial);this.next=this.time+(1.5+this.random()*2)/this.settings.rate}
+ hop(t){
+  const old=t.dir;
+  if(this.random(t)>t.m)t.dir=(t.dir+(this.random(t)<.5?7:1))%8;
+  let [dx,dy]=DIRS[t.dir];
+  if(t.x+dx<0||t.x+dx>=this.cols||t.y+dy<0||t.y+dy>=this.rows){
+   dx=t.x+dx<0||t.x+dx>=this.cols?-dx:dx;dy=t.y+dy<0||t.y+dy>=this.rows?-dy:dy;
+   t.dir=DIRS.findIndex(v=>v[0]===dx&&v[1]===dy);
+  }
+  t.x+=dx;t.y+=dy;t.steps++;if(old!==t.dir)t.turns++;
+  t.path.push({x:t.x,y:t.y,time:this.time});t.m*=1-t.damping;if(t.m<.04)t.alive=false;
+ }
+ step(){
+  this.time+=DT;if(this.time>=this.next)this.spawn();
+  for(const t of this.paths){
+   if(t.alive){t.age+=DT;t.wait+=DT;const interval=.04+.09*(1-t.m);if(t.wait>=interval){t.wait-=interval;this.hop(t)}}
+   t.path=t.path.filter(p=>this.time-p.time<this.settings.lifetime);
+  }
+  this.paths=this.paths.filter(t=>t.alive||t.path.length);
+ }
+ snapshot(){return {time:this.time,next:this.next,totalSpawned:this.serial,cols:this.cols,rows:this.rows,settings:{...this.settings},segments:this.paths.reduce((n,t)=>n+Math.max(0,t.path.length-1),0),paths:this.paths.map(t=>({id:t.id,x:t.x,y:t.y,momentum:t.m,alive:t.alive,steps:t.steps,turns:t.turns}))}}
+}
+const canvas=document.querySelector('#field'),ctx=canvas.getContext('2d'),toggle=document.querySelector('#toggle'),panel=document.querySelector('#panel'),pause=document.querySelector('#pause'),media=matchMedia('(prefers-reduced-motion: reduce)');
+let model=new OpenField(Math.max(3,Math.round(innerWidth/24)),Math.max(3,Math.round(innerHeight/24))),paused=media.matches,last=null,acc=0,width=0,height=0;
+const gridCanvas=document.createElement('canvas'),gridCtx=gridCanvas.getContext('2d');
+function buildGrid(){
+  gridCanvas.width=canvas.width;gridCanvas.height=canvas.height;
+  const dpr=Math.min(devicePixelRatio||1,2);gridCtx.setTransform(dpr,0,0,dpr,0,0);gridCtx.fillStyle='#8b9b83';
+  for(let j=0;j<model.rows;j++)for(let i=0;i<model.cols;i++){const [x,y]=project(i,j);gridCtx.beginPath();gridCtx.arc(x,y,1,0,Math.PI*2);gridCtx.fill()}
+}
+function resize(){width=innerWidth;height=innerHeight;const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);buildGrid();render()}
+function render(){
+  ctx.fillStyle='#0a0c0b';ctx.fillRect(0,0,width,height);
+  ctx.globalAlpha=model.settings.grid*.65;ctx.drawImage(gridCanvas,0,0,width,height);ctx.globalAlpha=1;ctx.lineCap='round';
+  ctx.lineWidth=1.2;
+  for(const t of model.paths){
+    for(let i=1;i<t.path.length;i++){
+      const a=t.path[i-1],b=t.path[i],alpha=Math.max(0,1-(model.time-b.time)/model.settings.lifetime);
+      ctx.strokeStyle=`rgba(185,207,173,${alpha*.8})`;
+      ctx.beginPath();ctx.moveTo(...project(a.x,a.y));ctx.lineTo(...project(b.x,b.y));ctx.stroke();
+    }
+    if(t.alive){const [x,y]=project(t.x,t.y);ctx.fillStyle='#e1efd9';ctx.fillRect(x-2,y-2,4,4);ctx.strokeStyle='#b9cfad';ctx.beginPath();ctx.arc(x,y,4+t.m*5,0,Math.PI*2);ctx.stroke()}
+  }
+}
+function project(x,y){return [(x+.5)*width/model.cols,(y+.5)*height/model.rows]}
+
+function setPanel(open){panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));syncPause()}
+toggle.addEventListener('click',()=>setPanel(panel.hidden));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){setPanel(false);toggle.focus()}});
+document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&e.target!==toggle)setPanel(false)});
+const formats={rate:v=>v.toFixed(2)+'×',damping:v=>v.toFixed(2),lifetime:v=>v+' s',impulse:v=>Math.round(v*100)+'%',grid:v=>Math.round(v*100)+'%'};
+for(const key of Object.keys(defaults)){
+  const input=document.getElementById(key),output=document.getElementById(key+'-value');
+  const update=()=>{if(key==='rate')model.next=model.time+(model.next-model.time)*model.settings.rate/(+input.value);model.settings[key]=+input.value;output.value=formats[key](+input.value);render()};
+  input.addEventListener('input',update);output.value=formats[key](+input.value);
+}
+function syncPause(){pause.textContent=paused?'resume':'pause';pause.setAttribute('aria-pressed',String(paused));toggle.textContent=panel.hidden?(paused?'parameters · paused':'parameters'):'close parameters';document.querySelector('#motion-note').hidden=!(media.matches&&paused)}
+pause.addEventListener('click',()=>{paused=!paused;last=null;acc=0;syncPause()});
+document.querySelector('#reset').addEventListener('click',()=>{const settings={...model.settings};model=new OpenField(model.cols,model.rows);model.settings=settings;last=null;acc=0;render()});
+media.addEventListener('change',e=>{if(e.matches){paused=true;last=null;acc=0;syncPause()}});
+document.addEventListener('visibilitychange',()=>{last=null;acc=0});
+window.addEventListener('resize',resize);
+function frame(now){if(last!==null&&!paused&&!document.hidden){acc+=Math.min((now-last)/1000,.1);while(acc>=DT){model.step();acc-=DT}}last=now;render();requestAnimationFrame(frame)}
+Object.defineProperty(window,'openField',{value:Object.freeze({snapshot:()=>({...model.snapshot(),paused,width,height})})});
+resize();syncPause();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

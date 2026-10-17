@@ -1,0 +1,764 @@
+<title>100days Presence Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* layout: void ground, one mono voice, hairline grid felt not shown; avatars are the only color */
+:root{
+  --ground:#0a0a0a; --base:#0f0f0f; --raised:#141414;
+  --line:#1a1a1a; --line2:#2a2a2a; --line3:#3a3a3a;
+  --text:#f5f5f7; --text2:#a8aab8; --text3:#8f919d; --hi:#ffffff;
+  --focus:#00a8ff; --flag:#ff0066;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, Monaco, "Courier New", monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --ground:#f3f3f1; --base:#ebebe8; --raised:#e4e4e0;
+  --line:#dddcd7; --line2:#c9c8c2; --line3:#a9a8a2;
+  --text:#0a0a0a; --text2:#45464e; --text3:#5a5b63; --hi:#000000;
+  --focus:#0067c0; --flag:#c8004f; color-scheme:light}}
+:root[data-theme="light"]{
+  --ground:#f3f3f1; --base:#ebebe8; --raised:#e4e4e0;
+  --line:#dddcd7; --line2:#c9c8c2; --line3:#a9a8a2;
+  --text:#0a0a0a; --text2:#45464e; --text3:#5a5b63; --hi:#000000;
+  --focus:#0067c0; --flag:#c8004f; color-scheme:light}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ground);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 60px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ground)}
+.wrap{max-width:1120px;margin:0 auto}
+a{color:var(--text2);text-underline-offset:3px}
+a:hover{color:var(--hi)}
+p{margin:0;max-width:64ch;color:var(--text2)}
+h1,h2,h3{font-weight:500;margin:0;text-wrap:balance}
+h1{font-size:16px;letter-spacing:3px;text-transform:uppercase;color:var(--hi)}
+h2{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--hi)}
+h3{font-size:14px;color:var(--hi)}
+.lbl{font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:lowercase}
+.lbl b{color:var(--text2);font-weight:500}
+code,.code{font-family:var(--mono);font-size:12px;color:var(--text2)}
+canvas{display:block;image-rendering:pixelated}
+hr{border:0;border-top:1px solid var(--line2);margin:0}
+
+/* controls: square, hairline, instant */
+button,select{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:lowercase;
+  color:var(--text2);background:var(--ground);border:1px solid var(--line2);border-radius:0;
+  min-height:36px;padding:0 12px;cursor:pointer}
+button:hover,select:hover{color:var(--hi);border-color:var(--line3)}
+button[aria-pressed="true"]{color:var(--ground);background:var(--text);border-color:var(--text)}
+button:focus-visible,select:focus-visible,.tile:focus-visible,.cellbtn:focus-visible{outline:1px solid var(--focus);outline-offset:2px}
+select{appearance:none;padding-right:26px;background-image:linear-gradient(45deg,transparent 50%,var(--text3) 50%),linear-gradient(135deg,var(--text3) 50%,transparent 50%);
+  background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.seg{display:inline-flex;flex-wrap:wrap}
+.seg button+button{border-left:0}
+
+/* sticky bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ground);border-bottom:1px solid var(--line2);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px))}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.bar .grow{flex:1}
+
+/* hue chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{width:36px;height:36px;padding:0;min-height:0;display:grid;place-items:center}
+.chip i{display:block;width:14px;height:14px}
+.chip[aria-pressed="true"]{background:var(--ground);border-color:var(--hi)}
+
+/* overlay sheet */
+.sheet{position:fixed;inset:0;z-index:40;background:var(--ground);overflow:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 40px) max(16px,env(safe-area-inset-left,0px))}
+.sheet-top{display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line2);padding-bottom:10px;margin-bottom:20px;position:sticky;top:-12px;background:var(--ground);z-index:2;padding-top:12px}
+
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+
+header.top{padding-block:28px 24px;display:grid;gap:20px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px 16px}
+.lede{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rules ul{margin:6px 0 0;padding:0;list-style:none;font-size:12px;color:var(--text2)}
+.rules li::before{content:"— ";color:var(--text3)}
+.strip{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.strip>div{display:grid;justify-items:center;gap:4px;padding-block:12px 8px;border-right:1px solid var(--line)}
+.strip>div:last-child{border-right:0}
+.strip canvas{max-width:100%;height:auto!important;aspect-ratio:1}
+.cat{padding-top:44px;display:grid;gap:28px}
+.cat-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;border-bottom:1px solid var(--line2);padding-bottom:8px}
+.dir{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px 28px}
+.dir-meta{display:grid;gap:10px;align-content:start}
+.dir-meta h3 span{color:var(--text3);font-weight:400}
+.dir-meta p{font-size:12px}
+.lineage{display:flex;flex-wrap:wrap;gap:4px 10px}
+.score{display:grid;grid-template-columns:auto auto;gap:2px 12px;font-size:11px;color:var(--text3);justify-content:start}
+.score b{font-weight:400;color:var(--text2);letter-spacing:2px}
+.tiles{align-self:start;display:grid;grid-template-columns:repeat(var(--cols,8),minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.tile{background:var(--ground);border:0;padding:12px 6px 6px;display:grid;justify-items:center;gap:6px;cursor:pointer;min-height:0;letter-spacing:0;text-transform:none;color:var(--text3)}
+.tile:hover{background:var(--base);color:var(--text2)}
+.tile span{font-size:10px;letter-spacing:1px;display:grid;justify-items:center;line-height:1.4}
+.tile span b{color:var(--text2);font-weight:500}
+footer{padding-top:56px;display:grid;gap:16px}
+.read{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.read>div{border-top:1px solid var(--line3);padding-top:10px;display:grid;gap:6px;align-content:start}
+.read p{font-size:12px}
+/* sheet */
+.sgrid{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:24px 36px;align-items:start}
+.big{border:1px solid var(--line2);max-width:100%}
+.big canvas{max-width:100%;height:auto!important;aspect-ratio:1}
+.panel{display:grid;gap:22px;min-width:0}
+.panel section{display:grid;gap:8px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.row figure{margin:0;display:grid;gap:4px;justify-items:center}
+.row figcaption{font-size:10px;color:var(--text3)}
+.grounds{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line2);border:1px solid var(--line2)}
+.grounds>div{padding:12px;display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+pre.recipe{margin:0;font-size:11px;color:var(--text3);white-space:pre-wrap;word-break:break-all;user-select:all}
+@media (max-width:820px){.lede,.dir,.sgrid{grid-template-columns:minmax(0,1fr)}.read{grid-template-columns:1fr}.strip{grid-template-columns:repeat(5,minmax(0,1fr))}.strip>div:nth-child(5){border-right:0}.strip>div:nth-child(-n+5){border-bottom:1px solid var(--line)}}
+@media (max-width:480px){.rules{grid-template-columns:1fr}.bar .grow{display:none}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="crumbs lbl"><span>min1 / issue 5</span><span>exploration 03</span><span>2026.10.17</span></div>
+  <h1>presence atlas / 100days</h1>
+  <div class="lede">
+    <p>The open brief again, redrawn inside the sketchbook's own rules. Every direction descends from a numbered day, so each avatar carries a piece of 100days lineage. Ten directions, eight variations each, from kawaii to bauhaus. Tap any avatar to inspect it at interface sizes, on both grounds, across four states.</p>
+    <div class="rules">
+      <div><span class="lbl">carried over</span><ul><li>circles, lines, rects</li><li>grid placement</li><li>12 fps stepped motion</li><li>dither, never gradients</li><li>no radius, no shadow</li></ul></div>
+      <div><span class="lbl">bent for identity</span><ul><li>six oklch hues + ink, not one accent</li><li>a paper ground beside the void</li><li>touch instead of hover</li><li>eyes allowed at the kawaii end</li></ul></div>
+    </div>
+  </div>
+  <div class="strip" id="strip" aria-label="one specimen per direction"></div>
+</header>
+</div>
+
+<div class="bar"><div class="wrap">
+  <span id="stSeg"></span>
+  <span id="gSeg"></span>
+  <span id="zSeg"></span>
+  <button type="button" id="motion"></button>
+  <span class="grow"></span>
+  <select id="filter" aria-label="filter by category"></select>
+  <a href="#" id="toMatrices" class="lbl">matrices deep dive →</a>
+</div></div>
+
+<main class="wrap" id="main"></main>
+
+<div class="wrap"><footer>
+  <h2>first read</h2>
+  <p>Provisional design judgments from building these, not user-tested. Scores are 1–4 on identity at rest, state expression, 64 px legibility and meaningful customisation.</p>
+  <div class="read">
+    <div><span class="lbl">strongest</span><h3>trace · automaton · sprite</h3><p>Each produces a distinct identity from a seed or a short recipe, and each survives 64 px. Trace and automaton are generative signatures; sprite is the most immediately likeable.</p></div>
+    <div><span class="lbl">worth a second pass</span><h3>lattice · orbital · ascii</h3><p>Lattice and orbital express state best of all. Both need heavier strokes at small sizes. ASCII is the cheapest system but depends on the font.</p></div>
+    <div><span class="lbl">open questions</span><h3>is color enough?</h3><p>In a population of fifty agents, six hues repeat quickly. Shape has to carry most of the identity; color becomes a second key. The matrices page tests exactly that.</p></div>
+  </div>
+</footer></div>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="wrap">
+    <div class="sheet-top"><div><div class="lbl" id="sCat"></div><h3 id="sTitle"></h3></div><button type="button" id="sClose">close ×</button></div>
+    <div class="sgrid">
+      <div class="big"><canvas id="sBig"></canvas></div>
+      <div class="panel">
+        <section><span class="lbl">state</span><div id="sState"></div></section>
+        <section><span class="lbl">four states at 64 px</span><div class="row" id="sStates"></div></section>
+        <section><span class="lbl">interface sizes on both grounds</span><div class="grounds"><div id="sVoid"></div><div id="sPaper"></div></div></section>
+        <section><span class="lbl">identity colour</span><div id="sHue"></div></section>
+        <section><span class="lbl">same seed, other vibes</span><div id="sVibe" class="seg"></div></section>
+        <section><span class="lbl">seed</span><div class="row"><button type="button" id="sPrev">← seed</button><code id="sSeed"></code><button type="button" id="sNext">seed →</button></div></section>
+        <section><span class="lbl">recipe</span><div class="row"><button type="button" id="sCopy">copy recipe</button><pre class="recipe" id="sRecipe"></pre></div></section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- seeded randomness
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hashStr(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+
+// ---------- oklch -> srgb (identity colour is computed, not picked)
+function oklch(L,C,h){
+  for(let c=C;c>=0;c-=0.005){
+    const a=c*Math.cos(h*Math.PI/180),b=c*Math.sin(h*Math.PI/180);
+    const l=(L+0.3963377774*a+0.2158037573*b)**3,m=(L-0.1055613458*a-0.0638541728*b)**3,s=(L-0.0894841775*a-1.2914855480*b)**3;
+    const lin=[4.0767416621*l-3.3077115913*m+0.2309699292*s,-1.2684380046*l+2.6097574011*m-0.3413193965*s,-0.0041960863*l-0.7034186147*m+1.7076147010*s];
+    if(lin.every(v=>v>=-0.0005&&v<=1.0005)){
+      const g=lin.map(v=>{v=Math.min(1,Math.max(0,v));return Math.round(255*(v<=0.0031308?12.92*v:1.055*Math.pow(v,1/2.4)-0.055))});
+      return '#'+g.map(v=>v.toString(16).padStart(2,'0')).join('');
+    }
+  }
+  return '#808080';
+}
+// six hues + ink; same hue angle on both grounds, lightness swaps
+const HUES=[
+  {id:'signal',h:250},{id:'terminal',h:165},{id:'amber',h:75,pL:.68},
+  {id:'magenta',h:5},{id:'ube',h:295},{id:'lime',h:128,pL:.62},{id:'ink',h:null}
+];
+const GROUNDS={
+  void:{bg:'#0a0a0a',ink:'#f5f5f7',mute:'#8f919d',line:'#2a2a2a',ghost:'rgba(255,255,255,0.10)'},
+  paper:{bg:'#f3f3f1',ink:'#0a0a0a',mute:'#5a5b63',line:'#c9c8c2',ghost:'rgba(0,0,0,0.09)'}
+};
+const _pal={};
+function palette(hue,ground){
+  const k=hue+'|'+ground;if(_pal[k])return _pal[k];
+  const G=GROUNDS[ground],H=HUES[hue],dark=ground==='void';
+  let main,dim,deep;
+  if(H.h===null){main=dark?'#f5f5f7':'#0a0a0a';dim=dark?'#8f919d':'#7d7e86';deep=dark?'#45464e':'#b4b4b0'}
+  else if(dark){main=oklch(.80,.17,H.h);dim=oklch(.58,.12,H.h);deep=oklch(.40,.08,H.h)}
+  else{main=oklch(H.pL||.56,.17,H.h);dim=oklch(.72,.11,H.h);deep=oklch(.84,.06,H.h)}
+  // bauhaus second colour: ink, unless identity is ink
+  const ink2=H.h===null?(dark?'#8f919d':'#7d7e86'):G.ink;
+  return _pal[k]={bg:G.bg,main,dim,deep,ink:ink2,mute:G.mute,line:G.line,ghost:G.ghost,ground};
+}
+
+// ---------- canvas: unit space is 64 x 64
+const DPR=()=>Math.min(3,window.devicePixelRatio||1);
+function sizeCanvas(cv,css){const d=DPR();const px=Math.round(css*d);if(cv.width!==px){cv.width=px;cv.height=px}cv.style.width=css+'px';cv.style.height=css+'px';return px}
+function unitCtx(cv,css){const px=sizeCanvas(cv,css);const ctx=cv.getContext('2d');ctx.setTransform(px/64,0,0,px/64,0,0);ctx.imageSmoothingEnabled=false;return ctx}
+
+// ---------- primitives (unit space)
+const P={
+  rect(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(x,y,w,h)},
+  srect(c,x,y,w,h,col,lw){c.strokeStyle=col;c.lineWidth=lw;c.lineJoin='miter';c.strokeRect(x,y,w,h)},
+  disc(c,x,y,r,col){c.fillStyle=col;c.beginPath();c.arc(x,y,Math.max(0,r),0,7);c.fill()},
+  ring(c,x,y,r,col,lw){c.strokeStyle=col;c.lineWidth=lw;c.beginPath();c.arc(x,y,Math.max(0,r),0,7);c.stroke()},
+  arc(c,x,y,r,a0,a1,col,lw,cap){c.strokeStyle=col;c.lineWidth=lw;c.lineCap=cap||'square';c.beginPath();c.arc(x,y,r,a0,a1);c.stroke()},
+  line(c,x1,y1,x2,y2,col,lw,cap){c.strokeStyle=col;c.lineWidth=lw;c.lineCap=cap||'square';c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()},
+  poly(c,pts,col,lw,closed,cap){c.strokeStyle=col;c.lineWidth=lw;c.lineCap=cap||'square';c.lineJoin=cap==='round'?'round':'miter';c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));if(closed)c.closePath();c.stroke()},
+  // eyes are punched holes in the identity: ground colour, square, binary states
+  eyes(c,cx,cy,gap,sz,st,t,col){
+    const xs=[cx-gap/2,cx+gap/2];
+    for(const x of xs){
+      if(st==='failure'){const k=sz*0.6;P.line(c,x-k,cy-k,x+k,cy+k,col,Math.max(1,sz*0.35));P.line(c,x-k,cy+k,x+k,cy-k,col,Math.max(1,sz*0.35))}
+      else if(st==='working')P.rect(c,x-sz/2,cy-sz*0.15,sz,Math.max(1,sz*0.32),col);
+      else if(st==='attention')P.rect(c,x-sz*0.65,cy-sz*0.65,sz*1.3,sz*1.3,col);
+      else{const blink=(t%3.2)<0.17;blink?P.rect(c,x-sz/2,cy,sz,Math.max(1,sz*0.22),col):P.rect(c,x-sz/2,cy-sz/2,sz,sz,col)}
+    }
+  }
+};
+const on=(t,hz)=>Math.floor(t*hz*2)%2===0; // binary blink
+
+// ---------- ordered dither (bayer 4x4) on the 64-unit grid, for state dissolves
+const BAYER=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+const _mask={};
+function bayerMask(level){ // level 0..16 -> Path2D of unit cells that switch
+  if(_mask[level])return _mask[level];const p=new Path2D();
+  for(let y=0;y<64;y++)for(let x=0;x<64;x++)if(BAYER[(y&3)*4+(x&3)]<level)p.rect(x,y,1,1);
+  return _mask[level]=p;
+}
+
+// ---------- ticker: one rAF, 12 fps stutter (motion tokens), visible canvases only
+const Ticker={subs:new Set(),fps:12,last:-1,motion:!matchMedia('(prefers-reduced-motion: reduce)').matches,t0:performance.now(),frozenT:0.6,
+  add(f){this.subs.add(f)},del(f){this.subs.delete(f)},
+  now(){return this.motion?(performance.now()-this.t0)/1000:this.frozenT},
+  q(t){return Math.floor(t*this.fps)/this.fps},
+  run(){const loop=()=>{const t=this.now(),f=Math.floor(t*this.fps);if(f!==this.last){this.last=f;const tq=this.q(t);this.subs.forEach(fn=>fn(tq))}requestAnimationFrame(loop)};requestAnimationFrame(loop)},
+  kick(){this.last=-1}
+};
+
+// ---------- visibility
+const VIS=new WeakSet();
+const io=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?VIS.add(e.target):VIS.delete(e.target)),{rootMargin:'200px'}):null;
+function watch(el){io?io.observe(el):VIS.add(el)}
+const isVis=el=>window.__allVis||!io||VIS.has(el);
+
+// ---------- small dom helpers
+const $=(s,r=document)=>r.querySelector(s);
+const h=(tag,attrs={},...kids)=>{const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else if(k.startsWith('on'))e.addEventListener(k.slice(2),attrs[k]);else if(attrs[k]!==false&&attrs[k]!=null)e.setAttribute(k,attrs[k])}kids.flat().forEach(c=>c!=null&&e.append(c.nodeType?c:document.createTextNode(c)));return e};
+function seg(id,opts,val,onchange){const box=h('div',{class:'seg',id,role:'group'});const set=v=>{[...box.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===String(v)))};
+  opts.forEach(([v,label])=>box.append(h('button',{type:'button','data-v':v,id:id+'-'+v,onclick:()=>{set(v);onchange(v)}},label)));set(val);box.set=set;return box}
+function store(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+async function copyText(txt,btn){const old=btn.textContent;try{await navigator.clipboard.writeText(txt);btn.textContent='copied'}catch(e){btn.textContent='select below';const pre=btn.nextElementSibling;if(pre){const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r)}}setTimeout(()=>btn.textContent=old,1400)}
+function hueChips(id,val,onchange,ground){const box=h('div',{class:'chips',id,role:'group','aria-label':'identity colour'});
+  const paint=()=>{const g=ground();[...box.children].forEach((b,i)=>{b.firstChild.style.background=palette(i,g).main;b.setAttribute('aria-pressed',i===box.val)})};
+  HUES.forEach((H,i)=>box.append(h('button',{type:'button',class:'chip',title:H.id,'aria-label':H.id,onclick:()=>{box.val=i;paint();onchange(i)}},h('i'))));box.val=val;box.paint=paint;paint();return box}
+const groundNow=()=>{const r=document.documentElement.dataset.theme;if(r)return r==='light'?'paper':'void';return matchMedia('(prefers-color-scheme: light)').matches?'paper':'void'};
+
+// ---------- ten directions, each descended from numbered days
+// build(vibeIndex, rng) -> params ; draw(ctx, params, s) where s={st,t,c}
+const VIBES=['kawaii','kawaii','playful','playful','functional','functional','bauhaus','bauhaus'];
+const VCODE=['k1','k2','p1','p2','f1','f2','b1','b2'];
+
+// ===== 01 orbital
+const ORBITAL={
+  build(v,r){const T=[
+    {core:'circle',cr:12,fill:1,eyes:1,rings:[[21,7,-.3,2]],sats:[[0,5,'c']]},
+    {core:'square',cr:10,fill:1,eyes:1,rings:[[22,22,0,1.5]],sats:[[0,4,'s'],[0,4,'s',Math.PI]]},
+    {core:'circle',cr:7,fill:1,rings:[[24,9,.5,1.5],[15,15,0,1.5]],sats:[[0,5,'c'],[1,4,'s']]},
+    {core:'square',cr:6,fill:1,rings:[[23,12,-.6,2]],sats:[[0,3,'s'],[0,4,'s',2.1],[0,6,'s',4.2]]},
+    {core:'point',cr:2,fill:1,ticks:1,rings:[[24,24,0,1],[13,13,0,1]],sats:[[0,3,'s'],[1,3,'s',Math.PI]]},
+    {core:'square',cr:4,fill:0,ticks:1,rings:[[25,8,.25,1],[8,25,.25,1]],sats:[[0,3,'s'],[1,3,'s',1.6]]},
+    {core:'square',cr:11,fill:1,rings:[[24,24,0,4]],sats:[[0,7,'c',0,1]]},
+    {core:'circle',cr:13,fill:1,rings:[[27,9,0,3,1]],sats:[[0,8,'s',0,0]]}][v];
+    T.ph=r()*6.28;T.dir=r()<.5?1:-1;return T},
+  draw(c,p,{st,t,c:k}){
+    let cx=32,cy=32;const sp={idle:.12,working:1,attention:0,failure:0}[st];
+    if(st==='failure')cy=36;
+    p.rings.forEach(([rx,ry,rot,lw,inkRing],i)=>{
+      const rr=rot+(st==='working'?t*.4*(i%2?-1:1):0);
+      c.save();c.setLineDash(st==='failure'?[3,4]:[]);c.strokeStyle=st==='failure'?k.dim:(inkRing?k.ink:k.main);c.lineWidth=lw;
+      c.beginPath();c.ellipse(cx,cy,rx,ry,rr,0,7);c.stroke();c.restore();
+    });
+    if(p.ticks){[[32,2,32,6],[32,58,32,62],[2,32,6,32],[58,32,62,32]].forEach(a=>P.line(c,...a,k.mute,1))}
+    const satPos=(s,i,a)=>{const [rx,ry,rot]=p.rings[s[0]];const rr=rot+(st==='working'?t*.4*(s[0]%2?-1:1):0);
+      const x=rx*Math.cos(a),y=ry*Math.sin(a);return [cx+x*Math.cos(rr)-y*Math.sin(rr),cy+x*Math.sin(rr)+y*Math.cos(rr)]};
+    p.sats.forEach((s,i)=>{
+      const col=s[4]?k.ink:k.main;let a=p.ph+(s[3]||0)+p.dir*t*sp*Math.PI*.9;
+      let x,y;
+      if(st==='attention'){a=-Math.PI/2+(i-(p.sats.length-1)/2)*.35;[x,y]=satPos(s,i,a);y=Math.min(y,cy-8)}
+      else if(st==='failure'){x=cx+(i-(p.sats.length-1)/2)*(s[1]*2+3);y=60-s[1]/2}
+      else{[x,y]=satPos(s,i,a);
+        if(st==='working')for(let g=1;g<=3;g++){const[gx,gy]=satPos(s,i,a-p.dir*g*.32);c.globalAlpha=.5-g*.13;s[2]==='c'?P.disc(c,gx,gy,s[1]/2,col):P.rect(c,gx-s[1]/2,gy-s[1]/2,s[1],s[1],col);c.globalAlpha=1}}
+      s[2]==='c'?P.disc(c,x,y,s[1]/2,col):P.rect(c,x-s[1]/2,y-s[1]/2,s[1],s[1],col);
+    });
+    const blinkOff=st==='attention'&&!on(t,1);
+    const hollow=st==='failure'||!p.fill||blinkOff,col=st==='failure'?k.dim:k.main;
+    if(p.core==='point')P.disc(c,cx,cy,hollow&&st!=='failure'?1:p.cr,col);
+    else if(p.core==='circle')hollow?P.ring(c,cx,cy,p.cr-1,col,2):P.disc(c,cx,cy,p.cr,col);
+    else hollow?P.srect(c,cx-p.cr+1,cy-p.cr+1,p.cr*2-2,p.cr*2-2,col,2):P.rect(c,cx-p.cr,cy-p.cr,p.cr*2,p.cr*2,col);
+    if(p.eyes&&!hollow)P.eyes(c,cx,cy-1,p.cr*.8,p.cr*.32,st,t,k.bg);
+    if(p.eyes&&st==='failure')P.eyes(c,cx,cy-1,p.cr*.8,p.cr*.32,st,t,col);
+  }
+};
+
+// ===== 02 instrument
+const RETICLE={
+  build(v,r){const T=[
+    {outer:20,olw:2,inner:'eyes',smile:1,arcs:[[24,-2.2,1.2,2]]},
+    {disc:16,ticks:8,tr:24,tl:3,inner:'eyes',arcs:[]},
+    {inner:'dot',arcs:[[12,0,1.9,3],[18,2,1.2,3],[24,4,2.4,3]]},
+    {cross:1,gap:7,inner:'square',arcs:[[16,.5,1.5,2],[22,3.6,1.5,2]]},
+    {outer:24,olw:1,ticks:12,tr:24,tl:3,cross:1,gap:6,inner:'dot',brackets:1,arcs:[[18,0,1,1]]},
+    {box:20,cross:1,gap:5,meter:1,inner:'none',arcs:[[13,1,2.2,1],[9,4,1.4,1]]},
+    {inner:'inkdisc',arcs:[[19,-.3,4.7,7]],bar:1},
+    {half:1,outer:24,olw:3,cross:1,gap:0,inkCross:1,inner:'none',arcs:[]}][v];
+    T.arcs=T.arcs.map(a=>[a[0],a[1]+r()*.6,a[2],a[3]]);return T},
+  draw(c,p,{st,t,c:k}){
+    const cx=32,cy=32,fail=st==='failure',work=st==='working',att=st==='attention';
+    const off=fail?3:0;
+    if(p.disc)P.disc(c,cx,cy,p.disc,fail?k.dim:k.main);
+    if(p.half){c.fillStyle=fail?k.dim:k.main;c.beginPath();c.arc(cx,cy,16,Math.PI,0);c.closePath();c.fill()}
+    if(p.outer)P.ring(c,cx,cy,p.outer,fail?k.dim:k.main,p.olw);
+    if(p.box)P.srect(c,cx-p.box,cy-p.box,p.box*2,p.box*2,fail?k.dim:k.main,1);
+    if(p.ticks)for(let i=0;i<p.ticks;i++){const a=i/p.ticks*Math.PI*2+(work?t*.8:0);P.line(c,cx+Math.cos(a)*(p.tr+1),cy+Math.sin(a)*(p.tr+1),cx+Math.cos(a)*(p.tr+1+p.tl),cy+Math.sin(a)*(p.tr+1+p.tl),fail?k.dim:(p.disc?k.main:k.mute),1.5)}
+    p.arcs.forEach(([R,a0,len,lw],i)=>{
+      let a=a0+(work?t*1.4*(i%2?-1:1):0);let rr=R;
+      if(fail){a=Math.PI/2-len/2+(i-1)*.2;rr=R+2}
+      if(att)a=-Math.PI/2-len/2;
+      P.arc(c,cx,cy+(fail?2:0),rr,a,a+len,fail?k.dim:k.main,lw,'square');
+    });
+    if(st==='idle'&&!p.disc){const a=t*.5;P.line(c,cx,cy,cx+Math.cos(a)*(p.outer||22),cy+Math.sin(a)*(p.outer||22),k.ghost,1)}
+    if(p.cross){const g=p.gap,L=28,col=p.inkCross?k.ink:(fail?k.dim:k.mute);const ox=cx+off,oy=cy+off;
+      if(g){P.line(c,ox-L,oy,ox-g,oy,col,1);P.line(c,ox+g,oy,ox+L,oy,col,1);P.line(c,ox,oy-L,ox,oy-g,col,1);P.line(c,ox,oy+g,ox,oy+L,col,1)}
+      else{P.line(c,ox-L,oy,ox+L,oy,col,p.inkCross?3:1);P.line(c,ox,oy-L,ox,oy+L,col,p.inkCross?3:1)}}
+    if(p.brackets||att){const d=att?(on(t,1.5)?20:24):26,L=5,col=att?k.main:k.mute;
+      [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([sx,sy])=>{const x=cx+sx*d,y=cy+sy*d;P.line(c,x,y,x-sx*L,y,col,1.5);P.line(c,x,y,x,y-sy*L,col,1.5)})}
+    if(p.meter){const n=work?1+Math.floor(t*6)%5:st==='idle'?2:att?5:0;for(let i=0;i<5;i++)P.rect(c,22+i*4.4,50,3,4,i<n?(att?k.main:k.mute):k.ghost)}
+    if(p.bar)P.rect(c,cx-2,cy+6,4,18,fail?k.dim:k.ink);
+    const ic=fail?k.dim:k.main;
+    if(p.inner==='dot')P.disc(c,cx+off,cy+off,att&&!on(t,1)?1:2.5,ic);
+    if(p.inner==='square')(att&&!on(t,1))?P.srect(c,cx-3,cy-3,6,6,ic,1):P.rect(c,cx-3+off,cy-3+off,6,6,ic);
+    if(p.inner==='inkdisc')P.disc(c,cx+(fail?6:0),cy-2+(fail?14:0),6,k.ink);
+    if(p.inner==='eyes'){const col=p.disc?k.bg:ic;P.eyes(c,cx,cy-2,10,4,st,t,col);
+      if(p.smile&&!fail)P.arc(c,cx,cy+1,6,.5,Math.PI-.5,col,1.5,'round');if(p.smile&&fail)P.line(c,cx-4,cy+7,cx+4,cy+7,col,1.5)}
+  }
+};
+
+// ===== 03 field (metaballs, thresholded on a pixel grid)
+const FIELD={
+  build(v,r){const T=[
+    {balls:[[32,36,12],[21,22,5],[43,22,5]],g:2,mode:'fill',eyes:[32,35,10,4]},
+    {balls:[[32,40,11],[32,24,8]],g:3,mode:'fill',eyes:[32,24,8,3]},
+    {balls:[[24,38,9],[40,38,9],[32,24,8]],g:3,mode:'fill'},
+    {balls:[[20,44,7],[30,34,8],[42,24,7],[48,14,4]],g:4,mode:'fill'},
+    {balls:[[26,34,10],[40,30,8]],g:2,mode:'contour'},
+    {balls:[[22,40,8],[42,40,8],[32,22,7]],g:3,mode:'contour',dots:1},
+    {balls:[[28,36,13],[46,20,7]],g:6,mode:'blocks',ink:1},
+    {balls:[[32,34,15],[32,34,6]],g:8,mode:'blocks',hole:1}][v];
+    T.balls=T.balls.map(b=>[b[0]+(r()-.5)*2,b[1]+(r()-.5)*2,b[2]]);return T},
+  pose(p,st,t){const b0=p.balls[0];return p.balls.map((b,i)=>{let[x,y,R]=b;
+    if(st==='idle')R*=1+.05*Math.sin(t*1.7+i);
+    if(st==='working'&&i>0){const a=t*1.6,dx=x-b0[0],dy=y-b0[1];x=b0[0]+dx*Math.cos(a)-dy*Math.sin(a);y=b0[1]+dx*Math.sin(a)+dy*Math.cos(a)}
+    if(st==='attention'){if(i===p.balls.length-1&&i>0){y-=10;R*=1.1}else R*=1.06}
+    if(st==='failure'){x=32+(x-32)*1.35;y=y+9+i*2;R*=.85}
+    return[x,y,R]})},
+  draw(c,p,{st,t,c:k}){
+    const B=this.pose(p,st,t),g=p.g,n=Math.floor(64/g);
+    const f=(x,y)=>{let s=0;for(const[bx,by,R]of B){const d=(x-bx)**2+(y-by)**2;s+=R*R/(d+.01)}return s};
+    const grid=[];for(let j=0;j<n;j++){grid[j]=[];for(let i=0;i<n;i++)grid[j][i]=f(i*g+g/2,j*g+g/2)>=1}
+    if(p.hole&&st!=='failure'){const b=B[1];const hi=Math.floor(b[0]/g),hj=Math.floor(b[1]/g);grid[hj]&&(grid[hj][hi]=false);}
+    const col=st==='failure'?k.dim:k.main;
+    for(let j=0;j<n;j++)for(let i=0;i<n;i++){
+      if(p.dots&&!grid[j][i]&&i%2===0&&j%2===0)P.rect(c,i*g+g/2-.5,j*g+g/2-.5,1,1,k.ghost);
+      if(!grid[j][i])continue;
+      const edge=!(grid[j-1]?.[i]&&grid[j+1]?.[i]&&grid[j][i-1]&&grid[j][i+1]);
+      if(p.mode==='contour'){if(edge)P.rect(c,i*g,j*g,g,g,col)}
+      else if(p.mode==='blocks'){const useInk=p.ink&&(i+j)%5===0;P.rect(c,i*g+.5,j*g+.5,g-1,g-1,useInk?k.ink:col)}
+      else P.rect(c,i*g,j*g,g,g,col);
+    }
+    if(p.eyes){const[ex,ey,gap,sz]=p.eyes;const b=B[0];const dx=b[0]-p.balls[0][0],dy=b[1]-p.balls[0][1];
+      P.eyes(c,Math.round(ex+dx),Math.round(ey+dy),gap,sz,st,t,k.bg)}
+  }
+};
+
+// ===== 04 stack (isometric cubes)
+const STACK={
+  build(v,r){const T=[
+    {cubes:[[0,0,0],[0,0,1]],s:11,mode:'iso',eyes:1},
+    {cubes:[[0,0,0]],s:17,mode:'iso',eyes:1},
+    {cubes:[[0,0,0],[1,0,0],[0,1,0],[0,0,1]],s:9,mode:'iso'},
+    {cubes:[[-1,0,0],[0,0,0],[0,0,1],[1,0,0],[1,0,1],[1,0,2]],s:7,mode:'iso'},
+    {cubes:[[0,0,0],[1,0,0],[0,1,0],[1,1,0],[0,0,1]],s:9,mode:'wire'},
+    {cubes:[[0,0,0],[0,0,1],[0,0,2]],s:8,mode:'wire',floor:1},
+    {flat:[['s',14,40,18,'m'],['s',32,40,14,'i'],['c',30,24,8,'m']],mode:'flat'},
+    {flat:[['s',32,46,14,'i'],['s',32,32,14,'m'],['c',32,15,7,'m']],mode:'flat'}][v];
+    if(T.cubes&&r()<.5&&v>1&&v<4)T.cubes=T.cubes.map(([x,y,z])=>[y,x,z]);return T},
+  draw(c,p,{st,t,c:k}){
+    if(p.mode==='flat'){
+      const items=p.flat.map((it,i)=>{let[sh,x,y,s,col]=it;
+        if(st==='idle'&&i===p.flat.length-1)y-=on(t,.5)?0:1;
+        if(st==='working'){const kk=Math.floor(t*3)%p.flat.length;if(i===kk)y-=4}
+        if(st==='attention'&&i===p.flat.length-1)y-=on(t,1)?8:6;
+        if(st==='failure'){y=60-s/2;x=12+i*18+s/4}
+        return[sh,x,y,s,col]});
+      items.forEach(([sh,x,y,s,col])=>{const cc=st==='failure'?k.dim:col==='i'?k.ink:k.main;sh==='c'?P.disc(c,x,y,s,cc):P.rect(c,x-s/2,y-s/2,s,s,cc)});
+      return}
+    const s=p.s,n=p.cubes.length;let cubes=p.cubes.map(q=>q.slice());
+    const top=cubes.reduce((m,q,i)=>q[2]>cubes[m][2]?i:m,0);
+    if(st==='idle')cubes[top][2]+=on(t,.5)?0:.12;
+    if(st==='working'){const kk=Math.floor(t*4)%n;cubes[kk][2]+=.35}
+    if(st==='attention')cubes[top][2]+=on(t,1)?.9:.7;
+    if(st==='failure')cubes=cubes.map((q,i)=>[(i%3)-1+(i>2?.5:0),Math.floor(i/3)*.9-.4,0]);
+    const zs=cubes.map(q=>q[2]),zmax=Math.max(...p.cubes.map(q=>q[2]));
+    const cx=32,cy=32+(zmax+1)*s*.5-s*.25;
+    const pr=(x,y,z)=>[cx+(x-y)*s*.866,cy+(x+y)*s*.5-z*s];
+    if(p.floor)for(let i=-2;i<=2;i++){const a=pr(i,-2,0),b=pr(i,2,0);P.line(c,a[0],a[1],b[0],b[1],k.ghost,1);const d=pr(-2,i,0),e=pr(2,i,0);P.line(c,d[0],d[1],e[0],e[1],k.ghost,1)}
+    const order=cubes.map((q,i)=>i).sort((a,b)=>(cubes[a][0]+cubes[a][1]+cubes[a][2]*1.01)-(cubes[b][0]+cubes[b][1]+cubes[b][2]*1.01));
+    const fail=st==='failure';
+    for(const i of order){const[x,y,z]=cubes[i];
+      const A=pr(x,y,z+1),B=pr(x+1,y,z+1),C=pr(x+1,y+1,z+1),D=pr(x,y+1,z+1),E=pr(x+1,y+1,z),F=pr(x,y+1,z),G=pr(x+1,y,z);
+      const faces=[[[A,B,C,D],fail?k.dim:k.main],[[D,C,E,F],fail?k.deep:k.dim],[[C,B,G,E],fail?k.deep:k.deep]];
+      if(p.mode==='wire'){const col=fail?k.dim:k.main;faces.forEach(([pts])=>P.poly(c,pts,col,1,true));
+        if(st==='attention'&&i===top&&on(t,1)){c.fillStyle=k.main;c.beginPath();[A,B,C,D].forEach((q,j)=>j?c.lineTo(...q):c.moveTo(...q));c.fill()}}
+      else faces.forEach(([pts,col])=>{c.fillStyle=col;c.beginPath();pts.forEach((q,j)=>j?c.lineTo(...q):c.moveTo(...q));c.closePath();c.fill()});
+      if(p.eyes&&i===top&&p.mode==='iso'){const fx=(D[0]+E[0])/2,fy=(D[1]+E[1])/2;P.eyes(c,fx,fy,s*.42,s*.16,st,t,k.bg)}
+    }
+  }
+};
+
+// ===== 05 lattice (graphs)
+const LATTICE={
+  build(v,r){
+    const grid=(n,sp)=>{const o=32-sp*(n-1)/2,pts=[];for(let j=0;j<n;j++)for(let i=0;i<n;i++)pts.push([o+i*sp,o+j*sp]);return pts};
+    const tree=(pts,extra)=>{const n=pts.length,inT=[0],E=[];const rest=pts.map((_,i)=>i).slice(1);
+      while(rest.length){let best=null;for(const a of inT)for(const b of rest){const d=Math.hypot(pts[a][0]-pts[b][0],pts[a][1]-pts[b][1])+r()*4;if(!best||d<best[2])best=[a,b,d]}
+        E.push([best[0],best[1]]);inT.push(best[1]);rest.splice(rest.indexOf(best[1]),1)}
+      for(let e=0;e<extra;e++){const a=Math.floor(r()*n),b=Math.floor(r()*n);if(a!==b&&Math.hypot(pts[a][0]-pts[b][0],pts[a][1]-pts[b][1])<20)E.push([a,b])}return E};
+    const T=[
+      ()=>({nodes:[[32,22],[19,44],[45,44]],edges:[[0,1],[1,2],[2,0]],r:[9,5,5],hub:0,shape:'c',lw:2,eyes:1}),
+      ()=>({nodes:[[32,40],[32,17]],edges:[[0,1]],r:[12,6],hub:0,shape:'c',lw:3,eyes:1}),
+      ()=>({nodes:[[32,14],[16,32],[48,32],[32,50]],edges:[[0,1],[0,2],[1,3],[2,3],[1,2]],r:[5,4,4,5],hub:3,shape:'s',lw:2}),
+      ()=>{const n=[[32,32]];for(let i=0;i<4;i++){const a=i/4*6.28+.4+r()*.5;n.push([32+Math.cos(a)*20,32+Math.sin(a)*20])}return{nodes:n,edges:[[0,1],[0,2],[0,3],[0,4]],r:[7,3,5,3,4],hub:0,shape:'c',lw:2}},
+      ()=>{const n=grid(3,20);return{nodes:n,edges:tree(n,1),r:n.map(()=>2),hub:4,shape:'c',lw:1}},
+      ()=>{const n=grid(4,14);return{nodes:n,edges:tree(n,0),r:n.map(()=>1.6),hub:Math.floor(r()*16),shape:'s',lw:1}},
+      ()=>({nodes:[[22,24],[44,42],[44,22]],edges:[[0,1]],r:[11,7,4],hub:0,shape:'mixed',lw:5}),
+      ()=>({nodes:[[32,32],[12,32],[52,32],[32,12],[32,52]],edges:[[0,1],[0,2],[0,3],[0,4]],r:[8,4,4,4,4],hub:0,shape:'hub',lw:3})][v];
+    return T()},
+  draw(c,p,{st,t,c:k}){
+    const fail=st==='failure',N=p.nodes;
+    const pos=N.map(([x,y],i)=>fail&&i%3===1?[x,Math.min(58,y+8)]:[x,y]);
+    p.edges.forEach(([a,b],e)=>{const A=pos[a],B=pos[b];const col=p.shape==='mixed'||p.shape==='hub'?k.ink:k.main;
+      if(fail&&e%2===0){const ux=(B[0]-A[0])*.25,uy=(B[1]-A[1])*.25;P.line(c,A[0],A[1],A[0]+ux,A[1]+uy,k.dim,p.lw);P.line(c,B[0],B[1],B[0]-ux,B[1]-uy,k.dim,p.lw)}
+      else P.line(c,A[0],A[1],B[0],B[1],fail?k.dim:col,p.lw+(st==='attention'?1:0));
+      if(st==='working'){const f=(t*1.1+e*.37)%1;P.rect(c,A[0]+(B[0]-A[0])*f-2,A[1]+(B[1]-A[1])*f-2,4,4,k.ink)}
+    });
+    pos.forEach(([x,y],i)=>{let R=p.r[i];const hub=i===p.hub;
+      if(st==='attention'&&hub)R+=on(t,1)?3:1;
+      const col=fail?k.dim:(p.shape==='mixed'&&i===1?k.ink:p.shape==='hub'&&i>0?k.ink:k.main);
+      const sq=p.shape==='s'||(p.shape==='mixed'&&i===1)||(p.shape==='hub'&&i===0);
+      const hollow=fail&&i%2===0;
+      if(sq)hollow?P.srect(c,x-R+.5,y-R+.5,R*2-1,R*2-1,col,1):P.rect(c,x-R,y-R,R*2,R*2,col);
+      else hollow?P.ring(c,x,y,R-.5,col,1):P.disc(c,x,y,R,col);
+      if(st==='idle'&&i===Math.floor(t*1.2)%N.length)sq?P.srect(c,x-R-2.5,y-R-2.5,R*2+5,R*2+5,k.mute,1):P.ring(c,x,y,R+3,k.mute,1);
+      if(p.eyes&&hub&&!hollow)P.eyes(c,x,y,R*.85,R*.32,st,t,k.bg);
+    });
+  }
+};
+
+// ===== 06 ascii (typographic glyphs)
+const ASCII={
+  build(v){return{rows:[
+    ['/\\_/\\','(o.o)','(   )'],
+    [' .-. ','(o o)',' |=| '],
+    ['*   *','[0_0]','/| |\\'],
+    ['\\|/','-+-','/|\\'],
+    ['+---+','| > |','+---+'],
+    [':::','[=]',':::'],
+    ['▄██▄','█  █','▀██▀'],
+    ['█ ▀','█▄█',' ▀ ']][v],block:v>=6}},
+  draw(c,p,{st,t,c:k}){
+    let rows=p.rows.map(r=>[...r]);const E='o0O';
+    const eyes=[];rows.forEach((r,j)=>r.forEach((ch,i)=>{if(E.includes(ch))eyes.push([j,i])}));
+    const W=Math.max(...rows.map(r=>r.length)),H=rows.length;
+    const midJ=Math.floor(H/2);let midI=Math.floor(rows[midJ].length/2);
+    if(st==='idle'){if(eyes.length){if(t%3.2<.25)eyes.forEach(([j,i])=>rows[j][i]='-')}else if(!p.block&&on(t,.45))rows[midJ][midI]='_';else if(p.block&&!on(t,.4))rows[H-1][W-1]=' '}
+    if(st==='working'){if(eyes.length===2){rows[eyes[0][0]][eyes[0][1]]='>';rows[eyes[1][0]][eyes[1][1]]='<'}
+      else{const sp=p.block?'▖▘▝▗':'|/-\\';rows[midJ][midI]=sp[Math.floor(t*8)%4]}}
+    if(st==='attention'){eyes.forEach(([j,i])=>rows[j][i]='O');if(!eyes.length&&!p.block)rows[midJ][midI]='!'}
+    if(st==='failure'){eyes.forEach(([j,i])=>rows[j][i]='x');rows[H-1]=rows[H-1].map((ch,i)=>ch!==' '&&i%2===0?'.':ch);if(!eyes.length&&!p.block)rows[midJ][midI]='x'}
+    const fs=Math.min(50/(W*.6),50/(H*1.08)),lh=p.block?fs:fs*1.08;
+    c.font=`600 ${fs}px "JetBrains Mono", ui-monospace, Menlo, monospace`;c.textBaseline='middle';c.textAlign='center';
+    const x0=32-W*fs*.6/2+fs*.3,y0=32-(H-1)*lh/2+(st==='failure'?4:0)-(st==='attention'?2:0);
+    rows.forEach((r,j)=>r.forEach((ch,i)=>{if(ch===' ')return;c.fillStyle=st==='failure'?k.dim:k.main;c.fillText(ch,x0+i*fs*.6,y0+j*lh)}));
+    if(st==='attention'&&(eyes.length||p.block)&&on(t,1)){P.rect(c,31,1,2,6,k.ink);P.rect(c,31,8.5,2,2,k.ink)}
+  }
+};
+
+// ===== 07 trace (self-avoiding walk)
+const TRACE={
+  build(v,r){const cfg=[
+    {n:4,L:5,lw:8,head:'eyes'},{n:3,L:6,lw:6,head:'eyes',cap:'round'},{n:5,L:9,lw:4,head:'disc'},{n:4,L:7,lw:4,nodes:1,head:'square'},
+    {n:6,L:14,lw:1.5,nodes:1,grid:1,head:'square'},{n:6,L:10,lw:1,head:'arrow',grid:1},{n:3,L:4,lw:9,head:'inkdisc'},{n:4,L:5,lw:8,inkSeg:1,head:'none'}][v];
+    let path;for(let tries=0;tries<200;tries++){const n=cfg.n,seen=new Set();let x=Math.floor(r()*n),y=n-1;path=[[x,y]];seen.add(x+','+y);
+      let ok=true;for(let s=1;s<cfg.L;s++){const opts=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>[x+dx,y+dy]).filter(([a,b])=>a>=0&&b>=0&&a<n&&b<n&&!seen.has(a+','+b));
+        if(!opts.length){ok=false;break}const q=opts[Math.floor(r()*opts.length)];x=q[0];y=q[1];seen.add(x+','+y);path.push(q)}
+      if(ok)break}
+    return{...cfg,path}},
+  draw(c,p,{st,t,c:k}){
+    const n=p.n,sp=40/(n-1),o=12,fail=st==='failure';
+    const pt=([x,y])=>[o+x*sp,o+y*sp+(fail?3:0)];
+    if(p.grid)for(let j=0;j<n;j++)for(let i=0;i<n;i++)P.rect(c,o+i*sp-.5,o+j*sp-.5,1,1,k.ghost);
+    const pts=p.path.map(pt),col=fail?k.dim:k.main,cap=p.cap||'square';
+    if(fail){for(let i=0;i<pts.length-1;i++)if(i%2===0){const a=pts[i],b=pts[i+1];P.line(c,a[0],a[1],a[0]+(b[0]-a[0])*.6,a[1]+(b[1]-a[1])*.6,col,p.lw,cap)}}
+    else{P.poly(c,pts,col,p.lw,false,cap);
+      if(p.inkSeg){const a=pts[1],b=pts[2];P.line(c,a[0],a[1],b[0],b[1],k.ink,p.lw)}}
+    if(p.nodes)pts.forEach(q=>P.rect(c,q[0]-1.5,q[1]-1.5,3,3,fail?k.dim:k.ink));
+    if(st==='working'){const L=pts.length-1,f=(t*1.6)%1*L,i=Math.floor(f),u=f-i;const a=pts[i],b=pts[i+1];const x=a[0]+(b[0]-a[0])*u,y=a[1]+(b[1]-a[1])*u;const s=Math.max(3,p.lw*.55);P.rect(c,x-s/2,y-s/2,s,s,p.lw>3?k.bg:k.ink)}
+    const hd=pts[pts.length-1],pv=pts[pts.length-2];
+    if(st==='attention'&&on(t,1)){P.line(c,hd[0],hd[1],hd[0],Math.max(2,hd[1]-14),k.main,Math.max(1.5,p.lw*.5));}
+    const hs=Math.max(5,p.lw*1.5);
+    if(p.head==='eyes'){const s=hs*1.2;fail?P.srect(c,hd[0]-s/2,hd[1]-s/2,s,s,col,1.5):P.rect(c,hd[0]-s/2,hd[1]-s/2,s,s,col);P.eyes(c,hd[0],hd[1]-1,s*.44,s*.2,st,t,fail?col:k.bg)}
+    if(p.head==='disc')(st==='idle'&&!on(t,.35))?P.ring(c,hd[0],hd[1],hs/2,col,1.5):P.disc(c,hd[0],hd[1],hs/2,col);
+    if(p.head==='square')(st==='idle'&&!on(t,.35))?P.srect(c,hd[0]-hs/2,hd[1]-hs/2,hs,hs,col,1):P.rect(c,hd[0]-hs/2,hd[1]-hs/2,hs,hs,col);
+    if(p.head==='inkdisc')P.disc(c,hd[0],hd[1],hs*.55,fail?k.dim:k.ink);
+    if(p.head==='arrow'){const dx=Math.sign(hd[0]-pv[0]),dy=Math.sign(hd[1]-pv[1]);const L=5;P.line(c,hd[0],hd[1],hd[0]-dx*L-dy*L,hd[1]-dy*L-dx*L,col,1);P.line(c,hd[0],hd[1],hd[0]-dx*L+dy*L,hd[1]-dy*L+dx*L,col,1)}
+  }
+};
+
+// ===== 08 flock (vicsek-like collective)
+const FLOCK={
+  build(v,r){
+    const ring=(N,R)=>Array.from({length:N},(_,i)=>{const a=i/N*6.28;return[32+Math.cos(a)*R,32+Math.sin(a)*R]});
+    const grid=(k,sp)=>{const o=32-sp*(k-1)/2,a=[];for(let j=0;j<k;j++)for(let i=0;i<k;i++)a.push([o+i*sp,o+j*sp]);return a};
+    const blob=(N,R)=>Array.from({length:N},()=>{const a=r()*6.28,d=Math.sqrt(r())*R;return[32+Math.cos(a)*d,34+Math.sin(a)*d]});
+    const T=[
+      {home:blob(16,12),mark:'dot',size:5},
+      {home:grid(3,10),mark:'dot',size:7},
+      {home:ring(10,18),mark:'square',size:4},
+      {home:[[32,14],[26,24],[38,24],[20,34],[32,34],[44,34],[14,44],[26,44],[38,44],[50,44]],mark:'dash',size:6},
+      {home:grid(5,9),mark:'square',size:2},
+      {home:Array.from({length:12},(_,i)=>[12+i*3.6,52-i*3.6]),mark:'dash',size:5,thin:1},
+      {home:[[22,40],[42,40],[32,20]],mark:'mixed',sizes:[9,14,7]},
+      {home:[[12,32],[22,32],[33,32],[45,32],[54,32]].map((q,i)=>[q[0]+i*0,q[1]]),mark:'square',sizes:[4,6,8,10,6],ink:[0,0,1,0,0]}][v];
+    T.ph=T.home.map(()=>r()*6.28);return T},
+  draw(c,p,{st,t,c:k}){
+    const N=p.home.length;
+    p.home.forEach(([hx,hy],i)=>{
+      let x=hx,y=hy,a=p.ph[i];const s=p.sizes?p.sizes[i]:p.size;
+      if(st==='idle'){x+=1.4*Math.sin(t*.9+p.ph[i]);y+=1.4*Math.cos(t*1.1+p.ph[i]*1.3);a=p.ph[i]+t*.3}
+      if(st==='working'){const r=t*.9,dx=hx-32,dy=hy-32;x=32+dx*Math.cos(r)-dy*Math.sin(r);y=32+dx*Math.sin(r)+dy*Math.cos(r);a=Math.atan2(dy,dx)+r+Math.PI/2}
+      if(st==='attention'){if(i===N-1){x=32;y=52}else{x=32;y=10+(N>2?i*(32/(N-2)):i*14)}a=Math.PI/2;if(!on(t,1)&&i===N-1)return}
+      if(st==='failure'){x=8+((p.ph[i]*97)%48);y=56-((p.ph[i]*13)%6);a=p.ph[i]*3}
+      const col=st==='failure'?k.dim:(p.ink&&p.ink[i]?k.ink:k.main);
+      const m=p.mark==='mixed'?['c','s','c'][i]:p.mark;
+      if(m==='dot'||m==='c')P.disc(c,x,y,s/2,p.mark==='mixed'&&i===1?k.ink:col);
+      else if(m==='square'||m==='s')P.rect(c,x-s/2,y-s/2,s,s,p.mark==='mixed'&&i===1?(st==='failure'?k.dim:k.ink):col);
+      else{const L=s/2;P.line(c,x-Math.cos(a)*L,y-Math.sin(a)*L,x+Math.cos(a)*L,y+Math.sin(a)*L,col,p.thin?1.5:2.5)}
+    });
+  }
+};
+
+// ===== 09 automaton (elementary CA)
+const AUTOMATON={
+  build(v,r){const T=[
+    {n:5,rule:90,seed:'00100',gap:2},{n:6,rule:150,seed:'001100',gap:2},{n:7,rule:30,seed:'0001000',gap:1},{n:7,rule:110,seed:'0000001',gap:1},
+    {n:12,rule:30,seed:null,gap:.6,gridl:1},{n:10,rule:45,seed:null,gap:1},{n:4,rule:105,seed:'0110',gap:3,circle:1},{n:5,rule:18,seed:'00100',gap:2,alt:1}][v];
+    if(!T.seed)T.seed=Array.from({length:T.n},()=>r()<.4?1:0).join('');
+    // precompute 64 generations
+    let row=[...T.seed].map(Number);const gens=[row];for(let g=1;g<64;g++){const nr=row.map((_,i)=>{const L=row[(i-1+T.n)%T.n],C=row[i],R=row[(i+1)%T.n];return(T.rule>>(L*4+C*2+R))&1});gens.push(nr);row=nr}
+    T.gens=gens;return T},
+  draw(c,p,{st,t,c:k}){
+    const n=p.n,A=46,cs=A/n,o=32-A/2;const fail=st==='failure';
+    let rows;const g0=st==='working'?Math.floor(t*6)%48:0;rows=p.gens.slice(g0,g0+n);
+    let cells=rows.map(r=>r.slice());
+    if(fail){const cols=Array(n).fill(0);cells.forEach(r=>r.forEach((b,i)=>cols[i]+=b));cells=cells.map((r,j)=>r.map((_,i)=>j>=n-cols[i]?1:0))}
+    if(st==='attention'&&on(t,1))cells=cells.map((r,j)=>r.map((b,i)=>(j===0||j===n-1||i===0||i===n-1)?1:b));
+    if(p.gridl)for(let i=0;i<=n;i++){P.line(c,o+i*cs,o,o+i*cs,o+A,k.ghost,.5);P.line(c,o,o+i*cs,o+A,o+i*cs,k.ghost,.5)}
+    cells.forEach((r,j)=>r.forEach((b,i)=>{
+      const blink=st==='idle'&&j===n-1&&i===n-1&&!on(t,.5);
+      if(!b&&!blink)return;
+      const col=fail?k.dim:(p.alt&&(i+j)%2?k.ink:k.main);
+      if(blink&&!b){P.srect(c,o+i*cs+p.gap/2+.5,o+j*cs+p.gap/2+.5,cs-p.gap-1,cs-p.gap-1,k.mute,1);return}
+      if(blink&&b)return;
+      if(p.circle&&i===1&&j===1&&!fail)P.disc(c,o+i*cs+cs/2,o+j*cs+cs/2,cs/2-p.gap/2,k.ink);
+      else P.rect(c,o+i*cs+p.gap/2,o+j*cs+p.gap/2,cs-p.gap,cs-p.gap,col);
+    }));
+  }
+};
+
+// ===== 10 sprite (pixel figure, 16x16 grid)
+const SPRITE={
+  build(v){return[
+    {kind:'px',body:[4,6,8,7],eyes:[[6,8],[9,8]],es:1,ant:'single',feet:1},
+    {kind:'px',body:[3,5,10,8],eyes:[[5,8],[9,8]],es:2,ears:1,feet:1},
+    {kind:'px',body:[5,4,6,9],eyes:[[6,6],[8,6]],es:1,ant:'double',arms:1,feet:1},
+    {kind:'px',body:[3,8,10,5],eyes:[[5,9],[9,9]],es:1,mouth:1},
+    {kind:'mono',body:[3,4,10,8],visor:1,stand:1},
+    {kind:'mono',body:[5,3,6,10],visor:1,tick:1,ant:'single'},
+    {kind:'bau',head:'c'},
+    {kind:'bau',head:'s'}][v]},
+  draw(c,p,{st,t,c:k}){
+    const U=4,R=(x,y,w,hh,col)=>P.rect(c,x*U,y*U,w*U,hh*U,col),fail=st==='failure';
+    let dy=0;if(st==='working')dy=on(t,2)?0:-1;if(st==='attention')dy=-2;
+    if(p.kind==='bau'){
+      const col=fail?k.dim:k.main,ink=fail?k.dim:k.ink;
+      const y=dy*U+(fail?10:0);
+      if(p.head==='c'){P.rect(c,16,34+y,32,22-(fail?6:0),ink);P.disc(c,32,22+y+(fail?6:0),13,col);
+        const e=st==='attention'?6:st==='working'?2:(t%3.2<.17?1.5:4);if(fail)P.eyes(c,36,22+y+6,0,4,st,t,k.bg);else P.rect(c,34,21+y-e/2,e*1.2,e,k.bg)}
+      else{P.rect(c,14,10+y+(fail?8:0),36,28-(fail?6:0),col);P.rect(c,20,38+y+(fail?2:0),6,16-(fail?10:0),ink);P.rect(c,38,38+y+(fail?2:0),6,16-(fail?10:0),ink);
+        const er=st==='attention'?8:st==='working'?3:(t%3.2<.17?1:6);fail?P.eyes(c,32,24+y+4,0,6,st,t,k.bg):P.disc(c,32,24+y,er,k.bg)}
+      return}
+    let[bx,by,bw,bh]=p.body;
+    if(st==='idle'&&!on(t,.25)){by-=1;bh+=1}
+    if(fail){by+=2;bh-=2}
+    by+=dy;
+    const col=fail?k.dim:k.main;
+    if(p.kind==='px'){
+      R(bx,by,bw,bh,col);
+      if(p.ears){R(bx,by-1,2,1,col);R(bx+bw-2,by-1,2,1,col)}
+      if(p.ant){const ax=bx+Math.floor(bw/2)-(p.ant==='double'?1:0);const tip=fail?1:0;
+        const xs=p.ant==='double'?[bx+1,bx+bw-2]:[ax];xs.forEach(x=>{R(x,by-2,1,2,col);R(x+tip,by-3,1,1,st==='attention'&&on(t,1)?k.ink:col)})}
+      if(p.feet&&!fail){R(bx+1,by+bh,2,1,col);R(bx+bw-3,by+bh,2,1,col)}
+      if(p.arms){const up=st==='attention'||(st==='working'&&on(t,2));R(bx-1,by+(up?1:4),1,3,col);R(bx+bw,by+(up?1:4),1,3,col)}
+      const es=p.es+(st==='attention'?1:0);
+      p.eyes.forEach(([ex,ey])=>{ey+=dy+(fail?2:0)+(st==='idle'&&!on(t,.25)?-1:0);
+        if(fail){P.line(c,ex*U,ey*U,(ex+p.es)*U,(ey+p.es)*U,k.bg,1.6);P.line(c,ex*U,(ey+p.es)*U,(ex+p.es)*U,ey*U,k.bg,1.6)}
+        else if(st==='working')R(ex,ey+es/2,es,.5,k.bg);
+        else if(st==='idle'&&t%3.2<.17)R(ex,ey+es/2,es,.5,k.bg);
+        else R(ex-(st==='attention'?.5:0),ey-(st==='attention'?.5:0),es,es,k.bg)});
+      if(p.mouth)R(bx+Math.floor(bw/2)-1,by+3+(fail?0:0),2,fail?.5:1,k.bg);
+    } else {
+      P.srect(c,bx*U+1,by*U+1,bw*U-2,bh*U-2,col,2);
+      if(p.visor){const vy=by+Math.floor(bh/2)-1;const w=bw-2;
+        if(fail){P.line(c,(bx+1)*U,vy*U+2,(bx+1+w)*U,vy*U+6,col,2)}
+        else if(st==='working'){const px=Math.floor(t*8)%w;R(bx+1,vy,w,1,k.ghost);R(bx+1+px,vy,1,1,col)}
+        else if(st==='attention')R(bx+1,vy-1,w,on(t,1)?3:2,col);
+        else R(bx+1,vy,w,t%3.2<.17?.25:1,col)}
+      if(p.stand&&!fail){R(bx+bw/2-1,by+bh,2,2,col);R(bx+bw/2-3,by+bh+2,6,1,col)}
+      if(p.tick){R(bx+bw,by+2,1,1,k.mute);R(bx+bw,by+4,1,1,k.mute)}
+      if(p.ant){R(bx+bw/2,by-2,.5,2,col);R(bx+bw/2-.25,by-3,1,1,st==='attention'&&on(t,1)?k.ink:col)}
+    }
+  }
+};
+
+const CATEGORIES=[
+  {id:'single',name:'single shapes',note:'one mark carries identity; state bends it'},
+  {id:'modular',name:'modular assemblies',note:'parts in a fixed arrangement; state moves parts'},
+  {id:'glyph',name:'glyph-like',note:'identity as a written mark'},
+  {id:'collective',name:'collectives',note:'many particles, one presence'},
+  {id:'matrix',name:'matrices',note:'identity as occupied cells'},
+  {id:'character',name:'character-like',note:'posture and eyes on primitive bodies'}];
+
+const DIRS=[
+  {id:'orbital',cat:'single',impl:ORBITAL,lineage:['06-orbital','79-idle-states · orbit'],rule:'a core plus 1–3 orbits. identity = core shape × ring tilt × satellite count.',axis:'kawaii: one ring, eyes on a filled core · bauhaus: a heavy ring and an ink satellite',score:[3,4,3,3],read:'states read instantly through orbital speed; the satellites carry the personality.'},
+  {id:'instrument',cat:'single',impl:RETICLE,lineage:['79-idle-states · hover','technical drawing'],rule:'a measuring instrument: dial, arcs, crosshair, brackets. identity = arc signature.',axis:'kawaii: a face inside the dial · functional: ticks, brackets, a level meter',score:[2,3,3,3],read:'reads as a tool more than a presence. strongest for an agent that measures or watches.'},
+  {id:'field',cat:'single',impl:FIELD,lineage:['41-metaball','42-metaball-grid'],rule:'2–4 metaballs thresholded onto a pixel grid. identity = ball layout × grid coarseness.',axis:'kawaii: ears and eyes on a 2u grid · bauhaus: 8u blocks with a punched cell',score:[3,3,3,2],read:'the pixel threshold keeps soft forms honest; coarse grids survive 64 px best.'},
+  {id:'stack',cat:'modular',impl:STACK,lineage:['40-cube-grid-rules','82-z-axis'],rule:'isometric unit cubes on a small footprint. identity = the stack profile.',axis:'kawaii: one or two cubes with a face · bauhaus: flat square-square-circle compositions',score:[3,3,2,3],read:'three face tones give depth without gradients. iso detail blurs under 32 px.'},
+  {id:'lattice',cat:'modular',impl:LATTICE,lineage:['51-resonant-lattice','16-hub-spoke-network','09-planar-graph'],rule:'nodes and edges. identity = topology; state = what travels on it.',axis:'kawaii: three round nodes, the hub has eyes · functional: spanning trees on a point grid',score:[3,4,2,4],read:'the most natural fit for an agent that routes work. thin edges fade at 64 px.'},
+  {id:'ascii',cat:'glyph',impl:ASCII,lineage:['53-ascii-grid','55-ascii-loading','66-ascii-field-gallery'],rule:'a 3-row monospace block. identity = characters; state = substitutions.',axis:'kawaii: kaomoji · functional: a prompt box · bauhaus: block elements',score:[3,3,4,4],read:'cheapest to customise and to type into a terminal. depends on the font being present.'},
+  {id:'trace',cat:'glyph',impl:TRACE,lineage:['04-random-walk','49-grid-trace','11-brownian-tree'],rule:'a seeded self-avoiding walk on an n×n grid. identity = the path.',axis:'kawaii: a short fat path with a head · functional: a 1px route with nodes',score:[4,3,3,4],read:'every seed is a distinct signature, and the path suggests a history of work.'},
+  {id:'flock',cat:'collective',impl:FLOCK,lineage:['02-vicsek-model','74-particles'],rule:'n particles around a formation. idle drifts, working aligns, attention forms a mark.',axis:'kawaii: a tight soft cluster · bauhaus: three to five weighted members',score:[2,4,2,3],read:'state expression is excellent; identity at rest is weak unless the formation is strong.'},
+  {id:'automaton',cat:'matrix',impl:AUTOMATON,lineage:['18-cellular-automaton','15-binary-camera-grid'],rule:'an elementary CA: rule number + seed row. identity = the first n generations.',axis:'kawaii: 5 chunky cells, rule 90 · functional: 12 fine cells with a hairline grid',score:[4,3,3,4],read:'identity is reproducible from two numbers. working literally computes.'},
+  {id:'sprite',cat:'character',impl:SPRITE,lineage:['89-sprite-states','91-retro-primitives'],rule:'a body on a 16×16 pixel grid with eyes, ears, antennae. identity = silhouette.',axis:'kawaii: small bodies, big eyes · functional: terminals with a visor · bauhaus: circle on square',score:[4,4,4,3],read:'the easiest to love and to read. the risk is that it looks like any game sprite.'}
+];
+
+// ---------- gallery
+const STATES=['idle','working','attention','failure'];
+const app={st:store('pa100.st')||'cycle',size:store('pa100.size')||64,filter:'all'};
+const stateAt=(t,i)=>app.st==='cycle'?STATES[Math.floor(t/2.4)%4]:app.st;
+function spec(di,v,seed,hue){const d=DIRS[di];const p=d.impl.build(v,mulberry32(seed));return{di,v,seed,hue,p}}
+function paint(ctx,s,st,t,ground){const k=palette(s.hue,ground);ctx.fillStyle=k.bg;ctx.fillRect(0,0,64,64);DIRS[s.di].impl.draw(ctx,s.p,{st,t,c:k})}
+const tiles=[];
+
+// strip
+const strip=$('#strip');
+DIRS.forEach((d,i)=>{const cv=h('canvas');const s=spec(i,i%2?2:0,hashStr(d.id),(i*3)%6);strip.append(h('div',{},cv,h('span',{class:'lbl'},d.id)));tiles.push({cv,s,css:56,strip:1});watch(cv)});
+
+// main
+const main=$('#main');
+CATEGORIES.forEach(cat=>{
+  const sec=h('section',{class:'cat','data-cat':cat.id},h('div',{class:'cat-head'},h('h2',{},cat.name),h('span',{class:'lbl'},cat.note)));
+  DIRS.forEach((d,di)=>{if(d.cat!==cat.id)return;
+    const bars=v=>'■'.repeat(v)+'□'.repeat(4-v);
+    const meta=h('div',{class:'dir-meta'},
+      h('h3',{},h('span',{},String(di+1).padStart(2,'0')+' / '),d.id),
+      h('div',{class:'lineage lbl'},'← ',...d.lineage.map(x=>h('span',{},x))),
+      h('p',{},d.rule),h('p',{},d.axis),
+      h('div',{class:'score'},'identity',h('b',{},bars(d.score[0])),'state',h('b',{},bars(d.score[1])),'64 px',h('b',{},bars(d.score[2])),'custom',h('b',{},bars(d.score[3]))),
+      h('p',{},d.read));
+    const grid=h('div',{class:'tiles'});
+    for(let v=0;v<8;v++){const s=spec(di,v,hashStr(d.id+v),(di*3+v)%7);const cv=h('canvas');
+      const b=h('button',{type:'button',class:'tile','aria-label':`${d.id} ${VCODE[v]} ${VIBES[v]}`,onclick:()=>openSheet(s)},cv,h('span',{},h('b',{},VCODE[v]),VIBES[v]));
+      grid.append(b);tiles.push({cv,s});watch(cv)}
+    sec.append(h('div',{class:'dir',id:d.id},meta,grid));
+  });main.append(sec)});
+
+function applySize(){const r=document.documentElement.style,narrow=innerWidth<820;r.setProperty('--ts',app.size+'px');r.setProperty('--cols',app.size>64?(narrow?2:4):(narrow?4:8));tiles.forEach(T=>T.dirty=1);Ticker.kick()}
+Ticker.add(t=>{const g=groundNow();tiles.forEach((T,i)=>{if(!isVis(T.cv))return;const css=T.strip?56:app.size;const ctx=unitCtx(T.cv,css);paint(ctx,T.s,stateAt(t),t+(i%7)*.13,g)})});
+
+// controls
+$('#stSeg').append(seg('st',[['idle','idle'],['working','working'],['attention','attention'],['failure','failure'],['cycle','cycle']],app.st,v=>{app.st=v;store('pa100.st',v);Ticker.kick()}));
+$('#gSeg').append(seg('g',[['void','void'],['paper','paper']],groundNow(),v=>{document.documentElement.dataset.theme=v==='paper'?'light':'dark';Ticker.kick()}));
+$('#zSeg').append(seg('z',[[64,'64'],[128,'128']],app.size,v=>{app.size=+v;store('pa100.size',app.size);applySize()}));
+const mb=$('#motion');const paintMotion=()=>{mb.textContent=Ticker.motion?'motion on':'motion off';mb.setAttribute('aria-pressed',Ticker.motion)};
+mb.onclick=()=>{Ticker.motion=!Ticker.motion;if(!Ticker.motion)Ticker.frozenT=.6;else Ticker.t0=performance.now();paintMotion();Ticker.kick()};paintMotion();
+const fs=$('#filter');fs.append(h('option',{value:'all'},'all categories'),...CATEGORIES.map(c=>h('option',{value:c.id},c.name)));
+fs.onchange=()=>{document.querySelectorAll('.cat').forEach(s=>s.hidden=fs.value!=='all'&&s.dataset.cat!==fs.value)};
+matchMedia('(prefers-color-scheme: light)').addEventListener('change',()=>{$('#g').set(groundNow());Ticker.kick()});
+$('#toMatrices').href='matrices.html';
+applySize();addEventListener('resize',applySize);
+
+// ---------- sheet
+const sh={s:null,st:'cycle',canv:{}};
+function openSheet(s){sh.s={...s};sh.st=app.st;$('#sheet').hidden=false;document.body.style.overflow='hidden';buildSheet();$('#sClose').focus()}
+function closeSheet(){$('#sheet').hidden=true;document.body.style.overflow='';sh.s=null}
+$('#sClose').onclick=closeSheet;addEventListener('keydown',e=>{if(e.key==='Escape'&&sh.s)closeSheet()});
+function rebuildSpec(){const s=sh.s;Object.assign(s,spec(s.di,s.v,s.seed,s.hue));updateText();Ticker.kick()}
+function updateText(){const s=sh.s,d=DIRS[s.di];$('#sCat').textContent=CATEGORIES.find(c=>c.id===d.cat).name+' / '+String(s.di+1).padStart(2,'0');
+  $('#sTitle').textContent=`${d.id} · ${VCODE[s.v]} ${VIBES[s.v]}`;$('#sSeed').textContent='0x'+(s.seed>>>0).toString(16).padStart(8,'0');
+  $('#sRecipe').textContent=JSON.stringify({direction:d.id,vibe:VCODE[s.v],seed:s.seed>>>0,hue:HUES[s.hue].id});
+  [...$('#sVibe').children].forEach((b,i)=>b.setAttribute('aria-pressed',i===s.v))}
+function buildSheet(){
+  const big=$('#sBig');sh.canv={big,states:[],voids:[],papers:[]};
+  const ss=$('#sState');ss.innerHTML='';ss.append(seg('sst',[['idle','idle'],['working','working'],['attention','attention'],['failure','failure'],['cycle','morph']],sh.st==='cycle'?'cycle':sh.st,v=>{sh.st=v;Ticker.kick()}));
+  const row=$('#sStates');row.innerHTML='';STATES.forEach(st=>{const cv=h('canvas');sh.canv.states.push([cv,st]);row.append(h('figure',{},cv,h('figcaption',{},st)))});
+  [['#sVoid','void','voids'],['#sPaper','paper','papers']].forEach(([sel,g,key])=>{const box=$(sel);box.innerHTML='';box.style.background=GROUNDS[g].bg;
+    [16,24,32,64].forEach(z=>{const cv=h('canvas');sh.canv[key].push([cv,z]);box.append(h('figure',{style:'margin:0;display:grid;gap:4px;justify-items:center'},cv,h('figcaption',{style:`color:${GROUNDS[g].mute};font-size:10px`},z)))})});
+  const hb=$('#sHue');hb.innerHTML='';const chips=hueChips('sHueChips',sh.s.hue,i=>{sh.s.hue=i;rebuildSpec()},groundNow);hb.append(chips);sh.chips=chips;
+  const vb=$('#sVibe');vb.innerHTML='';VCODE.forEach((c,i)=>vb.append(h('button',{type:'button',onclick:()=>{sh.s.v=i;rebuildSpec()}},c)));
+  updateText();Ticker.kick();
+}
+$('#sPrev').onclick=()=>{sh.s.seed=(sh.s.seed-1)>>>0;rebuildSpec()};$('#sNext').onclick=()=>{sh.s.seed=(sh.s.seed+1)>>>0;rebuildSpec()};
+$('#sCopy').onclick=e=>copyText($('#sRecipe').textContent,e.currentTarget);
+// morph: hold 1.9 s, dissolve 0.5 s through a bayer mask
+function morphPaint(ctx,s,t,g){const T=2.4,i=Math.floor(t/T)%4,u=t%T,cur=STATES[i],prev=STATES[(i+3)%4];
+  if(u>=.5||!Ticker.motion){paint(ctx,s,cur,t,g);return}
+  paint(ctx,s,prev,t,g);ctx.save();ctx.clip(bayerMask(Math.floor(u/.5*16)+1));paint(ctx,s,cur,t,g);ctx.restore()}
+Ticker.add(t=>{if(!sh.s)return;const g=groundNow(),s=sh.s;sh.chips&&sh.chips.paint();
+  const bigCss=Math.min(320,innerWidth-34);const ctx=unitCtx(sh.canv.big,bigCss);sh.st==='cycle'?morphPaint(ctx,s,t,g):paint(ctx,s,sh.st,t,g);
+  sh.canv.states.forEach(([cv,st])=>paint(unitCtx(cv,64),s,st,t,g));
+  const live=sh.st==='cycle'?STATES[Math.floor(t/2.4)%4]:sh.st;
+  sh.canv.voids.forEach(([cv,z])=>paint(unitCtx(cv,z),s,live,t,'void'));sh.canv.papers.forEach(([cv,z])=>paint(unitCtx(cv,z),s,live,t,'paper'))});
+Ticker.run();
+</script>

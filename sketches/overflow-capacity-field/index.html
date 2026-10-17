@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>overflow / capacity field</title>
+<style>
+:root{color-scheme:dark;font-family:monospace;background:#0a0a0a;color:#e3e3df;font-size:12px}*{box-sizing:border-box}body{margin:0}main{max-width:1260px;margin:auto;padding:32px 40px}a{color:#92958f;text-decoration:none}a:hover{color:#fff}header{display:flex;justify-content:space-between;gap:24px;padding:26px 0 32px;align-items:end}h1{font-size:16px;font-weight:400;letter-spacing:2px;margin:10px 0}p{color:#949891;line-height:1.7;margin:8px 0}.eyebrow,.label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#90948e}.number{color:#c6d99e}section{border-top:1px solid #30322e}.field-head{display:flex;justify-content:space-between;gap:15px;padding:16px 0}.field-head span:last-child{color:#949891}canvas{display:block;width:100%;height:clamp(280px,53vh,570px);background:#10120f;touch-action:none;cursor:crosshair;border:1px solid #30362a;outline-offset:4px}canvas:focus-visible{outline:1px solid #c6d99e}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;border-bottom:1px solid #30322e;padding:20px 0}.metric strong{display:block;font-size:16px;font-weight:400;margin-top:8px}.controls{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;padding:24px 0}.capacity-label{display:flex;justify-content:space-between}input{width:100%;accent-color:#c6d99e;margin:16px 0 12px;min-height:24px}.scale{display:flex;justify-content:space-between;color:#93968f;font-size:10px;gap:12px}.actions{display:flex;gap:8px}button{font:inherit;background:#10120f;color:#ddd;border:1px solid #42463c;padding:12px 16px;min-height:44px;cursor:pointer}button:hover{border-color:#c6d99e}button:focus-visible,a:focus-visible{outline:1px solid #c6d99e;outline-offset:4px}.notes{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding-top:20px}.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;color:#a2a69d}.swatch{display:inline-block;width:8px;height:8px;margin-right:7px;background:#77816a}.swatch.spill{background:#c6d99e}.swatch.trace{background:transparent;border:1px solid #62734a}footer{margin-top:28px;padding-top:18px;border-top:1px solid #252823;color:#74796e;font-size:10px;letter-spacing:1px}@media(max-width:620px){main{padding:18px 18px}header{display:block;padding:24px 0}header>p{max-width:30ch}canvas{height:46vh;min-height:280px}.field-head{font-size:10px}.metrics{grid-template-columns:repeat(2,1fr);gap:22px}.controls{grid-template-columns:1fr;gap:20px}.actions button{flex:1}.notes{grid-template-columns:1fr;gap:16px}.scale{font-size:9px}.legend{gap:12px}}
+</style>
+</head>
+<body><main>
+<a href="../index.html">← sketches</a>
+<header><div><div class="eyebrow">01 / physics · grid · emergence</div><h1>overflow / capacity field</h1></div><p>when does local excess<br>become a system-wide event?</p></header>
+<section><div class="field-head"><span id="regime" class="number">contained / local event</span><span id="status">running · 48 × 32 cells</span></div>
+<canvas id="field" tabindex="0" role="img" aria-label="Interactive pressure field. Click or drag to inject. Arrow keys move the selected cell; Space or Enter injects."></canvas>
+<div class="metrics"><div class="metric"><span class="label">stored pressure</span><strong id="stored">0</strong></div><div class="metric"><span class="label">spilling now</span><strong id="active">0</strong></div><div class="metric"><span class="label">cascade extent</span><strong id="extent">0%</strong></div><div class="metric"><span class="label">escaped at edge</span><strong id="escaped">0</strong></div></div>
+<div class="controls"><div><label class="capacity-label" for="capacity"><span class="label">capacity threshold</span><output id="capacity-value" for="capacity">3.65</output></label><input id="capacity" type="range" min="2.9" max="8" step="0.05" value="3.65"><div class="scale"><span>2.90 / cascading</span><span>3.65 / traveling</span><span>8.00 / contained</span></div></div><div class="actions"><button id="pause" type="button" aria-pressed="false">pause</button><button id="reset" type="button">reset field</button></div></div>
+</section>
+<section class="notes"><div><div class="legend"><span><i class="swatch"></i>pressure</span><span><i class="swatch spill"></i>spill</span><span><i class="swatch trace"></i>reached</span></div><p>click, hold, or drag to feed pressure.<br>keyboard: arrows to move · space to inject.</p></div><div><p>above capacity, a cell releases one capacity-sized packet equally to its four neighbors. pressure leaving the edge is counted.</p><p>reset repeats the same loaded field and center pulse. compare the three thresholds; the regime readout measures how far spills actually reach.</p></div></section>
+<footer>fixed substrate / synchronous transfer / open boundary</footer>
+</main>
+<script>
+'use strict';
+class OverflowField {
+ constructor(){this.cols=48;this.rows=32;this.size=this.cols*this.rows;this.capacity=3.65;this.reset();}
+ reset(){this.pressure=new Float64Array(this.size);this.flash=new Float64Array(this.size);this.reached=new Uint8Array(this.size);this.escaped=0;this.injected=0;this.active=0;this.extent=0;this.steps=0;for(let i=0;i<this.size;i++){const hash=((Math.imul(i+1,1597334677)>>>0)%1000)/1000;this.pressure[i]=2+hash*.8;}this.initial=this.total();this.inject(24,16,12);}
+ total(){return this.pressure.reduce((sum,p)=>sum+p,0);}
+ inject(x,y,amount=12){this.pressure[y*this.cols+x]+=amount;this.injected+=amount;}
+ step(){const delta=new Float64Array(this.size);let active=0;for(let i=0;i<this.size;i++){this.flash[i]*=.84;if(this.pressure[i]>this.capacity+1e-9){active++;this.flash[i]=1;if(!this.reached[i]){this.reached[i]=1;this.extent++;}delta[i]-=this.capacity;const quarter=this.capacity/4,x=i%this.cols,y=Math.floor(i/this.cols);for(const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]){const nx=x+dx,ny=y+dy;if(nx>=0&&nx<this.cols&&ny>=0&&ny<this.rows)delta[ny*this.cols+nx]+=quarter;else this.escaped+=quarter;}}}for(let i=0;i<this.size;i++)this.pressure[i]+=delta[i];this.active=active;this.steps++;}
+ regime(){return this.extent/this.size>=.45?'cascading / field-wide event':this.extent>12?'traveling / distributed front':'contained / local event';}
+}
+const model=new OverflowField();
+const canvas=document.getElementById('field'),ctx=canvas.getContext('2d');
+const el=id=>document.getElementById(id);
+let paused=false,held=false,pointerId=null,selected={x:24,y:16},keyboard=false,last=0,accumulator=0,feedTicks=0;
+function resize(){const r=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);draw();}
+function draw(){const w=canvas.width/model.cols,h=canvas.height/model.rows;ctx.fillStyle='#10120f';ctx.fillRect(0,0,canvas.width,canvas.height);for(let i=0;i<model.size;i++){const x=(i%model.cols)*w,y=Math.floor(i/model.cols)*h;const p=Math.min(1,model.pressure[i]/8),f=model.flash[i];ctx.fillStyle=`rgb(${Math.round(20+126*p+90*f)} ${Math.round(23+135*p+98*f)} ${Math.round(20+112*p+57*f)})`;ctx.fillRect(x+1,y+1,Math.max(1,w-2),Math.max(1,h-2));if(model.reached[i]){ctx.strokeStyle=f>.15?'#c6d99e':'#455038';ctx.lineWidth=Math.max(1,canvas.width/canvas.clientWidth);ctx.strokeRect(x+1.5,y+1.5,Math.max(1,w-3),Math.max(1,h-3));}}if(keyboard||held){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(selected.x*w,selected.y*h,w,h);}el('stored').textContent=model.total().toFixed(1);el('active').textContent=String(model.active).padStart(3,'0');el('extent').textContent=(100*model.extent/model.size).toFixed(1)+'%';el('escaped').textContent=model.escaped.toFixed(1);el('regime').textContent=model.regime();}
+function locate(event){const r=canvas.getBoundingClientRect();selected.x=Math.max(0,Math.min(model.cols-1,Math.floor((event.clientX-r.left)/r.width*model.cols)));selected.y=Math.max(0,Math.min(model.rows-1,Math.floor((event.clientY-r.top)/r.height*model.rows)));}
+canvas.addEventListener('pointerdown',event=>{if(pointerId!==null)return;event.preventDefault();canvas.focus({preventScroll:true});pointerId=event.pointerId;canvas.setPointerCapture(pointerId);locate(event);held=true;keyboard=false;feedTicks=0;model.inject(selected.x,selected.y);draw();});
+canvas.addEventListener('pointermove',event=>{if(event.pointerId!==pointerId)return;locate(event);});
+function release(event){if(event.pointerId!==pointerId)return;held=false;pointerId=null;}
+canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+window.addEventListener('blur',()=>{held=false;pointerId=null;});
+canvas.addEventListener('keydown',event=>{const moves={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};if(moves[event.key]){event.preventDefault();keyboard=true;selected.x=Math.max(0,Math.min(model.cols-1,selected.x+moves[event.key][0]));selected.y=Math.max(0,Math.min(model.rows-1,selected.y+moves[event.key][1]));}else if(event.key===' '||event.key==='Enter'){event.preventDefault();keyboard=true;model.inject(selected.x,selected.y);}draw();});
+el('capacity').addEventListener('input',event=>{model.capacity=Number(event.target.value);el('capacity-value').value=model.capacity.toFixed(2);draw();});
+el('pause').addEventListener('click',()=>{paused=!paused;el('pause').textContent=paused?'resume':'pause';el('pause').setAttribute('aria-pressed',String(paused));el('status').textContent=(paused?'paused':'running')+' · 48 × 32 cells';});
+el('reset').addEventListener('click',()=>{held=false;pointerId=null;model.reset();draw();});
+function frame(time){accumulator+=Math.min(time-last,100);last=time;while(accumulator>=1000/24){if(!paused){if(held&&++feedTicks%3===0)model.inject(selected.x,selected.y,4);model.step();}accumulator-=1000/24;}draw();requestAnimationFrame(frame);}
+new ResizeObserver(resize).observe(canvas);resize();requestAnimationFrame(frame);
+</script>
+</body></html>

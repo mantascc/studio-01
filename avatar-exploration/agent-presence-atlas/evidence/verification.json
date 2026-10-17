@@ -1,0 +1,163 @@
+{
+  "date": "2026-10-17T18:22:13.142Z",
+  "engine": "Chromium",
+  "physicalDevice": false,
+  "tests": [
+    {
+      "name": "80 specimens; ten families; no external runtime or assets",
+      "passed": true,
+      "milliseconds": 137,
+      "detail": {
+        "specimens": 80,
+        "families": 10,
+        "externalRequests": 0
+      }
+    },
+    {
+      "name": "1,280 deterministic state/theme/extreme-parameter renders; bounds and topology",
+      "passed": true,
+      "milliseconds": 757,
+      "detail": {
+        "renders": 1280,
+        "distinctStructures": 80,
+        "issues": []
+      }
+    },
+    {
+      "name": "Construction/vibe filters and exact 64 px gallery footprints",
+      "passed": true,
+      "milliseconds": 146,
+      "detail": {
+        "kawaii": 20,
+        "perFamily": 8,
+        "familyAndVibe": 2,
+        "interfacePixels": 64
+      }
+    },
+    {
+      "name": "All controls change the identity; palette, dimensions, seed, arrangement and reload persist",
+      "passed": true,
+      "milliseconds": 662,
+      "detail": {
+        "persistedFields": 8,
+        "partOffsetsPreserved": true
+      }
+    },
+    {
+      "name": "Saved studies, four-way comparison and persistence",
+      "passed": true,
+      "milliseconds": 489,
+      "detail": {
+        "saved": 4,
+        "comparisonStatePreviews": 16
+      }
+    },
+    {
+      "name": "Motion at both scales, geometry interpolation, exact pause and static phase",
+      "passed": true,
+      "milliseconds": 4883,
+      "detail": {
+        "staticDefault": true,
+        "compactMotion": true,
+        "interpolation": true,
+        "pauseFrozen": true,
+        "cycle": true
+      }
+    },
+    {
+      "name": "SVG, PNG, state-sheet, identity and session export; recipe round trip and invalid import",
+      "passed": true,
+      "milliseconds": 922,
+      "detail": {
+        "interfacePNG": "64 × 64",
+        "communicationPNG": "512 × 512",
+        "sheet": "512 × 160 SVG",
+        "exactRecipeRoundTrip": true,
+        "invalidImportAtomic": true,
+        "sessionRoundTrip": true
+      }
+    },
+    {
+      "name": "320/360/390/412/768/844/1440 px responsive layouts in both themes",
+      "passed": true,
+      "milliseconds": 2212,
+      "detail": {
+        "widths": [
+          320,
+          360,
+          390,
+          412,
+          768,
+          844,
+          1440
+        ],
+        "themes": [
+          "dark",
+          "light"
+        ],
+        "exactMiniPixels": 64
+      }
+    },
+    {
+      "name": "Android-sized touch: filtering, palette, part drag, nudge and state selection",
+      "passed": true,
+      "milliseconds": 829,
+      "detail": {
+        "viewport": "390 × 844",
+        "touchEnabled": true,
+        "realTouchEvents": true,
+        "draggedOffset": [
+          13.429,
+          5.714
+        ]
+      }
+    },
+    {
+      "name": "Reduced-motion startup and live preference changes; no autonomous motion",
+      "passed": true,
+      "milliseconds": 768,
+      "detail": {
+        "startupStatic": true,
+        "manualScrubbing": true,
+        "livePreferenceStopsMotion": true
+      }
+    },
+    {
+      "name": "Keyboard tab navigation, modal dismissal and focus restoration",
+      "passed": true,
+      "milliseconds": 160,
+      "detail": {
+        "tabArrows": true,
+        "escape": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "name": "Self-contained offline execution and storage-denied fallback",
+      "passed": true,
+      "milliseconds": 482,
+      "detail": {
+        "exactHTML": true,
+        "networkDisabled": true,
+        "requests": 0,
+        "storageFailureGraceful": true
+      }
+    },
+    {
+      "name": "Complete visual contact sheets in light and dark",
+      "passed": true,
+      "milliseconds": 834,
+      "detail": {
+        "sheets": 4,
+        "subjectsPerSheet": 40
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Android-sized Chromium touch emulation, not a physical Android device.",
+    "Managed browser policy blocks file:// navigation; offline execution is tested from the exact HTML in a network-disabled context."
+  ],
+  "browserVersion": "154.0.8037.57",
+  "passed": true
+}

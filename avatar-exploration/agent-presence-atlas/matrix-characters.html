@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Matrix characters — Form / presence</title>
+<style>
+:root{color-scheme:light dark;font-family:ui-sans-serif,system-ui,sans-serif;color:light-dark(#26332c,#e3e9df);background:light-dark(#f6f7f1,#171e19)}*{box-sizing:border-box}body{max-width:850px;margin:auto;padding:24px}header{margin-bottom:32px}header a{color:inherit}h1{font-size:32px;font-weight:500;letter-spacing:-.04em;margin:20px 0 8px}p{line-height:1.6}button,input,select{font:inherit}button{cursor:pointer}.viz-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.btn{padding:9px 13px;border:1px solid light-dark(#c7cfc4,#475348);border-radius:24px;color:inherit;background:transparent;min-height:40px}.btn[aria-pressed=true]{background:light-dark(#26332c,#e3e9df);color:light-dark(#f6f7f1,#171e19)}.btn:hover{border-color:currentColor}.form-check{display:flex;align-items:center;gap:5px;padding:8px}.form-label{display:flex;align-items:center;gap:8px}.form-select{padding:8px;border-radius:5px;color:inherit;background:light-dark(#f6f7f1,#171e19)}.text-small{font-size:12px}.text-muted{color:light-dark(#59675e,#a8b5a8)}@media(pointer:coarse){.btn{min-height:44px}}
+</style>
+<header><a href="index.html">← Form / presence</a><h1>Life on a matrix</h1><p>Six abstract characters on a fixed 19 × 19 lattice. Change their expression, move your pointer across them, or turn off faces to study personality through motion alone.</p></header>
+<div id="matrix-life">
+  <div class="viz-controls" aria-label="Character expression">
+    <button class="btn" data-mood="idle" aria-pressed="true">Idle</button>
+    <button class="btn" data-mood="curious" aria-pressed="false">Curious</button>
+    <button class="btn" data-mood="thinking" aria-pressed="false">Thinking</button>
+    <button class="btn" data-mood="joy" aria-pressed="false">Delighted</button>
+    <button class="btn" data-mood="startled" aria-pressed="false">Startled</button>
+    <button class="btn" data-mood="sleep" aria-pressed="false">Sleepy</button>
+  </div>
+  <div class="matrix-cast"></div>
+  <p class="text-small" id="matrix-detail" aria-live="polite">Moss · A small mass that breathes, compresses, and gathers itself.</p>
+  <div class="viz-controls">
+    <button class="btn" id="matrix-play" aria-pressed="true">Pause</button>
+    <label class="form-check"><input class="form-check-input" id="matrix-face" type="checkbox" checked><span class="form-check-label">Face</span></label>
+    <label class="form-check"><input class="form-check-input" id="matrix-guide" type="checkbox" checked><span class="form-check-label">Grid</span></label>
+    <label class="form-label">Cells <select class="form-select" id="matrix-cell"><option value="square">Squares</option><option value="dot">Dots</option></select></label>
+  </div>
+</div>
+<style>
+#matrix-life .matrix-cast{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 16px;margin:20px 0 12px}
+#matrix-life .matrix-specimen{min-width:0;text-align:center}
+#matrix-life canvas{display:block;width:100%;aspect-ratio:1;margin-bottom:8px;touch-action:pan-y}
+#matrix-life .matrix-caption{margin-top:6px}
+#matrix-life #matrix-detail{min-height:2.6em}
+@media(max-width:520px){#matrix-life .matrix-cast{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px}}
+</style>
+<script>
+(()=>{
+const root=document.getElementById('matrix-life'), $=s=>root.querySelector(s);
+const cast=[
+ {name:'Moss',desc:'A small mass that breathes, compresses, and gathers itself.',verb:'Breathe / squash',kind:0},
+ {name:'Reed',desc:'An antenna creature; attention travels from its roots to its tips.',verb:'Reach / listen',kind:1},
+ {name:'Loop',desc:'One moving aperture; a face made from the space it leaves empty.',verb:'Open / contract',kind:2},
+ {name:'Wisp',desc:'A wandering ribbon; thought ripples through its whole body.',verb:'Ripple / curl',kind:3},
+ {name:'Duet',desc:'Two masses sharing one rhythm, sometimes arriving a little apart.',verb:'Part / reunite',kind:4},
+ {name:'Rook',desc:'A broad, deliberate presence; it tilts, braces, then lifts its crown.',verb:'Brace / unfold',kind:5}
+];
+let mood='idle',selected=0,face=true,guide=true,cell='square',running=!matchMedia('(prefers-reduced-motion: reduce)').matches,time=0,last=0;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const moodKeys=['idle','curious','thinking','joy','startled','sleep'];
+let weights=Object.fromEntries(moodKeys.map(k=>[k,k==='idle'?1:0]));
+let pointer={x:0,y:0},ink='';
+const sq=x=>x*x, clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+function ellipse(x,y,cx,cy,rx,ry){return (1-Math.sqrt(sq((x-cx)/rx)+sq((y-cy)/ry)))*Math.min(rx,ry)}
+function segment(x,y,ax,ay,bx,by,r){const dx=bx-ax,dy=by-ay,k=clamp(((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy||1));return r-Math.hypot(x-ax-dx*k,y-ay-dy*k)}
+const views=cast.map((c,i)=>{
+ const div=document.createElement('div');div.className='matrix-specimen';
+ div.innerHTML=`<canvas role="img" aria-label="${c.name}: ${c.desc}"></canvas><button class="btn" aria-pressed="${i===0}">${c.name}</button><div class="matrix-caption text-small text-muted">${c.verb}</div>`;
+ $('.matrix-cast').append(div);
+ const v={c,div,canvas:div.querySelector('canvas'),ctx:div.querySelector('canvas').getContext('2d'),pulse:-100};
+ const pick=()=>{selected=i;v.pulse=time;sync();save();draw(0)};
+ div.querySelector('button').onclick=pick;v.canvas.onclick=pick;
+ v.canvas.onpointermove=e=>{const r=v.canvas.getBoundingClientRect();pointer={x:clamp((e.clientX-r.left)/r.width,0,1)*2-1,y:clamp((e.clientY-r.top)/r.height,0,1)*2-1};if(!running)draw(0)};
+ v.canvas.onpointerleave=()=>{pointer={x:0,y:0};if(!running)draw(0)};
+ return v;
+});
+function sync(){
+ root.querySelectorAll('[data-mood]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mood===mood));
+ views.forEach((v,i)=>v.div.querySelector('button').setAttribute('aria-pressed',selected===i));
+ $('#matrix-detail').textContent=cast[selected].name+' · '+cast[selected].desc;
+ $('#matrix-play').textContent=running?'Pause':'Play';$('#matrix-play').setAttribute('aria-pressed',running);
+ $('#matrix-face').checked=face;$('#matrix-guide').checked=guide;$('#matrix-cell').value=cell;
+}
+function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{character:cast[selected].name,expression:mood,face,cells:cell},privateContent:{guide,running}}).catch(()=>{});}
+function restore(s){const m=s?.modelContent,p=s?.privateContent;if(!m)return;
+ const n=cast.findIndex(c=>c.name===m.character);if(n>=0)selected=n;
+ if(moodKeys.includes(m.expression))mood=m.expression;if(typeof m.face==='boolean')face=m.face;if(['dot','square'].includes(m.cells))cell=m.cells;
+ if(typeof p?.guide==='boolean')guide=p.guide;if(typeof p?.running==='boolean')running=p.running&&!reduced.matches;
+ moodKeys.forEach(k=>weights[k]=+(k===mood));sync();draw(0);
+}
+root.querySelectorAll('[data-mood]').forEach(b=>b.onclick=()=>{mood=b.dataset.mood;if(!running)moodKeys.forEach(k=>weights[k]=+(k===mood));sync();save();draw(0)});
+$('#matrix-play').onclick=()=>{running=!running;sync();save()};
+$('#matrix-face').onchange=e=>{face=e.target.checked;save();draw(0)};
+$('#matrix-guide').onchange=e=>{guide=e.target.checked;save();draw(0)};
+$('#matrix-cell').onchange=e=>{cell=e.target.value;save();draw(0)};
+reduced.addEventListener('change',e=>{if(e.matches){running=false;sync();draw(0)}});
+window.addEventListener('openai:set_globals',e=>restore(e.detail?.globals?.widgetState));
+function draw(dt){
+ const style=getComputedStyle(root);ink=style.color;
+ for(const v of views){
+ const {c,ctx,canvas}=v,w=canvas.getBoundingClientRect().width;if(!w)continue;
+ const dpr=Math.min(devicePixelRatio||1,2),res=Math.round(w*dpr);if(canvas.width!==res){canvas.width=res;canvas.height=res;}
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,w);ctx.fillStyle=ink;
+ const t=time*(c.kind===5?.72:1)+c.kind*1.13, e=weights;
+ const breath=Math.sin(t*1.8), busy=Math.sin(t*6), hop=Math.max(0,Math.sin(t*5));
+ const pulseAge=time-v.pulse, impulse=pulseAge>=0&&pulseAge<1.2?Math.sin(pulseAge*9)*Math.exp(-pulseAge*3):0;
+ const bounce=-e.joy*hop*1.9-impulse*.9;
+ const stretch=1+e.curious*.18+e.startled*.27-e.sleep*.25+e.joy*Math.sin(t*5)*.10;
+ const tilt=e.curious*(.14+pointer.x*.09)+e.thinking*Math.sin(t*2)*.07;
+ const lookX=pointer.x*.75+e.curious*.8+e.thinking*Math.sin(t*2)*.6;
+ const lookY=pointer.y*.5-e.curious*.35+e.sleep*.55;
+ const blink=(t%5.7>5.48)?0:1;
+ const grid=19,step=w/(grid+2),size=step*.79;
+ for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){
+   const px=(gx+1.5)*step,py=(gy+1.5)*step;
+   if(guide){ctx.globalAlpha=.075;ctx.beginPath();ctx.arc(px,py,step*.085,0,Math.PI*2);ctx.fill()}
+   let x=gx-9,y=(gy-9-bounce-e.sleep*.9)/stretch;
+   x-=y*tilt; x/=1+breath*.045-e.startled*.12+e.sleep*.12;
+   let d=-99,ex=0,ey=-.9;
+   if(c.kind===0){d=Math.max(ellipse(x,y,0,.8,4.7,3.9),ellipse(x,y,-2.4,-1.8,2.4,2.8),ellipse(x,y,2.3,-1.7,2.2,2.4));}
+   if(c.kind===1){
+    const wave=Math.sin(t*2)*.45,reach=e.curious*1.1+e.joy*.6;
+    d=Math.max(ellipse(x,y,0,3.2,3.5,1.7),segment(x,y,0,3,.1,-2.3,1.05),segment(x,y,0,-1.4,-2.9+wave,-4.5-reach,1.0),segment(x,y,.1,-2,2.7+wave,-5.7-reach,1.0),ellipse(x,y,0,-1.1,2.6,1.5));ey=-1.2;
+   }
+   if(c.kind===2){
+    const outer=ellipse(x,y,0,0,5,4.8), inner=ellipse(x,y,lookX,lookY,2.5+e.startled*.9,2.4-e.sleep*1.7+e.startled*.7);
+    d=Math.min(outer,-inner); // Negative space itself is the expression.
+   }
+   if(c.kind===3){
+    const headX=Math.sin(t*1.6)*.9;ex=headX;ey=-2.5;
+    d=ellipse(x,y,headX,-2.5,2.9,2.4);
+    for(let j=0;j<6;j++){const yy=j*.95-.8,xx=Math.sin(t*2-j*.7)*(1.2+e.joy*.8);d=Math.max(d,ellipse(x,y,xx,yy,2-j*.16,1.25))}
+   }
+   if(c.kind===4){
+    const sep=2.4+Math.sin(t*1.7)*.35+e.startled*.8;
+    d=Math.max(ellipse(x,y,-sep,Math.sin(t*2.2)*.5,2.3,3.4),ellipse(x,y,sep,Math.sin(t*2.2-.8)*.5,2.3,3.4));
+   }
+   if(c.kind===5){
+    d=Math.min(5.1-Math.abs(x),2.8-Math.abs(y-1.3));
+    for(let j=-1;j<=1;j++){const top=-3.6-(j===0?.7:0)-e.joy*.8+Math.sin(t*1.6+j)*.2;d=Math.max(d,Math.min(.95-Math.abs(x-j*3), (1-top)/2-Math.abs(y-(1+top)/2)))}
+    ey=.6;
+   }
+   let occupancy=clamp(d+.55),eye=false,mouth=false;
+   const eyeY=ey+lookY,eyeH=blink*(.65-e.sleep*.43+e.startled*.35)+.08;
+   if(face&&c.kind!==2){
+    const eyeSep=c.kind===4?2.4:1.4;
+    eye=(Math.abs(x-ex-lookX-eyeSep)<.61||Math.abs(x-ex-lookX+eyeSep)<.61)&&Math.abs(y-eyeY)<eyeH;
+    if(e.joy>.3){eye=(Math.abs(Math.abs(x-ex-lookX)-eyeSep)<.85)&&Math.abs(y-eyeY+.35-Math.abs(Math.abs(x-ex-lookX)-eyeSep)*.7)<.35;}
+    if(c.kind!==1&&c.kind!==4){mouth=e.startled>.4?ellipse(x,y,ex,ey+2,.65,.8)>0:e.joy>.3?Math.abs(x-ex)<1.3&&Math.abs(y-ey-1.5-(1-Math.abs(x-ex))*.6)<.38:false;}
+   }
+   if(eye||mouth)occupancy*=.06;
+   // Cells never leave their lattice positions; occupancy and luminance carry motion.
+   const scan=e.thinking*Math.pow(Math.max(0,Math.cos(gy*.7-t*5)),5)*.4;
+   if(occupancy>.015){
+    ctx.globalAlpha=occupancy*(.76+.17*Math.sin(gx*.24-gy*.16+t*.6)+scan);
+    const s=size*(.74+.26*occupancy);
+    if(cell==='dot'){ctx.beginPath();ctx.arc(px,py,s/2,0,Math.PI*2);ctx.fill()}
+    else ctx.fillRect(px-s/2,py-s/2,s,s);
+   }
+ }
+ ctx.globalAlpha=1;
+ }
+}
+function frame(now){const dt=Math.min((now-last)/1000,.05);last=now;if(running&&!document.hidden){time+=dt;moodKeys.forEach(k=>weights[k]+=((k===mood?1:0)-weights[k])*Math.min(1,dt*7));draw(dt)}requestAnimationFrame(frame)}
+new ResizeObserver(()=>draw(0)).observe(root);
+new MutationObserver(()=>draw(0)).observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});
+sync();restore(window.openai?.widgetState);draw(0);requestAnimationFrame(frame);
+})();
+</script>
+
+</html>

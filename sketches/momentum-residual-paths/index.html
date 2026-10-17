@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Momentum / Residual Paths</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#0a0a0a;overflow:hidden}body{font:11px/1.7 'SFMono-Regular',Consolas,monospace;color:#989898}canvas{position:fixed;inset:0;width:100%;height:100%;display:block}header{position:fixed;top:28px;left:32px;right:32px;display:flex;align-items:start;justify-content:space-between;gap:24px;pointer-events:none}h1{font:inherit;font-size:12px;font-weight:400;letter-spacing:1px;margin:0;color:#bbb}a,button{pointer-events:auto;color:#929292;text-decoration:none}a{display:inline-block;padding:8px 0}button{border:1px solid #333;background:#0a0a0a;padding:10px 14px;min-height:44px;font:inherit;cursor:pointer}button:hover,a:hover{color:white}a:focus-visible,button:focus-visible{outline:1px solid #d8ded1;outline-offset:4px}.note{position:fixed;bottom:28px;left:32px;font-size:10px;letter-spacing:1px;pointer-events:none;color:#686868}@media(max-width:600px){header{top:20px;left:20px;right:20px;gap:12px}h1{max-width:200px}.note{bottom:24px;left:20px}}
+</style></head><body>
+<canvas id="field" aria-label="Autonomous luminous paths retain direction, slow, and fade. Residual trails gently steer later paths."></canvas>
+<header><div><h1>momentum / residual paths</h1><a href="../index.html">← experiments</a></div><button id="pause" type="button" aria-pressed="false">pause</button></header>
+<div class="note">motion leaves a direction behind</div>
+<script>
+'use strict';
+const DT=1/60,LIFETIME=9,DAMPING=.21,MAXAGE=8.5,RADIUS=.095;
+class ResidualModel{
+ constructor(seed=175402,influence=true){this.seed=seed;this.influence=influence;this.time=0;this.next=.35;this.serial=0;this.paths=[];this.memory=[];this.influencedSteps=0;this.totalTurn=0;this.spawnTimes=[];this.gaps=[2.1,2.8,3.3,25.8]}
+ random(){this.seed=(Math.imul(this.seed,1664525)+1013904223)>>>0;return this.seed/4294967296}
+ spawn(){const n=this.serial++,reverse=n%4===2;const p={id:n+1,x:reverse?1.015:-.015,y:.34+(this.random()-.5)*.13+(n%4===2?.15:0),angle:(reverse?Math.PI:0)+(this.random()-.5)*.32,speed:.21,age:0,phase:this.random()*6.28,points:[],last:null};p.last={x:p.x,y:p.y};this.paths.push(p);this.spawnTimes.push(this.time);if(this.spawnTimes.length>16)this.spawnTimes.shift();this.next+=this.gaps[n%4]+(this.random()-.5)*.5}
+ step(){this.time+=DT;if(this.time>=this.next)this.spawn();this.memory=this.memory.filter(s=>this.time-s.time<LIFETIME);for(const p of this.paths){if(p.age>=MAXAGE)continue;let ax=0,ay=0,weight=0;for(const s of this.memory){if(s.owner>=p.id)continue;const d=Math.hypot(p.x-s.x,p.y-s.y);if(d>=RADIUS)continue;const w=(1-d/RADIUS)*(1-(this.time-s.time)/LIFETIME);const sign=Math.cos(s.angle-p.angle)<0?-1:1;ax+=Math.cos(s.angle)*sign*w;ay+=Math.sin(s.angle)*sign*w;weight+=w}let turn=0;if(this.influence&&weight>.001){turn=Math.sin(Math.atan2(ay,ax)-p.angle)*.8*Math.min(1,weight);this.influencedSteps++;this.totalTurn+=Math.abs(turn*DT)}p.angle+=(Math.sin(p.age*.7+p.phase)*.025+turn)*DT;p.speed*=Math.exp(-DAMPING*DT);p.x+=Math.cos(p.angle)*p.speed*DT;p.y+=Math.sin(p.angle)*p.speed*DT;p.age+=DT;if(Math.round(p.age/DT)%4===0){const segment={owner:p.id,x:p.x,y:p.y,angle:p.angle,time:this.time,from:p.last};this.memory.push(segment);p.points.push(segment);p.last={x:p.x,y:p.y}}}for(const p of this.paths)p.points=p.points.filter(s=>this.time-s.time<LIFETIME);this.paths=this.paths.filter(p=>p.age<MAXAGE||p.points.length);if(this.memory.length>2400)this.memory.splice(0,this.memory.length-2400)}
+ snapshot(){return {time:this.time,next:this.next,seed:this.seed,spawnTimes:[...this.spawnTimes],paths:this.paths.map(p=>({id:p.id,x:p.x,y:p.y,angle:p.angle,age:p.age,speed:p.speed,points:p.points.length})),segments:this.memory.length,influencedSteps:this.influencedSteps,totalTurn:this.totalTurn,constants:{step:DT,damping:DAMPING,trailLifetime:LIFETIME,influenceRadius:RADIUS}}}
+}
+const canvas=document.querySelector('#field'),ctx=canvas.getContext('2d'),button=document.querySelector('#pause'),media=matchMedia('(prefers-reduced-motion: reduce)'),model=new ResidualModel();
+let paused=media.matches,last=null,acc=0,width=0,height=0;
+function resize(){width=innerWidth;height=innerHeight;const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+function project(x,y){return width>=height?[x*width,y*height]:[(1-y)*width,x*height]}
+function render(){ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,width,height);ctx.lineWidth=1.15;ctx.lineCap='round';for(const s of model.memory){const age=model.time-s.time,a=Math.max(0,1-age/LIFETIME),from=project(s.from.x,s.from.y),to=project(s.x,s.y);ctx.strokeStyle=`rgba(215,225,210,${a*.77})`;ctx.beginPath();ctx.moveTo(...from);ctx.lineTo(...to);ctx.stroke()}}
+function sync(){button.textContent=paused?'resume':'pause';button.setAttribute('aria-pressed',String(paused));button.setAttribute('aria-label',paused?'Resume ambient motion':'Pause ambient motion')}
+button.addEventListener('click',()=>{paused=!paused;last=null;acc=0;sync()});
+media.addEventListener('change',e=>{if(e.matches){paused=true;last=null;acc=0;sync()}});
+document.addEventListener('visibilitychange',()=>{last=null;acc=0});window.addEventListener('resize',resize);
+function frame(now){if(last!==null&&!paused&&!document.hidden){acc+=Math.min((now-last)/1000,.1);while(acc>=DT){model.step();acc-=DT}}last=now;render();requestAnimationFrame(frame)}
+Object.defineProperty(window,'residualPaths',{value:Object.freeze({snapshot:()=>({...model.snapshot(),paused,portrait:width<height})}),writable:false});
+resize();sync();render();requestAnimationFrame(frame);
+</script></body></html>
