@@ -1,4 +1,4 @@
-# Studio operating rules
+# studio-01 operating rules
 
 Read the root README and the nearest local README before editing a study. Preserve existing meaning and behavior; prefer small, explicit changes. Follow local patterns and avoid speculative folders or abstractions.
 
@@ -13,9 +13,9 @@ Read the root README and the nearest local README before editing a study. Preser
 
 ## Publishing
 
-- Studio is the source of truth for the runnable explorations. Keep broader research and formation notes in min1; link between repositories instead of maintaining duplicate active sources.
+- studio-01 is the source of truth for the runnable explorations. Keep broader research and formation notes in min1; link between repositories instead of maintaining duplicate active sources.
 - Each collection has an index linking to every runnable study, with the newest study first. Keep gallery copy sparse and previews faithful to the actual work.
-- Use relative links that work below `/studio/`. Keep shared assets next to the pages that use them.
+- Use relative links that work below `/studio-01/`. Keep shared assets next to the pages that use them.
 - Preserve accessible controls, keyboard navigation, and reduced-motion behavior.
 - Before committing, check affected links and syntax, and test changed interactions at relevant viewport sizes.
 - Only add material intended for public viewing. Do not include credentials, local machine paths, or private working notes.

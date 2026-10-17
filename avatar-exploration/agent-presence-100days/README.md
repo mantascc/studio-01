@@ -15,4 +15,4 @@ Six OKLCH hues + ink instead of one accent (same hue angle on both grounds, ligh
 - Self-contained except the JetBrains Mono webfont (falls back to system mono).
 - Source is assembled from shared parts (palette, ticker, directions) into these two files; edit the HTML directly for small changes.
 - Scores and "first read" notes are design judgments, not user tests.
-- Public preview: [Studio](https://mantas.cc/studio/avatar-exploration/agent-presence-100days/).
+- Public preview: [Studio](https://mantas.cc/studio-01/avatar-exploration/agent-presence-100days/).

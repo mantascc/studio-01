@@ -1,11 +1,13 @@
-# Studio
+# studio-01
 
-Public interaction and visual explorations by [mantascc](https://github.com/mantascc).
+The first active studio by [mantascc](https://github.com/mantascc), focused on expression, visual exploration, and divergent exploration.
 
-[Open Studio](https://mantas.cc/studio/)
+A place to try many directions through shape, motion, character, and interaction. Sketches make possibilities visible before a direction is chosen.
 
-- [Avatar exploration](https://mantas.cc/studio/avatar-exploration/) — shape, character, motion, and agent interfaces.
-- [Sketches](https://mantas.cc/studio/sketches/) — momentum, reinvention, overflow, and topology.
+[Open studio-01](https://mantas.cc/studio-01/)
+
+- [Avatar exploration](https://mantas.cc/studio-01/avatar-exploration/) — shape, character, motion, and agent interfaces.
+- [Sketches](https://mantas.cc/studio-01/sketches/) — momentum, reinvention, overflow, and topology.
 
 ## Work here
 
@@ -25,4 +27,4 @@ Open http://127.0.0.1:8850/. No build step is required. Some studies use an exte
 
 ## Publish
 
-GitHub Pages serves `main` from the repository root. `.nojekyll` keeps the HTML and assets as static files. Changes pushed to `main` are published automatically. All internal navigation uses relative paths so it works under `/studio/`.
+GitHub Pages serves `main` from the repository root. `.nojekyll` keeps the HTML and assets as static files. Changes pushed to `main` are published automatically. All internal navigation uses relative paths so it works under `/studio-01/`.
