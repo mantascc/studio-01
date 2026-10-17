@@ -13,8 +13,10 @@ Read the root README and the nearest local README before editing a study. Preser
 
 ## Publishing
 
-- studio-01 is the source of truth for the runnable explorations. Keep broader research and formation notes in min1; link between repositories instead of maintaining duplicate active sources.
-- Each collection has an index linking to every runnable study, with the newest study first. Keep gallery copy sparse and previews faithful to the actual work.
+- min1 holds all working drafts, including unfinished and unpublished directions. studio-01 holds explicitly selected public snapshots; develop new explorations in min1 first.
+- Publish only requested studies and their required assets and documentation, preserving matching relative paths. Never bulk-sync min1 drafts into this public repository.
+- Draft and public galleries may differ. Bring direct public fixes back into min1 deliberately, preserving newer draft work.
+- Each public collection has an index linking to every published study, with the newest study first. Keep gallery copy sparse and previews faithful to the actual work.
 - Use relative links that work below `/studio-01/`. Keep shared assets next to the pages that use them.
 - Preserve accessible controls, keyboard navigation, and reduced-motion behavior.
 - Before committing, check affected links and syntax, and test changed interactions at relevant viewport sizes.

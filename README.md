@@ -11,7 +11,9 @@ A place to try many directions through shape, motion, character, and interaction
 
 ## Work here
 
-This repository owns the runnable sketches and their supporting documentation. Broader thinking and formation context remain in [min1](https://github.com/mantascc/min1). The initial import preserves the existing collection paths, with a fresh repository history.
+This repository holds selected public explorations and their supporting documentation. [min1](https://github.com/mantascc/min1) holds all working drafts, unfinished variations, and source versions of published studies.
+
+Develop in min1. Publish explicitly selected studies here, keeping their relative paths and required assets together. The public collection is curated; it does not automatically mirror every draft or draft edit. Bring any direct public fixes back into the corresponding draft deliberately.
 
 Keep explorations focused and information sparse. Follow the [sketching principles](AGENTS.md#sketching-and-exploration). Add each new study to its collection index, newest first.
 
