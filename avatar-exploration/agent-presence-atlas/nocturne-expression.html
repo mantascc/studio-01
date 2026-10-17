@@ -18,9 +18,11 @@ function render(v){const {canvas:c,ctx}=v,w=c.clientWidth;if(!w)return;const res
 function glow(x,y,r,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,rgba(a));g.addColorStop(.5,rgba(a*.3));g.addColorStop(1,rgba(0));ctx.fillStyle=g;ctx.fillRect(0,0,w,w)}
 const beat=s===6?([.8,.3,.8,.25,.25,.25,.25,.25][Math.floor(t*2)%8]):s===5?.3+.15*Math.sin(t):s===4?.22+.03*Math.floor(t%20/5):s===0?pulse:.55+.15*Math.sin(t*2);
 if(isField)glow(cx,cy,w*.55,beat*.32);if(isGlow)glow(cx+(s===1?Math.cos(t)*w*.05:0),w*.72,w*.3,beat*.65);
-function dot(x,y,size=cell,a=1){ctx.fillStyle=rgba(a);ctx.fillRect(Math.round(x/step)*step-size/2,Math.round(y/step)*step-size/2,size,size)}
+// Every discrete mark shares the body's lattice origin and cell renderer.
+function matrixCell(x,y,size=cell){const px=cx+Math.round((x-cx)/step)*step,py=cy+Math.round((y-cy)/step)*step;if(dots){ctx.beginPath();ctx.arc(px,py,size/2,0,Math.PI*2);ctx.fill()}else ctx.fillRect(px-size/2,py-size/2,size,size)}
+function dot(x,y,size=cell,a=1){ctx.fillStyle=rgba(a);matrixCell(x,y,size)}
 function orbit(angle,r=rr,a=1){dot(cx+Math.cos(angle)*r,cy+Math.sin(angle)*r,cell,a)}
-function mark(x,y,type){ctx.strokeStyle=rgba(.95);ctx.lineWidth=Math.max(1,w*.006);ctx.beginPath();if(type==='x'){ctx.moveTo(x-step,y-step);ctx.lineTo(x+step,y+step);ctx.moveTo(x+step,y-step);ctx.lineTo(x-step,y+step)}else{ctx.moveTo(x,y-step*1.5);ctx.lineTo(x,y+step*.3)}ctx.stroke();if(type!=='x')dot(x,y+step*1.3,cell*.6)}
+function mark(x,y,type){const pattern=type==='x'?['101','010','101']:['010','010','010','000','010'];const gx=Math.round((x-cx)/step),gy=Math.round((y-cy)/step);pattern.forEach((row,y)=>[...row].forEach((on,x)=>{if(on==='1')dot(cx+(gx+x-1)*step,cy+(gy+y-Math.floor(pattern.length/2))*step,cell,.95)}))}
 if(isOrbit){
 if(s===0){dot(cx-step*1.5,w*.76,cell*.65,.3+pulse*.5);dot(cx+step*1.5,w*.76,cell*.65,.3+pulse*.5)}
 if(s===1){const k=Math.floor(t*3)%16;for(let j=0;j<4;j++)orbit((k-j)*Math.PI/8-Math.PI/2,rr,1-j*.22)}
@@ -33,9 +35,9 @@ if(s===6){mark(cx+rr*.7,cy-rr*.75,'!');dot(cx+rr*.9,cy-rr*.4,cell*.5,beat);dot(c
 // A white, fixed silhouette: only cells breathe when enabled; no colored body fill.
 const breath=body==='breath'?[.87,.94,1,.94][Math.floor(t/(s===3?.3:s===1?.5:1))%4]:1;
 let gaze=s===1?[0,1,0,-1][Math.floor(t)%4]*.5:s===2?.7:s===3?[.7,-.7][Math.floor(t*2)%2]:s===6?.5:0;let eyeY=i===1?-1:i===3?.6:-.8;if(s===4)eyeY+=.5;if(s===6)eyeY-=.5;
-for(let gy=0;gy<19;gy++)for(let gx=0;gx<19;gx++){const x=gx-9,y=gy-9;let a=clamp(shape(i,x,y)+.4);if(a<.02)continue;let eye=false;if(face&&i!==2){const dx=Math.min(Math.abs(x-gaze-1.4),Math.abs(x-gaze+1.4));const blink=s!==5&&Math.floor(t*6)%37===36;eye=dx<.65&&Math.abs(y-eyeY)<(blink?.1:s===4?.25:s===6?.85:.6);if(s===5)eye=Math.abs(Math.abs(x)-1.5)<.9&&Math.abs(y-eyeY-.35*(x>0?1:-1)*(Math.abs(x)-1.5))<.4}if(face&&i!==2){if(s===2){const mouthFrame=Math.floor(t*3)%3;eye=eye||(Math.abs(x)<(mouthFrame===1?1.1:.6)&&Math.abs(y-eyeY-2)<(mouthFrame===2?.8:.4))}if(s===5)eye=eye||(Math.abs(x)<1.5&&Math.abs(y-eyeY-2+Math.abs(x)*.35)<.35);if(s===6)eye=eye||(Math.abs(x)<.6&&Math.abs(y-eyeY-2)<.7)}if(eye)continue;ctx.fillStyle=`rgba(243,245,249,${a*.96})`;const size=cell*breath*(.85+.15*a),px=cx+x*step,py=cy+y*step;if(dots){ctx.beginPath();ctx.arc(px,py,size/2,0,Math.PI*2);ctx.fill()}else ctx.fillRect(px-size/2,py-size/2,size,size)}
+for(let gy=0;gy<19;gy++)for(let gx=0;gx<19;gx++){const x=gx-9,y=gy-9;let a=clamp(shape(i,x,y)+.4);if(a<.02)continue;let eye=false;if(face&&i!==2){const dx=Math.min(Math.abs(x-gaze-1.4),Math.abs(x-gaze+1.4));const blink=s!==5&&Math.floor(t*6)%37===36;eye=dx<.65&&Math.abs(y-eyeY)<(blink?.1:s===4?.25:s===6?.85:.6);if(s===5)eye=Math.abs(Math.abs(x)-1.5)<.9&&Math.abs(y-eyeY-.35*(x>0?1:-1)*(Math.abs(x)-1.5))<.4}if(face&&i!==2){if(s===2){const mouthFrame=Math.floor(t*3)%3;eye=eye||(Math.abs(x)<(mouthFrame===1?1.1:.6)&&Math.abs(y-eyeY-2)<(mouthFrame===2?.8:.4))}if(s===5)eye=eye||(Math.abs(x)<1.5&&Math.abs(y-eyeY-2+Math.abs(x)*.35)<.35);if(s===6)eye=eye||(Math.abs(x)<.6&&Math.abs(y-eyeY-2)<.7)}if(eye)continue;ctx.fillStyle=`rgba(243,245,249,${a*.96})`;const size=cell*breath*(.85+.15*a),px=cx+x*step,py=cy+y*step;matrixCell(px,py,size)}
 // Loop keeps its aperture; a tiny white gaze inside it changes expression, not its body.
-if(face&&i===2){ctx.fillStyle='#f3f5f9';const sz=cell*.7;if(s===5){ctx.fillRect(cx-step,cy-sz/2,step*2,sz*.5)}else{ctx.fillRect(cx+gaze*step-sz/2,cy+(s===6?-.5:s===4?.5:0)*step-sz/2,sz,sz)}}
+if(face&&i===2){ctx.fillStyle='#f3f5f9';if(s===5){for(let x=-1;x<=1;x++)matrixCell(cx+x*step,cy)}else{matrixCell(cx+Math.round(gaze)*step,cy+(s===6?-1:s===4?1:0)*step)}}
 }
 function draw(){views.forEach(v=>{if(v.visible)render(v)})}
 const observer=new IntersectionObserver(entries=>{entries.forEach(e=>views.find(v=>v.canvas===e.target).visible=e.isIntersecting);draw()},{rootMargin:'100px'});views.forEach(v=>observer.observe(v.canvas));new ResizeObserver(draw).observe(document.querySelector('main'));
